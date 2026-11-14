@@ -1,0 +1,68 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phát hiện với Falco · Kernel Notes</title><meta name="description" content="Viết rule quan sát shell trong Pod và đọc cảnh báo JSON.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 06 · TUẦN 2 · R14 · 4 PHÚT ĐỌC</div>
+<h1>Phát hiện với Falco</h1><p>Viết rule quan sát shell trong Pod và đọc cảnh báo JSON.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="falco-xu-ly-su-kien-nhu-the-nao">Falco xử lý sự kiện như thế nào</h2>
+<p>Một driver thu các sự kiện kernel mà Falco hỗ trợ. Falco bổ sung ngữ cảnh tiến trình, file descriptor và container khi có thể, sau đó đánh giá rule. Mỗi rule có tên, mô tả, điều kiện, nội dung cảnh báo và mức ưu tiên. <strong>Macro</strong> đặt tên cho đoạn điều kiện dùng lại. <strong>List</strong> gom các giá trị như tên shell. <strong>Exception</strong> mô tả trường hợp hợp lệ được loại trừ trong rule phù hợp. <a href="https://falco.org/docs/concepts/rules/basic-elements/">R14 Falco Rules</a></p>
+<p>Falco hỗ trợ Modern eBPF hoặc kernel module tùy môi trường và bản cài. Nếu luận văn đo <strong>eBPF</strong>, ghi nhận driver thực tế từ cấu hình và log khởi động. Một số sự kiện đến trước lúc metadata có sẵn; theo dõi các trường rỗng hoặc <code>&lt;NA&gt;</code>. <a href="https://falco.org/docs/concepts/event-sources/kernel/">Falco Kernel Events</a>, <a href="https://falco.org/docs/troubleshooting/missing-fields/">Missing Fields in Falco Logs</a>.</p>
+<h2 id="lab-mau-tren-cluster-mot-node">Lab mẫu trên cluster một node</h2>
+<p>Tạo file <code>falco-values.yaml</code> trong thư mục làm lab. Rule minh họa tìm tiến trình shell trong namespace <code>boutique</code>, kể cả khi mục đích là gỡ lỗi hợp lệ. <code>spawned_process</code> và <code>container</code> là macro từ bộ luật mặc định; giữ bộ luật đó khi thử cấu hình sau. Đối chiếu Helm values với chart đã chọn.</p>
+<pre><code class="language-yaml">driver:
+  kind: modern_ebpf
+falco:
+  json_output: true
+customRules:
+  lab-shell.yaml: |-
+    - list: lab_shells
+      items: [sh, bash, dash, ash]
+    - rule: Lab Shell in Boutique
+      desc: Observe shell execution in the boutique namespace
+      condition: spawned_process and container and k8s.ns.name = boutique and proc.name in (lab_shells)
+      output: &quot;lab shell (ns=%k8s.ns.name pod=%k8s.pod.name proc=%proc.name parent=%proc.pname container=%container.id)&quot;
+      priority: NOTICE
+      source: syscall
+      tags: [lab, process]
+</code></pre>
+<pre><code class="language-bash">helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+helm search repo falcosecurity/falco --versions
+# Thay giá trị dưới đây bằng phiên bản chart đã chọn.
+FALCO_CHART_VERSION='THAY_BANG_PHIEN_BAN'
+helm show values falcosecurity/falco --version &quot;$FALCO_CHART_VERSION&quot;
+helm upgrade --install falco falcosecurity/falco --namespace falco \
+  --create-namespace --version &quot;$FALCO_CHART_VERSION&quot; -f falco-values.yaml
+kubectl -n falco get pods -o wide
+</code></pre>
+<p>Kiểm tra driver, rule có tải thành công và Pod agent có mặt trên node thử. Nếu tên DaemonSet hoặc container khác với tên ví dụ, dùng tên thực tế. <a href="https://falco.org/docs/setup/kubernetes/">R14 hướng dẫn Helm</a>, <a href="https://github.com/falcosecurity/charts/blob/master/charts/falco/values.yaml">Falco chart values</a>.</p>
+<h2 id="tao-su-kien-da-biet-va-doc-json">Tạo sự kiện đã biết và đọc JSON</h2>
+<p>Trong namespace lab đã tồn tại, tạo Pod thử. Ghi thời điểm UTC ngay trước khi chạy lệnh <code>exec</code>.</p>
+<pre><code class="language-bash">kubectl -n boutique run runtime-probe --image=busybox:1.36.1 \
+  --restart=Never --command -- sleep 3600
+kubectl -n boutique wait --for=condition=Ready pod/runtime-probe --timeout=120s
+date -u +%FT%TZ
+kubectl -n boutique exec runtime-probe -- /bin/sh -c 'echo falco-smoke'
+kubectl -n falco logs daemonset/falco -c falco --since=5m
+</code></pre>
+<p>Trong log, tìm rule <code>Lab Shell in Boutique</code> và pod <code>runtime-probe</code>. Falco có thể phát cảnh báo từ các rule mặc định trong cùng thời gian. Bộ nhập liệu nên tách dòng JSON hợp lệ khỏi thông báo khởi động, giữ <code>time</code>, <code>rule</code>, <code>priority</code>, <code>source</code> và <code>output_fields</code>. Với nhiều node, thu log của từng agent và ghi node tương ứng. <a href="https://falco.org/docs/concepts/outputs/formatting/">R14 Alert Formatting</a>, <a href="https://falco.org/docs/reference/rules/supported-fields/">Falco fields</a>.</p>
+<p><strong>Đối chứng.</strong> Thử exec một binary không nằm trong danh sách, chẳng hạn <code>/bin/true</code> nếu image có binary đó. Rule shell dự kiến không phát. Giữ thời gian và kết quả của cả hai lần chạy. Nếu chưa thấy alert mong đợi, kiểm tra node, driver, bộ luật, điều kiện namespace, tên tiến trình và log báo mất sự kiện.</p>
+<p>Falco báo khi rule khớp. Phân tích tỷ lệ kết nối bình thường cần một nguồn đủ phủ cả hoạt động không khớp rule. Một alert về shell cho biết điều kiện phát hiện xảy ra; dùng audit hoặc dữ liệu điều phối để biết đó là kiểm thử, bảo trì hay hành vi của đối thủ.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Priority NOTICE có phải xác suất tấn công không?</strong> Đó là mức được đặt trong rule.</li>
+<li><strong>Rule có tự cách ly Pod không?</strong> Luồng ở bài này xuất cảnh báo; cách ly cần cơ chế phản ứng riêng.</li>
+<li><strong>Metadata bị thiếu ảnh hưởng thế nào?</strong> Điều kiện dựa trên namespace có thể bỏ qua event chưa được bổ sung trường đó.</li>
+</ol>
+<p>Xem <a href="08-du-lieu-va-thuc-nghiem.html">bài 8</a> để thiết kế phép đánh giá cho rule.</p><div class="finish"><button class="button" data-complete="06-falco" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="05-ebpf-runtime-telemetry.html">← eBPF &amp; telemetry runtime</a><a href="07-tetragon.html">Quan sát với Tetragon →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#falco-xu-ly-su-kien-nhu-the-nao">Falco xử lý sự kiện như thế nào</a></li>
+<li><a href="#lab-mau-tren-cluster-mot-node">Lab mẫu trên cluster một node</a></li>
+<li><a href="#tao-su-kien-da-biet-va-doc-json">Tạo sự kiện đã biết và đọc JSON</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

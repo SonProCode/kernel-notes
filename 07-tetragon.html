@@ -1,0 +1,76 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quan sát với Tetragon · Kernel Notes</title><meta name="description" content="Dùng TracingPolicy để hiểu tiến trình, truy cập file và kết nối.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 07 · TUẦN 2 · R16 · 4 PHÚT ĐỌC</div>
+<h1>Quan sát với Tetragon</h1><p>Dùng TracingPolicy để hiểu tiến trình, truy cập file và kết nối.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="process-event-va-policy-chon-su-kien">Process event và policy chọn sự kiện</h2>
+<p>Tetragon dùng eBPF để quan sát runtime. Process event cho biết việc thực thi hoặc kết thúc tiến trình, kèm ngữ cảnh có sẵn về Pod và tiến trình cha. Tetragon dùng <strong>TracingPolicy</strong> để cấu hình điểm móc và cách chọn sự kiện. CRD mở rộng API Kubernetes để nhận loại đối tượng này. Policy có thể chỉ quan sát hoặc yêu cầu hành động ở các hook được hỗ trợ. Thí nghiệm baseline trong bài này dùng chế độ quan sát. <a href="https://tetragon.io/docs/concepts/tracing-policy/">R16 TracingPolicy</a></p>
+<p>Đọc policy theo bốn câu hỏi. Hook chạy khi nào? Thu được đối số gì? Selector giữ sự kiện nào? Khi khớp thì chỉ xuất event hay có hành động? Ví dụ, một policy file có thể giữ sự kiện mở file trong một vùng đường dẫn. Độ chính xác của kết luận phụ thuộc hook và trường thu được.</p>
+<h2 id="cai-agent-va-thu-process-event">Cài agent và thử process event</h2>
+<p>Ví dụ Bash cho cluster một node Linux. K3s chạy trực tiếp trên VM là một bố trí có thể thử. Nếu dùng kind, đọc cấu hình mount host <code>/proc</code> và giá trị <code>tetragon.hostProcPath</code> theo hướng dẫn trước khi cài. Với nhiều node, tìm agent cùng node với workload để kiểm tra hoặc thu từ tất cả agent để làm dữ liệu. <a href="https://tetragon.io/docs/getting-started/install-k8s/">R16 Quick Kubernetes Install</a></p>
+<pre><code class="language-bash">helm repo add cilium https://helm.cilium.io
+helm repo update
+helm search repo cilium/tetragon --versions
+TETRAGON_CHART_VERSION='THAY_BANG_PHIEN_BAN'
+helm upgrade --install tetragon cilium/tetragon -n kube-system \
+  --version &quot;$TETRAGON_CHART_VERSION&quot;
+kubectl -n kube-system rollout status daemonset/tetragon --timeout=180s
+kubectl -n kube-system get pods -o wide
+</code></pre>
+<p>Tạo Pod <code>runtime-probe</code> bằng các lệnh ở <a href="06-falco.html#tao-su-kien-da-biet-va-doc-json">bài Falco</a> nếu chưa có. Terminal A mở luồng trước khi tạo sự kiện.</p>
+<pre><code class="language-bash">kubectl -n kube-system exec daemonset/tetragon -c tetragon -- \
+  tetra getevents --pods runtime-probe &gt; tetragon-probe.jsonl
+</code></pre>
+<p>Terminal B tạo sự kiện.</p>
+<pre><code class="language-bash">date -u +%FT%TZ
+kubectl -n boutique exec runtime-probe -- /bin/sh -c 'echo tetragon-smoke'
+</code></pre>
+<p>Dừng terminal A sau khi nhận event. Khi học cách đọc log, thêm <code>-o compact</code> để xem dòng ngắn. Khi lưu cho parser, dùng JSON. Tìm <code>process_exec</code>, binary của shell, thời gian, thuộc tính Pod, parent và định danh tiến trình nếu có. Dùng định danh của công cụ cùng node và thời gian để nối dữ liệu; PID có thể tái sử dụng. <a href="https://tetragon.io/docs/getting-started/execution/">R16 Execution Monitoring</a></p>
+<h2 id="tu-process-sang-file-va-network">Từ process sang file và network</h2>
+<table>
+<thead>
+<tr>
+<th>Mục tiêu</th>
+<th>Ví dụ kiểm thử</th>
+<th>Diễn giải</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Theo dõi file</td>
+<td>Tạo file vô hại <code>/tmp/lab-marker</code>, mở hoặc đọc theo một bước đã ghi thời gian</td>
+<td>Cần sửa selector của policy mẫu cho đúng đường dẫn và scope. Xem hook thực sự biểu diễn open hay read.</td>
+</tr>
+<tr>
+<td>Theo dõi nội bộ</td>
+<td>Từ probe tạo kết nối mới tới một listener lab</td>
+<td>Giữ destination IP/port, đối chiếu DNS, endpoint và phía đích. Kiểm tra riêng đường Service IP và Pod IP khi cần.</td>
+</tr>
+<tr>
+<td>Theo dõi ra ngoài</td>
+<td>Đi tới một endpoint test được kiểm soát</td>
+<td>Policy egress mẫu trong tài liệu có thể loại CIDR nội bộ, nên phù hợp với mục tiêu egress riêng.</td>
+</tr>
+</tbody>
+</table>
+<p>Các sự kiện network và file cần policy phù hợp. Bắt đầu bằng policy mẫu cùng phiên bản tool, đọc hook/selector, bỏ các hành động chặn cho pha quan sát, rồi thử bằng hai trường hợp khớp và không khớp. Lưu YAML thực tế và kết quả kiểm tra. <a href="https://tetragon.io/docs/getting-started/file-events/">R16 File Access Monitoring</a>, <a href="https://tetragon.io/docs/getting-started/network/">R16 Network Monitoring</a>, <a href="https://tetragon.io/docs/use-cases/network-observability/">Network observability</a>.</p>
+<p>Với pipeline nhiều node, cấu hình xuất tập trung hoặc thu theo từng agent. Mỗi tệp nên có node và khoảng thời gian đi kèm. Dùng thử nghiệm đã biết để kiểm tra selector, throttle và khả năng nhận đủ event ở tải mong muốn.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Thấy sự kiện từ node A có thể kết luận đã phủ node B chưa?</strong> Kiểm tra agent và đường thu ở từng node chứa workload.</li>
+<li><strong>Policy ví dụ tập trung egress ngoài cluster có phù hợp để dựng đồ thị nội bộ không?</strong> Đọc selector, điều chỉnh theo mục tiêu và kiểm chứng từng cạnh nội bộ mẫu.</li>
+<li><strong>Policy chạy rồi nhưng file event trống, kiểm tra gì?</strong> Xác định đúng hook, đường dẫn thực tế, namespace, metadata và tiến trình thử.</li>
+</ol>
+<p>Tiếp theo <a href="08-du-lieu-va-thuc-nghiem.html">bài 8</a>.</p><div class="finish"><button class="button" data-complete="07-tetragon" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="06-falco.html">← Phát hiện với Falco</a><a href="08-du-lieu-va-thuc-nghiem.html">Từ log đến thực nghiệm →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#process-event-va-policy-chon-su-kien">Process event và policy chọn sự kiện</a></li>
+<li><a href="#cai-agent-va-thu-process-event">Cài agent và thử process event</a></li>
+<li><a href="#tu-process-sang-file-va-network">Từ process sang file và network</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

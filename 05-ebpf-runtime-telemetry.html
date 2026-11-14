@@ -1,0 +1,116 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>eBPF &amp; telemetry runtime · Kernel Notes</title><meta name="description" content="Lần theo một sự kiện từ syscall, qua kernel, đến bản ghi có ngữ cảnh Kubernetes.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 05 · TUẦN 2 · R11 · 5 PHÚT ĐỌC</div>
+<h1>eBPF &amp; telemetry runtime</h1><p>Lần theo một sự kiện từ syscall, qua kernel, đến bản ghi có ngữ cảnh Kubernetes.</p></header>
+<div class="shell reading"><article class="prose"><figure class="article-cover"><img src="assets/runtime.webp" alt="Vi mạch graphite với các đường tín hiệu xanh và hổ phách"></figure><h2 id="runtime-la-luc-chuong-trinh-dang-hoat-dong">Runtime là lúc chương trình đang hoạt động</h2>
+<p>Kiểm tra image cho biết ứng dụng được đóng gói với thành phần nào. Quan sát runtime trả lời tiến trình thực sự đã chạy, mở file hoặc kết nối đi đâu. Ví dụ, một image có shell để phục vụ gỡ lỗi. Khi một tiến trình web sinh shell vào lúc không có phiên bảo trì, sự kiện đó cung cấp thêm ngữ cảnh để điều tra.</p>
+<p><strong>Telemetry</strong> là dữ liệu được thu từ hệ thống đang chạy. Event là bản ghi một việc đã quan sát; metric là số đo được tổng hợp hoặc lấy theo thời gian; trace theo dấu một yêu cầu qua nhiều bước. Cùng một tình huống checkout có thể xuất hiện ở cả ba nguồn.</p>
+<h2 id="chuong-trinh-ebpf-duoc-chay-nhu-the-nao">Chương trình eBPF được chạy như thế nào</h2>
+<p>Trên Linux, chương trình eBPF có thể được gắn vào điểm trong kernel hoặc các điểm quan sát được hỗ trợ. Cảm biến như Falco và Tetragon dùng chương trình đã được thiết kế cho các sự kiện chúng quan tâm. Người triển khai lab chủ yếu cấu hình driver, rule và policy, rồi kiểm tra các sự kiện thực thu.</p>
+<ol>
+<li><strong>Loader</strong> ở user space yêu cầu kernel nạp chương trình.</li>
+<li><strong>Verifier</strong> kiểm tra chương trình tuân thủ giới hạn an toàn của loại chương trình, ví dụ cách truy cập bộ nhớ và các đường thực thi có thể có. Kiểm tra này khác với kiểm tra tính đúng đắn của giả thuyết phát hiện.</li>
+<li>Chương trình có thể được <strong>JIT</strong> biên dịch thành mã máy nếu được hỗ trợ.</li>
+<li>Khi <strong>hook</strong> được kích hoạt, chương trình dùng ngữ cảnh được cung cấp, có thể gọi <strong>helper</strong>, lưu trạng thái vào <strong>map</strong> hoặc gửi dữ liệu qua ring buffer.</li>
+<li>Agent đọc dữ liệu và có thể bổ sung thông tin container, Pod và chính sách trước khi xuất.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Điểm móc</th>
+<th>Giải thích dễ hiểu</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tracepoint</td>
+<td>Điểm tracing được mã nguồn kernel cung cấp</td>
+<td>Quan sát sự kiện liên quan syscall</td>
+</tr>
+<tr>
+<td>Kprobe</td>
+<td>Gắn vào vị trí hoặc hàm kernel phù hợp</td>
+<td>Lấy ngữ cảnh tại một hàm kết nối</td>
+</tr>
+<tr>
+<td>Uprobe</td>
+<td>Gắn vào mã chương trình user space</td>
+<td>Quan sát hàm của một thư viện</td>
+</tr>
+<tr>
+<td>Hook mạng hoặc LSM</td>
+<td>Điểm quan sát/xử lý mạng hoặc bảo mật, tùy loại chương trình</td>
+<td>Thu dữ liệu mạng hoặc áp hành động được hỗ trợ</td>
+</tr>
+</tbody>
+</table>
+<p>BTF mô tả kiểu dữ liệu của kernel. CO-RE dùng thông tin kiểu và cơ chế relocation để thích nghi với khác biệt layout giữa kernel phù hợp. Hỗ trợ thực tế còn phụ thuộc tính năng kernel, quyền agent và cấu hình môi trường. <a href="https://ebpf.io/what-is-ebpf/">R11 What is eBPF?</a>, <a href="https://docs.kernel.org/bpf/">Linux kernel BPF documentation</a>.</p>
+<h2 id="mot-ket-noi-tu-kernel-den-do-thi">Một kết nối từ kernel đến đồ thị</h2>
+<p>Giả sử tiến trình checkout gọi <code>connect()</code> tới payment:</p>
+<pre><code class="language-text">checkout process → socket/connect → hook trên node
+  → bản ghi có tiến trình, địa chỉ và cổng
+  → tra Pod/container theo ngữ cảnh runtime
+  → tra Service/endpoint theo snapshot tại thời điểm xảy ra
+  → cạnh checkoutservice → paymentservice
+</code></pre>
+<p>Địa chỉ có thể là Service IP hoặc Pod IP tùy vị trí quan sát và biến đổi mạng. Một socket non-blocking có thể trả <code>EINPROGRESS</code> ở lần gọi đầu; muốn biết cuối cùng TCP thiết lập hay thất bại cần quan sát tiếp hoặc đối chiếu phía ứng dụng. Một kết nối tồn tại lâu có thể phục vụ nhiều request gRPC. Dùng log/trace lớp ứng dụng để đếm lời gọi và biết status.</p>
+<table>
+<thead>
+<tr>
+<th>Tín hiệu</th>
+<th>Kết luận có thể rút ra</th>
+<th>Bằng chứng cần thêm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exec event</td>
+<td>Binary đã được thực thi nếu sự kiện thể hiện exec thành công</td>
+<td>Dòng lệnh, parent, actor, mục đích</td>
+</tr>
+<tr>
+<td>Open file thành công</td>
+<td>Có thể mở file với quyền tương ứng</td>
+<td>Sự kiện read nếu cần chứng minh đã đọc</td>
+</tr>
+<tr>
+<td>Connect attempt</td>
+<td>Tiến trình thử mở kết nối tới địa chỉ/cổng</td>
+<td>Kết quả TCP, log ứng dụng hoặc flow tương ứng</td>
+</tr>
+<tr>
+<td>Audit event API</td>
+<td>API server ghi nhận yêu cầu theo chính sách audit</td>
+<td>Danh tính tiến trình và ngữ cảnh mạng nếu cần nối chuỗi</td>
+</tr>
+<tr>
+<td>Không có event</td>
+<td>Nguồn thu chưa ghi nhận sự kiện</td>
+<td>Kiểm tra coverage, selector, event drop và thời gian thu</td>
+</tr>
+</tbody>
+</table>
+<h2 id="chi-phi-va-chat-luong-du-lieu">Chi phí và chất lượng dữ liệu</h2>
+<p>Thu càng nhiều sự kiện thì càng cần xem CPU, bộ nhớ, băng thông và kho lưu trữ. Lọc tại kernel có thể giảm dữ liệu đi lên agent, đổi lại bằng chứng bị loại không xuất hiện trong log. Cần ghi loại hook đã bật, số event theo node, cảnh báo mất sự kiện hoặc export lỗi nếu tool có số liệu, và tỷ lệ event thiếu metadata. Khởi động lại và backlog có thể làm sự kiện đến trễ; giữ cả thời gian xảy ra và thời gian ingest.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Biết binary <code>sh</code> đã chạy có biết người khởi tạo không?</strong> Dùng process parent, UID, thông tin container và log điều khiển để đối chiếu.</li>
+<li><strong>Có thể dùng số connect để báo throughput gRPC không?</strong> Đếm request ở lớp ứng dụng hoặc proxy được cấu hình tương ứng.</li>
+<li><strong>Vì sao cần kiểm thử bằng sự kiện chủ động?</strong> Một thao tác có thời gian và nguồn đã biết cho phép kiểm tra toàn bộ đường từ hook tới log.</li>
+</ol>
+<p>Chọn <a href="06-falco.html">Falco</a> hoặc <a href="07-tetragon.html">Tetragon</a>, sau đó thiết kế dữ liệu ở <a href="08-du-lieu-va-thuc-nghiem.html">bài 8</a>.</p><div class="finish"><button class="button" data-complete="05-ebpf-runtime-telemetry" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="04-testbed-online-boutique.html">← Dựng lab Online Boutique</a><a href="06-falco.html">Phát hiện với Falco →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#runtime-la-luc-chuong-trinh-dang-hoat-dong">Runtime là lúc chương trình đang hoạt động</a></li>
+<li><a href="#chuong-trinh-ebpf-duoc-chay-nhu-the-nao">Chương trình eBPF được chạy như thế nào</a></li>
+<li><a href="#mot-ket-noi-tu-kernel-den-do-thi">Một kết nối từ kernel đến đồ thị</a></li>
+<li><a href="#chi-phi-va-chat-luong-du-lieu">Chi phí và chất lượng dữ liệu</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

@@ -1,0 +1,168 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tra cứu · Kernel Notes</title><meta name="description" content="Học bảo mật Kubernetes và eBPF từ đầu với Online Boutique.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><h1>Tra cứu tài liệu</h1><p>Thuật ngữ, nguồn chính thức và mẫu bàn giao lần chạy.</p></header><div class="shell reading"><article class="prose"><h2 id="tu-vung-dung-trong-cac-bai">Từ vựng dùng trong các bài</h2>
+<table>
+<thead>
+<tr>
+<th>Thuật ngữ</th>
+<th>Cách hiểu trong bộ tài liệu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workload</td>
+<td>Chương trình hoặc nhóm Pod thực hiện một vai trò, chẳng hạn checkout</td>
+</tr>
+<tr>
+<td>Pod UID</td>
+<td>Mã nhận diện một Pod cụ thể trong vòng đời của nó</td>
+</tr>
+<tr>
+<td>Service / endpoint</td>
+<td>Điểm truy cập ổn định / địa chỉ backend phục vụ lưu lượng</td>
+</tr>
+<tr>
+<td>ServiceAccount / RBAC</td>
+<td>Danh tính Kubernetes / cơ chế cấp quyền thao tác API</td>
+</tr>
+<tr>
+<td>CNI / NetworkPolicy</td>
+<td>Lớp tích hợp mạng cho container / đối tượng Kubernetes mô tả quyền kết nối</td>
+</tr>
+<tr>
+<td>Ingress / egress</td>
+<td>Luồng vào / luồng ra của đối tượng đang xét</td>
+</tr>
+<tr>
+<td>L3, L4, L7</td>
+<td>Tầng mạng, tầng vận chuyển và tầng ứng dụng</td>
+</tr>
+<tr>
+<td>Zero Trust</td>
+<td>Mô hình kiểm soát truy cập tài nguyên theo danh tính, quyền và ngữ cảnh</td>
+</tr>
+<tr>
+<td>Threat model</td>
+<td>Giả định về tài sản, đối thủ, năng lực và phạm vi</td>
+</tr>
+<tr>
+<td>Lateral movement</td>
+<td>Quá trình đối thủ tiến sang hệ thống khác sau chỗ đứng ban đầu</td>
+</tr>
+<tr>
+<td>Blast radius</td>
+<td>Phạm vi ảnh hưởng đo theo tài nguyên và phép thử đã định nghĩa</td>
+</tr>
+<tr>
+<td>Hook / syscall</td>
+<td>Điểm kích hoạt chương trình quan sát / yêu cầu của tiến trình với kernel</td>
+</tr>
+<tr>
+<td>Collector / detector</td>
+<td>Khối thu dữ liệu / khối đánh giá để phát hiện</td>
+</tr>
+<tr>
+<td>Normalization / enrichment</td>
+<td>Đưa dữ liệu về schema chung / bổ sung ngữ cảnh từ nguồn khác</td>
+</tr>
+<tr>
+<td>Ground truth / baseline</td>
+<td>Nhãn thực nghiệm độc lập / mô tả hành vi bình thường trong phạm vi đã lấy mẫu</td>
+</tr>
+<tr>
+<td>TCP connection / RPC</td>
+<td>Kết nối vận chuyển / một lần gọi thủ tục từ xa</td>
+</tr>
+<tr>
+<td>Smoke test</td>
+<td>Phép thử ngắn chứng minh thành phần hoạt động ở một đường đã biết</td>
+</tr>
+</tbody>
+</table>
+<h2 id="muc-doc-theo-ma-r">Mục đọc theo mã R</h2>
+<table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>Bài liên quan</th>
+<th>Mở tài liệu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>Bài 2, mục nguyên tắc và quyết định</td>
+<td><a href="https://doi.org/10.6028/NIST.SP.800-207">PDF NIST SP 800-207</a> · <a href="https://doi.org/10.6028/NIST.SP.800-207">Nguồn NIST</a></td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Bài 2, cách phân loại hành vi</td>
+<td><a href="https://attack.mitre.org/tactics/TA0008/">PDF TA0008</a> · <a href="https://attack.mitre.org/tactics/TA0008/">MITRE ATT&amp;CK</a></td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Bài 3, bản OWASP 2025</td>
+<td><a href="https://kubernetes-top10.owasp.org/">PDF OWASP</a> · <a href="https://kubernetes-top10.owasp.org/">OWASP Kubernetes Top Ten</a></td>
+</tr>
+<tr>
+<td>R6</td>
+<td>Bài 1 và 3</td>
+<td><a href="https://kubernetes.io/docs/concepts/">Concepts</a> · <a href="https://kubernetes.io/docs/concepts/security/service-accounts/">Service Accounts</a> · <a href="https://kubernetes.io/docs/concepts/security/rbac-good-practices/">RBAC</a></td>
+</tr>
+<tr>
+<td>R7</td>
+<td>Bài 3, cô lập và selector</td>
+<td><a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">PDF Network Policies</a> · <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Kubernetes</a></td>
+</tr>
+<tr>
+<td>R8</td>
+<td>Bài 4, kiến trúc và manifest</td>
+<td><a href="https://github.com/GoogleCloudPlatform/microservices-demo/tree/v0.10.7">README v0.10.7</a> · <a href="https://github.com/GoogleCloudPlatform/microservices-demo/tree/v0.10.7">Mã nguồn v0.10.7</a></td>
+</tr>
+<tr>
+<td>R11</td>
+<td>Bài 5, hook và pipeline</td>
+<td><a href="https://ebpf.io/what-is-ebpf/">PDF What is eBPF?</a> · <a href="https://ebpf.io/what-is-ebpf/">eBPF.io</a></td>
+</tr>
+<tr>
+<td>R14</td>
+<td>Bài 6, driver, rule và JSON</td>
+<td><a href="https://falco.org/docs/">Falco Docs</a> · <a href="https://falco.org/docs/concepts/rules/basic-elements/">Falco Rules</a></td>
+</tr>
+<tr>
+<td>R16</td>
+<td>Bài 7, process, file và kết nối</td>
+<td><a href="https://tetragon.io/docs/">Tetragon Docs</a> · <a href="https://tetragon.io/docs/concepts/tracing-policy/">Tracing Policy</a></td>
+</tr>
+</tbody>
+</table>
+<p><a href="#muc-doc-theo-ma-r">Mục lục đầy đủ 19 PDF</a></p>
+<h2 id="mau-ban-giao-cho-phien-phan-tich-tiep-theo">Mẫu bàn giao cho phiên phân tích tiếp theo</h2>
+<p>Sao chép phần dưới và điền bằng kết quả thực tế. Chỉ rõ đường dẫn tới bằng chứng và dữ liệu nào là minh họa.</p>
+<pre><code class="language-text">Câu hỏi cần phân tích
+Giả thuyết và đơn vị đo
+Mã lần chạy và thời gian UTC
+Phiên bản workload, cluster, driver, chart và policy
+Thông tin node và Pod tham gia
+Lệnh hoặc kịch bản đã chạy
+Các pha baseline, thử nghiệm và đối chứng
+Đường dẫn manifest, log raw, dữ liệu chuẩn hóa, nhãn
+Định nghĩa thành công và điều kiện gắn alert với nhãn
+Kết quả quan sát được
+Giới hạn coverage hoặc trường còn thiếu
+Điểm cần kiểm chứng tiếp theo
+</code></pre>
+<p>Ví dụ yêu cầu phân tích cho một phiên sau: “Đọc bài 3 và bài 8 để lấy định nghĩa. Từ lần chạy lab-004, đối chiếu ground truth, log đúng node và policy đã lưu. Kiểm tra nguồn hợp lệ còn kết nối được không, xác định đơn vị tính chỉ số và ghi trường dữ liệu còn thiếu.”</p>
+<p>Về <a href="./">mục lục học liệu</a>.</p></article><aside class="toc-panel"><h2>Trong trang này</h2><div class="toc">
+<ul>
+<li><a href="#tu-vung-dung-trong-cac-bai">Từ vựng dùng trong các bài</a></li>
+<li><a href="#muc-doc-theo-ma-r">Mục đọc theo mã R</a></li>
+<li><a href="#mau-ban-giao-cho-phien-phan-tich-tiep-theo">Mẫu bàn giao cho phiên phân tích tiếp theo</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

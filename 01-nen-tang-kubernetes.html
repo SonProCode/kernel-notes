@@ -1,0 +1,121 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nền tảng Kubernetes · Kernel Notes</title><meta name="description" content="Từ một lần bấm mua hàng đến Service, Pod và tiến trình thực sự xử lý yêu cầu.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 01 · TUẦN 1 · R6 · 5 PHÚT ĐỌC</div>
+<h1>Nền tảng Kubernetes</h1><p>Từ một lần bấm mua hàng đến Service, Pod và tiến trình thực sự xử lý yêu cầu.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="mot-lan-bam-mua-hang-di-qua-dau">Một lần bấm mua hàng đi qua đâu</h2>
+<p>Trong Online Boutique, trình duyệt gửi yêu cầu tới frontend. Khi người dùng mua hàng, frontend gọi checkout để điều phối đơn. Checkout có thể gọi payment giả lập và shipping. Các dịch vụ trao đổi qua mạng nên lỗi, quyền và dữ liệu quan sát của mỗi lần gọi có thể khác nhau.</p>
+<ul>
+<li><strong>Client</strong> là phía phát yêu cầu. Frontend là server đối với trình duyệt và có thể là client đối với checkout.</li>
+<li><strong>API</strong> quy định thao tác và định dạng dữ liệu. HTTP là giao thức ứng dụng. gRPC là khuôn khổ gọi thủ tục từ xa, thường truyền nhiều lời gọi trên một kết nối HTTP/2.</li>
+<li><strong>IP</strong> giúp định vị đầu mạng. <strong>Port</strong> giúp chọn điểm nhận trong máy hoặc địa chỉ đó. <strong>DNS</strong> phân giải tên thành địa chỉ.</li>
+<li><strong>TCP</strong> tạo kết nối có trạng thái. Kết nối TCP tới payment có thể thành công trong khi lời gọi gRPC bị từ chối hoặc trả lỗi.</li>
+<li><strong>Lưu lượng nội bộ</strong> giữa workload thường gọi là east–west. Lưu lượng ra hoặc vào biên hệ thống thường gọi là north–south.</li>
+</ul>
+<p>Ví dụ, một dấu vết có IP và cổng xác nhận được đích quan sát tại một vị trí trên đường đi. Muốn biết lời gọi nào đã chạy, cần thêm log hoặc trace ở lớp ứng dụng. <a href="https://github.com/GoogleCloudPlatform/microservices-demo/tree/v0.10.7">R8 Online Boutique</a></p>
+<h2 id="linux-image-container-va-pod">Linux, image, container và Pod</h2>
+<p><strong>Tiến trình</strong> là một lần chương trình đang chạy. Chương trình có thể gọi <strong>system call</strong> để yêu cầu kernel làm việc như mở file hay tạo socket. <strong>Kernel</strong> là phần hệ điều hành quản lý bộ nhớ, tiến trình và tài nguyên.</p>
+<p><strong>Image</strong> đóng gói chương trình và tệp cần để tạo container. <strong>Container</strong> chạy chương trình với các cơ chế cách ly và giới hạn của hệ điều hành. Các container Linux trên cùng node thường dùng chung kernel; namespace Linux giới hạn những gì tiến trình nhìn thấy, còn cgroup quản lý và hạch toán tài nguyên như CPU và bộ nhớ.</p>
+<p><strong>Pod</strong> là đơn vị chạy workload mà Kubernetes quản lý. Các container trong một Pod dùng chung không gian mạng của Pod, có thể kết nối qua localhost và có thể chia sẻ volume nếu được cấu hình. Ví dụ, backend và sidecar trong cùng pod có thể giao tiếp qua loopback. Khi cần xác định ai tạo kết nối, lưu thêm container và tiến trình thay vì chỉ tên Pod. <a href="https://kubernetes.io/docs/concepts/workloads/pods/">R6 Pods</a></p>
+<h2 id="cac-doi-tuong-can-doc-trong-manifest">Các đối tượng cần đọc trong manifest</h2>
+<table>
+<thead>
+<tr>
+<th>Đối tượng</th>
+<th>Giải thích</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node</td>
+<td>Máy ảo hoặc máy vật lý chạy workload</td>
+<td>Worker chứa pod payment và agent telemetry</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Khai báo trạng thái mong muốn, quản lý rollout thông qua ReplicaSet</td>
+<td>Muốn duy trì hai replica frontend</td>
+</tr>
+<tr>
+<td>ReplicaSet</td>
+<td>Duy trì số pod theo mẫu được chỉ định</td>
+<td>Khi một pod mất, controller tạo pod khác</td>
+</tr>
+<tr>
+<td>Service</td>
+<td>Điểm truy cập ổn định cho một nhóm endpoint</td>
+<td>Checkout gọi tên DNS của payment</td>
+</tr>
+<tr>
+<td>EndpointSlice</td>
+<td>Thông tin các endpoint phía sau một Service</td>
+<td>Địa chỉ và trạng thái backend</td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td>Phạm vi tên đối tượng và quản trị trong cluster</td>
+<td>Tách boutique và namespace kiểm thử</td>
+</tr>
+<tr>
+<td>Label và selector</td>
+<td>Cặp khóa giá trị và biểu thức chọn đối tượng</td>
+<td>Service chọn pod có <code>app: paymentservice</code></td>
+</tr>
+<tr>
+<td>DaemonSet</td>
+<td>Tạo pod trên từng node đủ điều kiện</td>
+<td>Đặt cảm biến ở các node chứa workload</td>
+</tr>
+<tr>
+<td>ConfigMap và Secret</td>
+<td>Tách cấu hình và dữ liệu nhạy cảm ra khỏi image</td>
+<td>URL backend và credential</td>
+</tr>
+</tbody>
+</table>
+<p>Control plane quản lý trạng thái của cluster. API server tiếp nhận yêu cầu Kubernetes, etcd lưu trạng thái, scheduler chọn node và controller đối chiếu trạng thái mong muốn. Kubelet ở node phối hợp với container runtime để chạy các Pod đã được giao. <a href="https://kubernetes.io/docs/concepts/">R6 Kubernetes Concepts</a></p>
+<h2 id="vi-du-doc-yaml-tu-ngoai-vao-trong">Ví dụ đọc YAML từ ngoài vào trong</h2>
+<p>Đây là trích đoạn minh họa, dùng cổng tùy chọn.</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  namespace: boutique
+spec:
+  selector:
+    app: payment
+  ports:
+    - port: 7000
+      targetPort: 7070
+</code></pre>
+<p>Client gọi <code>payment.boutique.svc</code> qua cổng Service 7000. Service chọn Pod theo label trong cùng namespace và chuyển tới backend cổng 7070. Nếu selector sai hoặc thiếu backend sẵn sàng, Service có thể tồn tại mà yêu cầu vẫn lỗi. Khi Pod được thay thế, IP và UID có thể đổi trong khi tên Service vẫn giữ nguyên. <a href="https://kubernetes.io/docs/concepts/services-networking/service/">R6 Kubernetes Service</a></p>
+<h2 id="doc-tinh-trang-bang-kubectl">Đọc tình trạng bằng kubectl</h2>
+<p><code>kubectl</code> gửi yêu cầu đến API server theo context. Các lệnh sau chỉ xem trạng thái. Chúng có thể thực hiện trong lab ở <a href="04-testbed-online-boutique.html">bài 4</a>.</p>
+<pre><code class="language-bash">kubectl config current-context
+kubectl get nodes -o wide
+kubectl -n boutique get deployment,pod,service,endpointslice -o wide
+kubectl -n boutique get pods --show-labels
+</code></pre>
+<p><code>Running</code> là pha của Pod; cột <code>READY</code> cho biết các container trong Pod đã sẵn sàng theo trạng thái hiện tại. Khi frontend lỗi, lần lượt kiểm tra Deployment, Pod, Service, endpoint và tình trạng nghiệp vụ. Sự cố của một lớp có thể hiện ra như lỗi ở lớp khác.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Pod restart hoặc bị thay thế, nên nhóm hành vi theo gì?</strong> Dùng namespace và workload để thống kê; giữ pod UID, container ID và thời gian để truy lại sự kiện.</li>
+<li><strong>Hai Pod có cùng namespace thì đã bị tách mạng với phần còn lại chưa?</strong> Namespace tạo phạm vi quản lý. Việc giới hạn luồng còn tùy chính sách và lớp thực thi.</li>
+<li><strong>TCP kết nối được đã đủ kết luận đặt hàng thành công chưa?</strong> Cần kiểm tra kết quả API nghiệp vụ hoặc dấu vết ứng dụng tương ứng.</li>
+</ol>
+<p>Tiếp theo <a href="02-zero-trust-threat-model.html">bài 2</a>.</p><div class="finish"><button class="button" data-complete="01-nen-tang-kubernetes" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="./#lo-trinh">← Lộ trình</a><a href="02-zero-trust-threat-model.html">Zero Trust &amp; mô hình đe dọa →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#mot-lan-bam-mua-hang-di-qua-dau">Một lần bấm mua hàng đi qua đâu</a></li>
+<li><a href="#linux-image-container-va-pod">Linux, image, container và Pod</a></li>
+<li><a href="#cac-doi-tuong-can-doc-trong-manifest">Các đối tượng cần đọc trong manifest</a></li>
+<li><a href="#vi-du-doc-yaml-tu-ngoai-vao-trong">Ví dụ đọc YAML từ ngoài vào trong</a></li>
+<li><a href="#doc-tinh-trang-bang-kubectl">Đọc tình trạng bằng kubectl</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

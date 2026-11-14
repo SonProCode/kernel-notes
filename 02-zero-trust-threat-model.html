@@ -1,0 +1,163 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zero Trust &amp; mô hình đe dọa · Kernel Notes</title><meta name="description" content="Theo chân một pod bị xâm nhập và xác định bằng chứng cho từng bước di chuyển ngang.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 02 · TUẦN 1 · R1 · R2 · 6 PHÚT ĐỌC</div>
+<h1>Zero Trust &amp; mô hình đe dọa</h1><p>Theo chân một pod bị xâm nhập và xác định bằng chứng cho từng bước di chuyển ngang.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="tu-vi-tri-trong-mang-den-quyet-dinh-truy-cap">Từ vị trí trong mạng đến quyết định truy cập</h2>
+<p>Một hệ thống có thể mở payment cho checkout vì checkout cần tính tiền. Nếu mạng cho phép mọi pod kết nối tới payment, một pod recommendation bị xâm nhập cũng có cơ hội thử kết nối. <strong>Di chuyển ngang</strong> mô tả việc đối thủ tiến sang hệ thống khác sau khi đã có chỗ đứng. <strong>Blast radius</strong> là phạm vi bị ảnh hưởng hoặc tiếp cận được dưới một giả định cụ thể.</p>
+<p>Zero Trust bảo vệ tài nguyên dựa trên yêu cầu truy cập, danh tính và ngữ cảnh thay vì cấp đặc quyền mặc nhiên theo vị trí mạng. Bảy nguyên tắc ở mục 2.1 của NIST SP 800-207 có thể học qua các câu hỏi sau.</p>
+<table>
+<thead>
+<tr>
+<th>Điều phải xét</th>
+<th>Câu hỏi cho Online Boutique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xác định tài nguyên</td>
+<td>Ai có thể truy cập payment, dữ liệu giỏ hàng, Kubernetes API và kho log?</td>
+</tr>
+<tr>
+<td>Bảo vệ liên lạc ở mọi vị trí</td>
+<td>Lưu lượng nội bộ được bảo vệ và xác thực thế nào?</td>
+</tr>
+<tr>
+<td>Cấp quyền theo phiên</td>
+<td>Được truy cập checkout có mở quyền tới payment luôn không?</td>
+</tr>
+<tr>
+<td>Chính sách theo ngữ cảnh</td>
+<td>Danh tính, quyền và tình trạng runtime nào ảnh hưởng quyết định?</td>
+</tr>
+<tr>
+<td>Theo dõi tình trạng tài sản</td>
+<td>Pod có đang chạy image và cấu hình đã kiểm kê không?</td>
+</tr>
+<tr>
+<td>Xác thực và phân quyền trước truy cập</td>
+<td>Chủ thể là ai và được thực hiện thao tác nào?</td>
+</tr>
+<tr>
+<td>Thu thập dữ liệu để cải thiện bảo vệ</td>
+<td>Sự kiện nào đã dẫn đến thay đổi chính sách và kết quả ra sao?</td>
+</tr>
+</tbody>
+</table>
+<p>Nguồn đọc mục 2–3. <a href="https://doi.org/10.6028/NIST.SP.800-207">R1 NIST SP 800-207</a></p>
+<h2 id="xac-thuc-phan-quyen-va-thuc-thi">Xác thực, phân quyền và thực thi</h2>
+<p><strong>Xác thực</strong> trả lời “ai đang yêu cầu?”. <strong>Phân quyền</strong> trả lời “chủ thể đó được làm gì?”. mTLS có thể giúp hai đầu xác thực lẫn nhau và bảo vệ kênh truyền. Quyết định “chỉ checkout được gọi thao tác thanh toán” cần một cơ chế phân quyền thích hợp ở ứng dụng hoặc lớp proxy.</p>
+<p>Trong mô hình NIST, <strong>Policy Engine (PE)</strong> quyết định, <strong>Policy Administrator (PA)</strong> điều phối thi hành, <strong>Policy Enforcement Point (PEP)</strong> kiểm soát truy cập. PE và PA tạo thành <strong>Policy Decision Point (PDP)</strong>. Ví dụ thiết kế cho đề tài:</p>
+<pre><code class="language-mermaid">flowchart LR
+  A[Pod] --&gt; B[Cảm biến runtime]
+  B --&gt; C[Phát hiện và đánh giá rủi ro]
+  C --&gt; D[Controller áp dụng quyết định]
+  D --&gt; E[Lớp thực thi mạng hoặc ứng dụng]
+  E --&gt; F[Tài nguyên đích]
+</code></pre>
+<p>Cảm biến cung cấp dữ liệu đầu vào. Module quyết định xét mức độ nghi ngờ và phạm vi phản ứng. Controller gửi cấu hình. CNI hoặc proxy tương ứng thực thi. Muốn chứng minh chính sách có hiệu lực, đo kết quả ở đường truy cập sau thay đổi. <a href="https://doi.org/10.6028/NIST.SP.800-207">R1 NIST Zero Trust Architecture</a></p>
+<h2 id="mo-hinh-de-doa-de-xuat">Mô hình đe dọa đề xuất</h2>
+<p>Mô hình đe dọa ghi lại giả định về tài sản, đối thủ và phạm vi để người khác biết kết quả áp dụng được đến đâu.</p>
+<table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Giả định cho lần chạy đầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tài sản</td>
+<td>API payment, dữ liệu giả lập, danh tính của workload, API server, log telemetry</td>
+</tr>
+<tr>
+<td>Ranh giới</td>
+<td>Người dùng ↔ frontend, pod ↔ pod, pod ↔ API server, cảm biến ↔ kho dữ liệu</td>
+</tr>
+<tr>
+<td>Chỗ đứng</td>
+<td>Đối thủ đã thực thi được lệnh với quyền container trong pod giả lập</td>
+</tr>
+<tr>
+<td>Năng lực</td>
+<td>Tạo kết nối từ pod, chạy binary có sẵn, truy cập file mà tiến trình có quyền</td>
+</tr>
+<tr>
+<td>Đích thử nghiệm</td>
+<td>Thiết lập kết nối từ nguồn ngoài luồng tới payment, hoặc thực hiện một thao tác lab ở đích</td>
+</tr>
+<tr>
+<td>Defender</td>
+<td>Có quyền điều phối cảm biến và áp dụng policy trong cluster thử nghiệm</td>
+</tr>
+<tr>
+<td>Giả định tin cậy</td>
+<td>Kernel node, control plane và nơi lưu bằng chứng chưa bị đối thủ kiểm soát</td>
+</tr>
+<tr>
+<td>Ngoài phạm vi</td>
+<td>Chiếm kernel, thoát container, chiếm control plane và khai thác zero-day</td>
+</tr>
+</tbody>
+</table>
+<p>Nếu dùng <code>kubectl exec</code> để tạo sự kiện, ghi rõ đây là <strong>cơ chế mô phỏng năng lực có sẵn</strong>. Nếu dùng pod kiểm thử thay cho recommendation thật, ghi khác biệt về ServiceAccount, label và quyền mạng. Hai nguồn có thể bị áp dụng policy khác nhau.</p>
+<h2 id="tach-hanh-vi-bang-chung-va-ket-qua">Tách hành vi, bằng chứng và kết quả</h2>
+<p>MITRE ATT&amp;CK dùng <strong>tactic</strong> để chỉ mục tiêu của đối thủ và <strong>technique</strong> để mô tả cách thực hiện. TA0008 là tactic Lateral Movement.</p>
+<table>
+<thead>
+<tr>
+<th>Bước quan sát</th>
+<th>Bằng chứng nên dùng</th>
+<th>Cách gắn nhãn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Liên hệ nhiều cổng dịch vụ nội bộ</td>
+<td>Nhiều lần thử kết nối, nhiều đích, thời gian tập trung</td>
+<td>Discovery, T1046 nếu hành vi là dò dịch vụ</td>
+</tr>
+<tr>
+<td>Chạy shell trong container</td>
+<td>Exec event, binary, tiến trình cha</td>
+<td>Execution, T1059.004 khi dùng Unix shell</td>
+</tr>
+<tr>
+<td>Truy cập file thông tin xác thực</td>
+<td>File event, đường dẫn, kết quả thao tác</td>
+<td>Credential Access, xem T1552.001 khi phù hợp</td>
+</tr>
+<tr>
+<td>Dùng token bị lấy để truy cập hệ thống khác</td>
+<td>Yêu cầu ở phía đích kèm danh tính và kết quả</td>
+<td>Cân nhắc T1550.001 theo hành vi thực tế</td>
+</tr>
+<tr>
+<td>Gọi payment ngoài luồng qua gRPC</td>
+<td>Kết nối, nguồn và log kết quả ở đích</td>
+<td>Ghi vi phạm chính sách; xác định kỹ thuật ATT&amp;CK khi đủ bằng chứng</td>
+</tr>
+</tbody>
+</table>
+<p>Nguồn đối chiếu. <a href="https://attack.mitre.org/tactics/TA0008/">R2 TA0008</a>, <a href="https://attack.mitre.org/techniques/T1046/">T1046</a>, <a href="https://attack.mitre.org/techniques/T1059/004/">T1059.004</a>, <a href="https://attack.mitre.org/techniques/T1552/001/">T1552.001</a>, <a href="https://attack.mitre.org/techniques/T1550/001/">T1550.001</a>.</p>
+<p><strong>Ví dụ tiêu chí thành công.</strong> Trong bài thử phân đoạn, thành công của nguồn thử là mở được TCP tới payment trong 3 giây. Với bài thử phân quyền ứng dụng, thành công là lời gọi lab được đích chấp nhận và có bản ghi đối chiếu. Ghi hai kết quả ở hai cột khác nhau.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Một dòng log cho biết pod chạy shell, cần thêm gì để xác nhận di chuyển ngang?</strong> Cần chứng cứ đối thủ tiến sang tài nguyên khác, cùng cách truy cập và kết quả phù hợp với kịch bản.</li>
+<li><strong>Token của Pod có quyền gì?</strong> Kiểm tra danh tính, audience, thời hạn và quyền được cấp trong API đích.</li>
+<li><strong>Tại sao vẫn cần xác thực khi dịch vụ nằm trong mạng riêng?</strong> Vì vị trí mạng chưa chứng minh danh tính hay quyền của caller.</li>
+</ol>
+<p>Tiếp theo <a href="03-bao-mat-kubernetes-networkpolicy.html">bài 3</a>.</p><div class="finish"><button class="button" data-complete="02-zero-trust-threat-model" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="01-nen-tang-kubernetes.html">← Nền tảng Kubernetes</a><a href="03-bao-mat-kubernetes-networkpolicy.html">Bảo mật Kubernetes &amp; NetworkPolicy →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#tu-vi-tri-trong-mang-den-quyet-dinh-truy-cap">Từ vị trí trong mạng đến quyết định truy cập</a></li>
+<li><a href="#xac-thuc-phan-quyen-va-thuc-thi">Xác thực, phân quyền và thực thi</a></li>
+<li><a href="#mo-hinh-de-doa-de-xuat">Mô hình đe dọa đề xuất</a></li>
+<li><a href="#tach-hanh-vi-bang-chung-va-ket-qua">Tách hành vi, bằng chứng và kết quả</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

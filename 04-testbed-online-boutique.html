@@ -1,0 +1,118 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dựng lab Online Boutique · Kernel Notes</title><meta name="description" content="Đưa cửa hàng mẫu lên cluster và kiểm tra luồng xem sản phẩm, thêm giỏ, đặt hàng.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 04 · TUẦN 2 · R8 · 4 PHÚT ĐỌC</div>
+<h1>Dựng lab Online Boutique</h1><p>Đưa cửa hàng mẫu lên cluster và kiểm tra luồng xem sản phẩm, thêm giỏ, đặt hàng.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="testbed-la-gi">Testbed là gì</h2>
+<p>Testbed là môi trường thí nghiệm có cấu hình được ghi lại để lặp lại phép đo. Một cluster Linux một node đủ để thử pipeline. Khi nghiên cứu khác biệt cùng node và khác node, cần bố trí workload trên nhiều node và lưu thông tin vị trí. Ví dụ dưới đây giả định có cluster lab, <code>kubectl</code>, và Helm nếu cài collector qua chart. Trên máy Windows có thể dùng một VM Linux cho node và chạy các lệnh Bash ở VM. Phiên bản kernel cần đọc từ node Linux chạy agent.</p>
+<p>Một cài đặt K3s mặc định có controller NetworkPolicy tích hợp. Khả năng thực thi trong cụm cụ thể vẫn cần kiểm chứng bằng kết nối thử theo <a href="03-bao-mat-kubernetes-networkpolicy.html">bài 3</a>. <a href="https://docs.k3s.io/quick-start">K3s Quick Start</a>, <a href="https://docs.k3s.io/networking/networking-services">K3s Networking Services</a>.</p>
+<h2 id="luong-ung-dung-va-du-lieu-mau">Luồng ứng dụng và dữ liệu mẫu</h2>
+<table>
+<thead>
+<tr>
+<th>Hành trình</th>
+<th>Chuỗi đơn giản hóa để bắt đầu quan sát</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mở trang và xem sản phẩm</td>
+<td>Trình duyệt → frontend → productcatalogservice</td>
+</tr>
+<tr>
+<td>Thêm giỏ hàng</td>
+<td>Frontend → cartservice → redis-cart</td>
+</tr>
+<tr>
+<td>Đặt hàng</td>
+<td>Frontend → checkoutservice → paymentservice, shippingservice và emailservice</td>
+</tr>
+<tr>
+<td>Gợi ý sản phẩm</td>
+<td>Frontend → recommendationservice → productcatalogservice</td>
+</tr>
+<tr>
+<td>Tải nền</td>
+<td>Loadgenerator → frontend</td>
+</tr>
+</tbody>
+</table>
+<p>Đây là các cạnh mẫu, có thể có thêm cạnh phụ thuộc đường chạy. README và sơ đồ mô tả cấu trúc. Quan sát thực tế để xác định cạnh nào xuất hiện ở phiên bản và cấu hình thí nghiệm. Dùng dữ liệu thanh toán giả lập. <a href="https://github.com/GoogleCloudPlatform/microservices-demo/tree/v0.10.7">R8 README v0.10.7</a></p>
+<h2 id="chay-workload-tu-manifest-da-luu">Chạy workload từ manifest đã lưu</h2>
+<p>Dùng <a href="https://github.com/GoogleCloudPlatform/microservices-demo/archive/refs/tags/v0.10.7.zip">ZIP mã nguồn v0.10.7</a>, giải nén rồi mở shell ở thư mục gốc bản giải nén. Kiểm tra context trỏ vào cluster lab và node đã Ready.</p>
+<pre><code class="language-bash">kubectl config current-context
+kubectl get nodes -o wide
+kubectl create namespace boutique --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n boutique apply -f release/kubernetes-manifests.yaml
+kubectl -n boutique rollout status deployment/frontend --timeout=180s
+kubectl -n boutique get deploy,pods,svc,endpointslice -o wide
+kubectl -n boutique port-forward service/frontend 8080:80
+</code></pre>
+<p>Mở <code>http://localhost:8080</code> từ máy chạy lệnh port-forward. Nếu lệnh chạy trong VM, truy cập qua kết nối tới VM đã cấu hình. Port-forward chạy ở một terminal riêng. Manifest upstream có Service <code>frontend-external</code> kiểu LoadBalancer; kiểm tra cách phân phối Kubernetes của bạn xử lý đối tượng đó. Với lab chỉ truy cập bằng port-forward, có thể bỏ đối tượng này trong bản manifest lab và ghi thay đổi. <a href="https://github.com/GoogleCloudPlatform/microservices-demo/tree/v0.10.7">R8 mã nguồn và manifest</a></p>
+<p>Thử đủ ba hành trình mở trang, thêm giỏ và đặt hàng. Ghi thời điểm, hành trình và kết quả. Nếu muốn điều khiển tải thủ công, ghi số replica hiện tại của loadgenerator trước khi chỉnh, rồi đặt bằng 0 trong pha tay và phục hồi khi đổi pha.</p>
+<pre><code class="language-bash">kubectl -n boutique get deploy/loadgenerator
+kubectl -n boutique scale deploy/loadgenerator --replicas=0
+</code></pre>
+<p>Một lần chạy hiệu năng cần cố định quy trình tạo tải, mức đồng thời, thời gian warm-up, thời gian đo và dữ liệu đầu vào. Duyệt vài trang bằng tay hữu ích cho kiểm tra chức năng, còn đo hiệu năng cần tải lặp lại được.</p>
+<h2 id="doc-loi-theo-tung-lop">Đọc lỗi theo từng lớp</h2>
+<table>
+<thead>
+<tr>
+<th>Dấu hiệu</th>
+<th>Kiểm tra tiếp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ImagePullBackOff</code></td>
+<td>Pod events, registry, DNS và phiên bản image</td>
+</tr>
+<tr>
+<td>Pod chạy nhưng chưa Ready</td>
+<td>Probe, log container, downstream cần thiết</td>
+</tr>
+<tr>
+<td>Không có endpoint Ready</td>
+<td>Selector Service, label Pod, readiness</td>
+</tr>
+<tr>
+<td>Trang mở nhưng checkout lỗi</td>
+<td>Log frontend và checkout cùng mốc thời gian, luồng checkout tới backend</td>
+</tr>
+<tr>
+<td>Collector không thấy workload</td>
+<td>DaemonSet có pod đúng node, lọc namespace, phiên bản driver hoặc policy</td>
+</tr>
+<tr>
+<td>Sau khi thêm policy, nhiều dịch vụ lỗi</td>
+<td>Kiểm tra DNS, hai chiều ingress/egress và policy có sẵn</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash">kubectl -n boutique describe pod TEN_POD
+kubectl -n boutique logs deployment/checkoutservice --since=10m
+kubectl -n boutique get events --sort-by=.metadata.creationTimestamp
+</code></pre>
+<h2 id="ho-so-cua-moi-lan-chay">Hồ sơ của mỗi lần chạy</h2>
+<p>Lưu mã lần chạy, phiên bản Kubernetes, Linux kernel, CNI, collector/chart và rule/policy, cấu hình node, revision ứng dụng, placement, image digest thực tế, thời gian UTC, cách phát tải và thay đổi so với baseline. Có thể xuất <code>kubectl -n boutique get pods -o json</code> và <code>kubectl -n boutique get svc,endpointslice -o json</code> ở mỗi mốc để ánh xạ IP và ứng dụng.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Vì sao dùng phiên bản v0.10.7 cố định?</strong> Người sau có cùng source và manifest để kiểm chứng. Cần ghi thêm digest image thực tế để tăng khả năng tái lập.</li>
+<li><strong>Một node cho phép kết luận gì?</strong> Kiểm tra pipeline và hành vi trong bố trí một node; cần thí nghiệm đa node cho kết luận về đường mạng qua các node.</li>
+<li><strong>Thấy cạnh checkout → payment trong sơ đồ, có thể dùng làm ground truth số request không?</strong> Cần đo hoặc ghi kết quả ứng dụng trong từng lần chạy.</li>
+</ol>
+<p>Tiếp theo <a href="05-ebpf-runtime-telemetry.html">bài 5</a>.</p><div class="finish"><button class="button" data-complete="04-testbed-online-boutique" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="03-bao-mat-kubernetes-networkpolicy.html">← Bảo mật Kubernetes &amp; NetworkPolicy</a><a href="05-ebpf-runtime-telemetry.html">eBPF &amp; telemetry runtime →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#testbed-la-gi">Testbed là gì</a></li>
+<li><a href="#luong-ung-dung-va-du-lieu-mau">Luồng ứng dụng và dữ liệu mẫu</a></li>
+<li><a href="#chay-workload-tu-manifest-da-luu">Chạy workload từ manifest đã lưu</a></li>
+<li><a href="#doc-loi-theo-tung-lop">Đọc lỗi theo từng lớp</a></li>
+<li><a href="#ho-so-cua-moi-lan-chay">Hồ sơ của mỗi lần chạy</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

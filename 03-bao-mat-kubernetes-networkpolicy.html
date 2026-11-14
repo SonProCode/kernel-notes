@@ -1,0 +1,151 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bảo mật Kubernetes &amp; NetworkPolicy · Kernel Notes</title><meta name="description" content="Thử nghiệm ba Pod để biết luồng nào được phép và luồng nào bị chặn.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 03 · TUẦN 1 · R3 · R6 · R7 · 7 PHÚT ĐỌC</div>
+<h1>Bảo mật Kubernetes &amp; NetworkPolicy</h1><p>Thử nghiệm ba Pod để biết luồng nào được phép và luồng nào bị chặn.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="danh-tinh-quyen-va-cau-hinh-pod">Danh tính, quyền và cấu hình Pod</h2>
+<p><strong>ServiceAccount</strong> là danh tính Kubernetes mà workload có thể dùng để xác thực. Pod khai báo <code>serviceAccountName</code>; khi được mount, token đại diện cho tài khoản trong phạm vi, thời hạn và audience tương ứng. Ví dụ, khi checkout gọi API server để đọc ConfigMap, API server xác thực token trước khi kiểm tra quyền đọc. Workload không cần token tự động có thể đặt <code>automountServiceAccountToken: false</code> sau khi xác nhận các chức năng phụ thuộc. <a href="https://kubernetes.io/docs/concepts/security/service-accounts/">R6 Service Accounts</a></p>
+<p><strong>RBAC</strong> phân quyền theo thao tác và tài nguyên. <code>Role</code> mô tả quyền trong namespace. <code>ClusterRole</code> mô tả một bộ quyền để tái sử dụng hoặc dùng cấp cluster. <code>RoleBinding</code> cấp quyền trong namespace, ngay cả khi tham chiếu ClusterRole. <code>ClusterRoleBinding</code> cấp quyền ở phạm vi cluster. Ví dụ một Role chỉ cho <code>get</code> ConfigMap tên <code>checkout-config</code> hẹp hơn quyền <code>list</code> mọi ConfigMap. Có thể dùng <code>kubectl auth can-i get configmap/checkout-config -n boutique --as=system:serviceaccount:boutique:checkoutservice</code> với tài khoản được phép impersonate để hỏi hệ thống về quyền đó. <a href="https://kubernetes.io/docs/concepts/security/rbac-good-practices/">R6 RBAC Good Practices</a></p>
+<p><strong>Security context</strong> cấu hình quyền tiến trình trong Pod. <code>runAsNonRoot</code> yêu cầu container chạy bằng UID khác 0. <code>allowPrivilegeEscalation: false</code> giảm khả năng tiến trình con có đặc quyền mới. Capabilities chia quyền đặc biệt của Linux thành từng nhóm nhỏ. Seccomp hạn chế syscall. Pod Security Standards mô tả ba mức Privileged, Baseline và Restricted; Pod Security Admission có thể áp dụng chuẩn tại lúc nhận yêu cầu tạo workload. <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/">Pod Security Standards</a></p>
+<p><strong>Secret</strong> là đối tượng chứa dữ liệu nhạy cảm. Base64 là mã hóa biểu diễn, có thể giải mã trực tiếp. Cần xét cả quyền đọc API, quyền qua Pod/mount, cách bảo vệ dữ liệu lưu trữ và độ nhạy của log. <a href="https://kubernetes.io/docs/concepts/configuration/secret/">Kubernetes Secrets</a></p>
+<h2 id="doc-owasp-kubernetes-top-ten-ban-2025">Đọc OWASP Kubernetes Top Ten bản 2025</h2>
+<table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>Rủi ro</th>
+<th>Ví dụ áp dụng khi đọc cấu hình lab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K01</td>
+<td>Cấu hình workload thiếu an toàn</td>
+<td>Pod chạy privileged hoặc có mount host không cần thiết.</td>
+</tr>
+<tr>
+<td>K02</td>
+<td>Phân quyền quá rộng</td>
+<td>Một token ứng dụng được cấp quyền đọc secrets toàn cluster.</td>
+</tr>
+<tr>
+<td>K03</td>
+<td>Quản lý secrets kém</td>
+<td>Credential được ghi vào log hoặc đặt trực tiếp trong manifest chia sẻ.</td>
+</tr>
+<tr>
+<td>K04</td>
+<td>Thiếu thực thi policy cấp cluster</td>
+<td>Tiêu chuẩn Pod chỉ nằm trong tài liệu, không có cơ chế kiểm tra khi tạo.</td>
+</tr>
+<tr>
+<td>K05</td>
+<td>Thiếu phân đoạn mạng</td>
+<td>Pod nguồn ngoài luồng có đường TCP tới dịch vụ nhạy cảm.</td>
+</tr>
+<tr>
+<td>K06</td>
+<td>Phơi lộ thành phần Kubernetes</td>
+<td>API điều khiển hoặc endpoint quản trị mở rộng hơn nhu cầu.</td>
+</tr>
+<tr>
+<td>K07</td>
+<td>Thành phần cluster cấu hình sai hoặc dễ tổn thương</td>
+<td>Thành phần vận hành có cấu hình hoặc phiên bản tạo lỗ hổng.</td>
+</tr>
+<tr>
+<td>K08</td>
+<td>Di chuyển từ cluster sang cloud</td>
+<td>Quyền cloud của workload cho phép tiếp cận thêm tài nguyên bên ngoài cluster.</td>
+</tr>
+<tr>
+<td>K09</td>
+<td>Cơ chế xác thực yếu</td>
+<td>Xử lý sai danh tính hoặc chấp nhận credential không phù hợp.</td>
+</tr>
+<tr>
+<td>K10</td>
+<td>Thiếu log và giám sát</td>
+<td>Nhìn thấy đích IP nhưng thiếu nguồn Pod và thời gian đối chiếu.</td>
+</tr>
+</tbody>
+</table>
+<p>Các mã gắn với bản 2025. <a href="https://kubernetes-top10.owasp.org/">R3 OWASP Kubernetes Top Ten</a></p>
+<h2 id="networkpolicy-tu-mot-vi-du-cu-the">NetworkPolicy từ một ví dụ cụ thể</h2>
+<p>NetworkPolicy chọn Pod bằng label và kiểm soát luồng L3/L4. <strong>Ingress</strong> là chiều đi vào Pod. <strong>Egress</strong> là chiều đi ra. <code>policyTypes</code> xác định chiều được áp dụng; khi Pod bị cô lập ở một chiều, các policy phù hợp hợp lại thành tập luồng được phép. Với hai đầu đều bị cô lập ở chiều liên quan, egress nguồn và ingress đích đều phải cho phép. Lưu lượng trả lời của kết nối được phép được cho qua theo mô hình policy. Cần lớp mạng hỗ trợ thực thi. CNI (Container Network Interface) là quy ước tích hợp plugin mạng với môi trường container. Plugin hoặc controller mạng của cluster chịu trách nhiệm biến cấu hình thành quy tắc có tác dụng trên đường truyền. <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">R7 Network Policies</a></p>
+<p>Xét cấu hình minh họa dành cho một lab riêng. Backend giả lập tên <code>payment</code> lắng nghe TCP/7070, cả hai Pod đều ở namespace <code>policy-lab</code>.</p>
+<pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: payment-from-checkout
+  namespace: policy-lab
+spec:
+  podSelector:
+    matchLabels:
+      app: payment
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: checkout
+      ports:
+        - protocol: TCP
+          port: 7070
+</code></pre>
+<p>Policy này chọn Pod <strong>đích</strong> bằng <code>spec.podSelector</code> và chọn Pod <strong>nguồn</strong> trong <code>from</code>. Với cấu hình trên, selector nguồn chọn checkout trong cùng namespace. Để yêu cầu đồng thời đúng namespace và đúng label, đặt <code>namespaceSelector</code> và <code>podSelector</code> trong <strong>cùng</strong> phần tử <code>from</code>. Hai phần tử riêng là các lựa chọn khác nhau. <code>ipBlock</code> dùng CIDR; lưu ý NAT và cách CNI triển khai có thể ảnh hưởng IP được so khớp. <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">R7 hành vi selector và NAT</a></p>
+<h3 id="cach-kiem-chung">Cách kiểm chứng</h3>
+<ol>
+<li>Dựng hai Pod nguồn với label <code>app=checkout</code> và <code>app=probe</code>, một Pod đích <code>app=payment</code> và Service cho đích. Ghi nhãn thực tế bằng <code>kubectl -n policy-lab get pod --show-labels</code>.</li>
+<li>Kiểm tra kết nối mới tới cùng đích từ hai nguồn trước khi áp policy. Xác nhận listener đang chạy để có đối chứng.</li>
+<li>Áp policy và thử lại kết nối <strong>mới</strong>. Dự kiến checkout kết nối được còn probe bị chặn nếu các chính sách còn lại phù hợp.</li>
+<li>Kiểm tra DNS riêng. Khi khóa egress, cần xem cấu hình DNS của cluster và cho phép đường DNS cần thiết qua UDP/TCP 53, nếu workload dùng đường đó.</li>
+<li>Ghi thời điểm gửi policy và thời điểm probe lần đầu không kết nối được. Thử riêng kết nối đã mở, vì hành vi với kết nối đang tồn tại tùy triển khai. <a href="https://kubernetes.io/docs/tasks/administer-cluster/declare-network-policy/">Ví dụ kiểm chứng của Kubernetes</a></li>
+</ol>
+<p><strong>Ví dụ cộng dồn.</strong> Policy A cho checkout vào payment. Policy B chọn payment và có <code>policyTypes: [Ingress]</code> với <code>ingress: []</code>. Checkout vẫn có thể vào nhờ A. Muốn cách ly, cần thay đổi hoặc loại trừ Pod khỏi mọi allow áp dụng, hoặc dùng cơ chế có ngữ nghĩa deny thích hợp.</p>
+<h2 id="thuc-hanh-kiem-chung-bang-ba-pod">Thực hành kiểm chứng bằng ba Pod</h2>
+<p>Lệnh Bash dưới đây tạo hai nguồn và một đích riêng cho ví dụ TCP/7070. Chạy trong context lab. Lưu YAML ở mục trên thành <code>payment-from-checkout.yaml</code> để áp dụng ở bước thứ hai.</p>
+<pre><code class="language-bash">kubectl create namespace policy-lab --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n policy-lab run payment --image=busybox:1.36.1 --restart=Never \
+  --labels=app=payment --command -- /bin/sh -c \
+  'mkdir -p /www &amp;&amp; echo payment-lab &gt; /www/index.html &amp;&amp; exec httpd -f -p 7070 -h /www'
+kubectl -n policy-lab expose pod payment --name=payment --port=7070 --target-port=7070
+kubectl -n policy-lab run checkout --image=busybox:1.36.1 --restart=Never \
+  --labels=app=checkout --command -- sleep 3600
+kubectl -n policy-lab run probe --image=busybox:1.36.1 --restart=Never \
+  --labels=app=probe --command -- sleep 3600
+kubectl -n policy-lab wait --for=condition=Ready pod/payment pod/checkout pod/probe --timeout=120s
+
+# Trước policy, cả hai lệnh dự kiến in payment-lab.
+kubectl -n policy-lab exec checkout -- wget -T 3 -qO- http://payment:7070/
+kubectl -n policy-lab exec probe -- wget -T 3 -qO- http://payment:7070/
+
+kubectl apply -f payment-from-checkout.yaml
+# Sau khi policy có hiệu lực, checkout vẫn in payment-lab, probe dự kiến hết thời gian.
+kubectl -n policy-lab exec checkout -- wget -T 3 -qO- http://payment:7070/
+kubectl -n policy-lab exec probe -- wget -T 3 -qO- http://payment:7070/
+</code></pre>
+<p>Ghi mã thoát và thời điểm của lần thử. Nếu cả hai vẫn truy cập được, kiểm tra lớp thực thi, nhãn và các policy đang áp dụng. Nếu cả hai đều lỗi, kiểm tra backend và DNS từ nguồn được phép. Listener HTTP nhỏ ở đây giúp kiểm chứng đường TCP. Payment của Online Boutique v0.10.7 dùng Service gRPC cổng 50051 theo manifest đã lưu.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>RBAC cho đọc ConfigMap có cho kết nối TCP tới payment không?</strong> RBAC áp cho thao tác API Kubernetes; kết nối phụ thuộc chính sách mạng và server.</li>
+<li><strong>Timeout có chứng minh policy hoạt động không?</strong> Phải đối chiếu listener, DNS, trạng thái workload và một nguồn đối chứng được phép.</li>
+<li><strong>Cho phép đúng cổng đã giới hạn được method gRPC chưa?</strong> Muốn giới hạn method cần cơ chế nhận biết giao thức ứng dụng và danh tính phù hợp.</li>
+</ol>
+<p>Tiếp theo <a href="04-testbed-online-boutique.html">bài 4</a>.</p><div class="finish"><button class="button" data-complete="03-bao-mat-kubernetes-networkpolicy" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="02-zero-trust-threat-model.html">← Zero Trust &amp; mô hình đe dọa</a><a href="04-testbed-online-boutique.html">Dựng lab Online Boutique →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#danh-tinh-quyen-va-cau-hinh-pod">Danh tính, quyền và cấu hình Pod</a></li>
+<li><a href="#doc-owasp-kubernetes-top-ten-ban-2025">Đọc OWASP Kubernetes Top Ten bản 2025</a></li>
+<li><a href="#networkpolicy-tu-mot-vi-du-cu-the">NetworkPolicy từ một ví dụ cụ thể</a><ul>
+<li><a href="#cach-kiem-chung">Cách kiểm chứng</a></li>
+</ul>
+</li>
+<li><a href="#thuc-hanh-kiem-chung-bang-ba-pod">Thực hành kiểm chứng bằng ba Pod</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

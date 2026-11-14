@@ -1,0 +1,155 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Từ log đến thực nghiệm · Kernel Notes</title><meta name="description" content="Tạo baseline, gắn nhãn độc lập và tính precision, recall, độ trễ phát hiện.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI 08 · TUẦN 2 · Thực hành · 7 PHÚT ĐỌC</div>
+<h1>Từ log đến thực nghiệm</h1><p>Tạo baseline, gắn nhãn độc lập và tính precision, recall, độ trễ phát hiện.</p></header>
+<div class="shell reading"><article class="prose"><h2 id="cau-hoi-nghien-cuu-quyet-dinh-du-lieu-can-thu">Câu hỏi nghiên cứu quyết định dữ liệu cần thu</h2>
+<p>Ví dụ câu hỏi “Có thể phát hiện nguồn gọi payment ngoài luồng với ít cảnh báo sai không?” cần biết quyền hoặc luồng hợp lệ, định danh nguồn, đích và kết quả. Nếu dữ liệu chỉ có IP/cổng, câu hỏi đo được là “Có thể nhận ra kết nối tới đích ngoài tập cho phép không?”. Muốn phân tích từng thao tác thanh toán, bổ sung dữ liệu phía ứng dụng, proxy hoặc trace có method và status.</p>
+<p>Giữ riêng:</p>
+<ul>
+<li><strong>Raw</strong> chứa sự kiện nguyên bản theo công cụ và node. Lưu với quyền phù hợp vì argv và log có thể chứa dữ liệu nhạy cảm.</li>
+<li><strong>Normalized</strong> chứa trường thống nhất để phân tích. Giữ đường dẫn, định danh hoặc vị trí để truy lại raw.</li>
+<li><strong>Ground truth</strong> ghi thời gian, hành vi và kết quả từ bộ điều phối và đối chứng phía đích.</li>
+<li><strong>Metadata</strong> chứa cấu hình, snapshot workload, phiên bản công cụ và thay đổi giữa lần chạy.</li>
+</ul>
+<h2 id="mau-ban-ghi-va-cach-doc">Mẫu bản ghi và cách đọc</h2>
+<p>JSON dưới đây là dữ liệu minh họa. Nó thể hiện một lần thử TCP; công cụ thực tế có thể dùng tên trường và cấu trúc khác.</p>
+<pre><code class="language-json">{
+  &quot;schema_version&quot;: 1,
+  &quot;run_id&quot;: &quot;lab-004&quot;,
+  &quot;event_id&quot;: &quot;node-a-000132&quot;,
+  &quot;event_time&quot;: &quot;2026-11-15T02:00:01.200Z&quot;,
+  &quot;ingest_time&quot;: &quot;2026-11-15T02:00:01.240Z&quot;,
+  &quot;collector&quot;: &quot;tetragon&quot;,
+  &quot;event_type&quot;: &quot;connect_attempt&quot;,
+  &quot;node&quot;: &quot;node-a&quot;,
+  &quot;namespace&quot;: &quot;boutique&quot;,
+  &quot;pod_uid&quot;: null,
+  &quot;src_workload&quot;: &quot;runtime-probe&quot;,
+  &quot;dst_ip&quot;: &quot;10.43.10.8&quot;,
+  &quot;dst_port&quot;: 50051,
+  &quot;dst_workload&quot;: &quot;paymentservice&quot;,
+  &quot;dst_mapping&quot;: &quot;service_snapshot&quot;,
+  &quot;result&quot;: null
+}
+</code></pre>
+<p><code>null</code> biểu thị trường chưa biết. Trong ví dụ, người phân tích biết đích dựa vào Service snapshot, vẫn chưa biết TCP thành công. Giữ IP nguyên bản và nguồn ánh xạ. Nếu nhiều endpoint có thể khớp, đánh dấu mơ hồ và lưu phương án tra cứu. Snapshot nên có thời điểm vì Pod IP có thể được tái sử dụng. Khi chạy nhiều cluster, lưu thêm cluster ID. Nếu join các nguồn, quản lý lệch đồng hồ và dấu thời gian UTC.</p>
+<h2 id="baseline-va-tap-dac-trung">Baseline và tập đặc trưng</h2>
+<p><strong>Baseline</strong> mô tả hoạt động bình thường trong phạm vi đã chạy. Thu các pha startup, warm-up, tải ổn định và thay đổi hợp lệ như rollout, health check hoặc debug đã ghi nhận. Dữ liệu nên có đủ luồng nghiệp vụ như đọc sản phẩm và checkout, vì mỗi luồng có các cạnh khác nhau.</p>
+<p>Một <strong>cạnh</strong> là hướng giao tiếp từ một workload tới workload khác trong mô hình. Chọn ý nghĩa cho trọng số, ví dụ số TCP attempts quan sát trong 30 giây. RPC count là một biến khác.</p>
+<table>
+<thead>
+<tr>
+<th>Cửa sổ 30 giây</th>
+<th>Nguồn</th>
+<th style="text-align: right;">Đích khác nhau</th>
+<th style="text-align: right;">Thử kết nối</th>
+<th>Giải thích cần kiểm tra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>checkoutservice</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td>Hành trình đặt hàng mẫu</td>
+</tr>
+<tr>
+<td>B</td>
+<td>runtime-probe</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+<td>Kiểm tra phạm vi đích trong kịch bản dò</td>
+</tr>
+<tr>
+<td>C</td>
+<td>checkoutservice</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">11</td>
+<td>Có thể là tải tăng hoặc reconnect</td>
+</tr>
+</tbody>
+</table>
+<p>Các số chỉ để minh họa. Có thể thêm số cổng đích, số cạnh mới, tỷ lệ kết quả thất bại <strong>trong số sự kiện có kết quả</strong>, số exec shell và số lần truy cập file trong danh sách quan sát. Ghi phương pháp lọc DNS, probe và traffic nền. Hiệu chỉnh ngưỡng trên một nhóm lần chạy rồi đánh giá trên nhóm lần chạy khác. Tách theo <code>run_id</code> giúp các cửa sổ cùng lần chạy không rơi vào cả hai tập.</p>
+<h2 id="thiet-ke-cac-lan-chay">Thiết kế các lần chạy</h2>
+<table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>Kịch bản trong cluster lab</th>
+<th>Bằng chứng và đối chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0</td>
+<td>Browse, thêm giỏ, checkout dưới tải ghi trước</td>
+<td>Ghi kết quả user journey, thời điểm, config và log</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>Probe thử một tập đích/cổng được chỉ định, với tần suất giới hạn</td>
+<td>Ghi đích cố định và kết quả từng lần; so với tải hợp lệ</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>Probe thử kết nối tới payment giả lập</td>
+<td>Dùng checkout hợp lệ đối chứng; nếu đo API thì ghi status phía đích</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Chạy shell và mở file đánh dấu vô hại</td>
+<td>Ghi exec và file riêng; thử thêm một thao tác bình thường</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>Tăng tần suất yêu cầu tới listener lab</td>
+<td>So với spike tải hợp lệ và ghi giới hạn tải</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>Gửi dữ liệu giả lập tới endpoint lab riêng</td>
+<td>Ghi endpoint, lượng dữ liệu và kết quả trước/sau egress policy</td>
+</tr>
+</tbody>
+</table>
+<p>Tên và mục tiêu dựa theo khung kịch bản trong đề cương. Có thể bắt đầu bằng S0 và một phép thử S2 hoặc S3. Ghi trạng thái policy, đích thực và kết quả từng lần. <code>kubectl exec</code> hoặc Pod probe là phương pháp tạo tình huống. Cảnh báo của detector là kết quả dự đoán.</p>
+<p>Mẫu nhãn có thể bắt đầu bằng CSV:</p>
+<pre><code class="language-csv">run_id,scenario,start_utc,end_utc,source,target,attempted,observed_outcome
+lab-004,S2,2026-11-15T02:00:01Z,2026-11-15T02:00:04Z,runtime-probe,paymentservice,true,tcp_timeout
+</code></pre>
+<h2 id="danh-gia-bao-mat-va-hieu-nang">Đánh giá bảo mật và hiệu năng</h2>
+<p>Định nghĩa đơn vị trước khi đếm, ví dụ mỗi run chứa một cửa sổ mục tiêu hoặc dùng cửa sổ 30 giây. Gắn cảnh báo với nhãn bằng thời gian, nguồn và loại hành vi đã quy định.</p>
+<ul>
+<li><strong>TP</strong> là đơn vị có hành vi mục tiêu và có phát hiện. <strong>FN</strong> là đơn vị có hành vi mục tiêu bị bỏ sót.</li>
+<li><strong>FP</strong> là đơn vị bình thường bị cảnh báo. <strong>TN</strong> là đơn vị bình thường được dự đoán đúng.</li>
+<li><strong>Precision</strong> = TP / (TP + FP). <strong>Recall</strong> = TP / (TP + FN). <strong>FPR</strong> = FP / (FP + TN). Nếu mẫu số bằng 0, ghi chỉ số chưa xác định.</li>
+<li><strong>Độ trễ phát hiện</strong> = thời điểm alert trừ thời điểm bắt đầu hành vi.</li>
+<li><strong>Độ trễ giảm thiểu</strong> = thời điểm kiểm chứng vừa bị chặn trừ thời điểm alert. Định kỳ probe giúp báo giới hạn độ phân giải phép đo.</li>
+</ul>
+<p>Ví dụ có 10 lần tấn công và 100 cửa sổ bình thường, phát hiện đúng 8 lần và báo nhầm 4 cửa sổ. Nếu quy ước phân tích coi mỗi lần tấn công là một cửa sổ mục tiêu, TP=8, FN=2, FP=4, TN=96. Precision = 66,7%, recall = 80%, FPR = 4%. Với nhiều alert trên cùng cửa sổ, thống nhất cách gộp trước khi tính.</p>
+<p>Throughput là lượng công việc hoàn thành trong một đơn vị thời gian, ví dụ 80 request thành công mỗi giây. Latency là thời gian xử lý một yêu cầu. p95 bằng 200 ms nghĩa là khoảng 95% mẫu có độ trễ không quá 200 ms. p50 cho thấy độ trễ ở giữa tập mẫu, còn p99 giúp quan sát nhóm chậm nhất. Ghi cách xử lý request lỗi và timeout để so sánh nhất quán.</p>
+<p>Đo overhead ở tải được kiểm soát: ứng dụng gốc → thêm collector → thêm detector → thêm thực thi. Báo số lần lặp, throughput, p50/p95/p99 latency, CPU/RAM, số event mất nếu tool báo được và số luồng hợp lệ bị ảnh hưởng. Đo blast radius theo số đích tiếp cận được từ <strong>cùng nguồn</strong> và <strong>cùng tập đích</strong> trước/sau policy. Ví dụ 6/10 đích giảm còn 2/10 là giảm 4 đích trong phép thử ở mức đã định nghĩa.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Tại sao có thể recall cao nhưng precision thấp?</strong> Hệ thống phát hiện nhiều mẫu tấn công và đồng thời tạo nhiều cảnh báo nhầm.</li>
+<li><strong>Không thấy alert thì kết luận gì?</strong> Cần đối chiếu nhãn, độ phủ collector và log thô trước khi giải thích.</li>
+<li><strong>Một lần đo p99 có đủ so sánh không?</strong> Cần số mẫu, cách phát tải, thời gian đo và các lần lặp để đánh giá biến động.</li>
+<li><strong>Khi chạy policy sai làm checkout lỗi, cần lưu gì?</strong> Lưu policy, log và kết quả luồng hợp lệ để phản ánh chi phí phản ứng.</li>
+</ol>
+<p>Dùng <a href="09-tra-cuu.html#mau-ban-giao-cho-phien-phan-tich-tiep-theo">mẫu bàn giao</a> khi chuyển lần chạy cho người hoặc phiên khác.</p><div class="finish"><button class="button" data-complete="08-du-lieu-va-thuc-nghiem" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="07-tetragon.html">← Quan sát với Tetragon</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#cau-hoi-nghien-cuu-quyet-dinh-du-lieu-can-thu">Câu hỏi nghiên cứu quyết định dữ liệu cần thu</a></li>
+<li><a href="#mau-ban-ghi-va-cach-doc">Mẫu bản ghi và cách đọc</a></li>
+<li><a href="#baseline-va-tap-dac-trung">Baseline và tập đặc trưng</a></li>
+<li><a href="#thiet-ke-cac-lan-chay">Thiết kế các lần chạy</a></li>
+<li><a href="#danh-gia-bao-mat-va-hieu-nang">Đánh giá bảo mật và hiệu năng</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>
