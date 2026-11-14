@@ -1,0 +1,109 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phát hiện bất thường · Kernel Notes</title><meta name="description" content="So sánh baseline tiến trình kiểu PROCATCH với đồ thị giao tiếp của microservices.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-3">← Lộ trình học</a><div class="eyebrow">BÀI 10 · TUẦN 3 · R23 · R24 · 6 PHÚT ĐỌC</div>
+<h1>Phát hiện bất thường</h1><p>So sánh baseline tiến trình kiểu PROCATCH với đồ thị giao tiếp của microservices.</p></header>
+<div class="shell reading"><article class="prose"><p><strong>Bất thường</strong> là hành vi khác kỳ vọng đã định nghĩa. Một tiến trình mới xuất hiện sau rollout có thể do phiên bản mới. Một API nhạy cảm bị gọi bằng binary cũ cũng có thể là tấn công. Vì vậy, detector cần chỉ ra nó đã thấy gì, so với chuẩn nào và cần bằng chứng bổ sung nào.</p>
+<h2 id="ba-muc-phat-hien-de-so-sanh">Ba mức phát hiện để so sánh</h2>
+<table>
+<thead>
+<tr>
+<th>Hướng</th>
+<th>Đầu vào tối thiểu</th>
+<th>Ví dụ kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Luật cố định</td>
+<td>Tên/đường dẫn executable, workload, kết nối, hoặc quyết định policy</td>
+<td>Shell xuất hiện trong payment, chuyển sang điều tra.</td>
+</tr>
+<tr>
+<td>Baseline thực thi</td>
+<td>Tập thuộc tính chuẩn của workload và event tương ứng</td>
+<td>Executable mới hoặc đường dẫn thay đổi sau khi Pod Ready.</td>
+</tr>
+<tr>
+<td>Đồ thị mạng</td>
+<td>Nguồn, đích, thời gian và đặc trưng luồng có độ phủ phù hợp</td>
+<td>Cạnh recommendation → payment mới xuất hiện.</td>
+</tr>
+</tbody>
+</table>
+<p>Luật cố định dễ diễn giải và là mốc so sánh cho luận văn. Baseline giúp tìm tín hiệu ngoài danh sách luật. Đồ thị thêm cấu trúc ai giao tiếp với ai. Mỗi hướng chỉ quan sát được các hành vi có dấu vết trong dữ liệu đầu vào.</p>
+<h2 id="r24-procatch-va-huong-phu-hop-de-thu-truoc">R24 PROCATCH và hướng phù hợp để thử trước</h2>
+<p><strong>PROCATCH: Detecting Execution-based Anomalies in Single-Instance Microservices</strong> tận dụng giả thuyết microservice chuyên trách có hành vi thực thi khá ổn định. Nhóm tác giả chụp thuộc tính các tiến trình đang chạy khi Pod vừa đạt trạng thái Ready, nhận diện nhóm tiến trình thông qua cgroup, rồi dùng Falco để theo dõi thay đổi. Tên executable, đường dẫn tuyệt đối, inode và thư mục làm việc là các trường chính. Inode là một số nhận diện đối tượng file trong phạm vi filesystem. Cùng một số inode ở hai filesystem không đảm bảo là cùng file. <a href="https://conand.me/publications/elkhairi-procatch-2025.pdf">R24 PROCATCH, mục II–IV</a></p>
+<p>Bài báo đánh giá trên mười kịch bản tấn công trong môi trường do nhóm tác giả thiết kế. Precision trung bình 99,77% và recall 100% là kết quả trong phạm vi đó. Khi đặt câu hỏi về di chuyển ngang, cần thêm tín hiệu mạng hoặc ứng dụng, nhất là khi đối thủ dùng tiến trình hiện có để tạo request. Nhóm tác giả giả định hành vi đối thủ gây ra thay đổi quan sát được ở lớp thực thi. <a href="https://conand.me/publications/elkhairi-procatch-2025.pdf">R24 PROCATCH, mục III và V–VI</a></p>
+<h3 id="bai-thuc-hanh-lay-cam-hung-tu-procatch">Bài thực hành lấy cảm hứng từ PROCATCH</h3>
+<p>Ví dụ bên dưới là detector đơn giản để học. Nó so khớp đường dẫn được chuẩn hóa với baseline minh họa, trong khi PROCATCH dùng nhiều thuộc tính và phương pháp tạo baseline riêng.</p>
+<pre><code class="language-python">baseline = {&quot;/app/paymentserver&quot;}
+examples = [
+    {&quot;binary&quot;: &quot;/app/paymentserver&quot;, &quot;phase&quot;: &quot;normal&quot;},
+    {&quot;binary&quot;: &quot;/bin/sh&quot;, &quot;phase&quot;: &quot;simulated&quot;},
+    {&quot;binary&quot;: None, &quot;phase&quot;: &quot;normal&quot;},
+]
+for event in examples:
+    binary = event[&quot;binary&quot;]
+    if not binary:
+        decision = &quot;missing_telemetry&quot;
+    elif binary in baseline:
+        decision = &quot;within_baseline&quot;
+    else:
+        decision = &quot;review_new_executable&quot;
+    print(event[&quot;phase&quot;], decision)
+</code></pre>
+<p>Thay baseline minh họa bằng dữ liệu chuẩn thực tế của một container. Ghi phiên bản image, UID Pod, thời điểm Ready và tiến trình tại thời điểm tạo baseline. Dùng tập chạy sạch để lập chuẩn, sau đó xem đợt tải bình thường và đợt có thao tác mô phỏng độc lập. Nếu cần lưu baseline theo workload thay vì từng Pod, dùng ít nhất định danh workload, container và phiên bản image để tránh trộn rollout. Với Falco, thu <strong>dòng sự kiện thực thi cần cho detector</strong>; chỉ giữ alert shell đã lọc sẽ làm mất phần đối chứng. Tetragon có process exec event để thử phiên bản đơn giản, nhưng kết quả gọi đúng là hệ thống lấy cảm hứng từ R24. <a href="https://conand.me/publications/elkhairi-procatch-2025.pdf">R24 cách tạo và đối chiếu baseline</a>, <a href="https://tetragon.io/docs/getting-started/execution/">R16 Execution Monitoring</a></p>
+<p><strong>Ví dụ diễn giải.</strong> Khi health probe hợp lệ tạo binary mới, detector có thể báo sai. Khi checkout bị điều khiển thực hiện thêm một request bằng binary vốn hợp lệ, detector đường dẫn có thể bỏ sót. Tạo riêng hai tình huống này để đo giới hạn thay vì chỉ thử shell.</p>
+<h2 id="r23-gataku-va-huong-phat-hien-theo-do-thi">R23 GATAKU và hướng phát hiện theo đồ thị</h2>
+<p>R23 xây mô hình GATAKU trên telemetry mạng từ Cilium trong testbed Kubernetes. Nhóm tác giả chuẩn bị dữ liệu và đặc trưng, huấn luyện mô hình đồ thị và so sánh với SVM và Random Forest. Phần cần lấy cho đề tài là cách biểu diễn quan hệ giữa các thành phần và thiết kế baseline so sánh. Khi thay telemetry Cilium bằng dữ liệu Tetragon, cần ghi lại sự khác biệt về độ phủ và cấu trúc sự kiện. <a href="https://digitalcollection.zhaw.ch/bitstreams/15ae5877-9515-4c65-9712-aa32a2a2cc89/download">R23 Anomaly Detection in Microservices Architecture Using Graph Neural Networks</a></p>
+<p><strong>Đồ thị</strong> gồm node và cạnh. Trong ví dụ học, một node là workload logic. Cạnh có hướng biểu diễn nguồn → đích trong 30 giây. Có thể giữ số lần thử kết nối, số lần thành công đã xác minh và độ đa dạng cổng. GNN là mạng nơ-ron có thể tính biểu diễn một node từ đặc trưng của nó và của các node hàng xóm theo cạnh. Nhờ vậy, mô hình có thể xét ngữ cảnh giao tiếp cùng lúc. Đây là cách giải thích và đề xuất thiết kế, không phải mô tả nguyên xi dataset GATAKU.</p>
+<table>
+<thead>
+<tr>
+<th>Cửa sổ</th>
+<th>Cạnh</th>
+<th>Nhận xét</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chuẩn</td>
+<td>checkout → payment</td>
+<td>Có trong luồng nghiệp vụ.</td>
+</tr>
+<tr>
+<td>Chuẩn</td>
+<td>recommendation → catalog</td>
+<td>Có trong luồng gợi ý.</td>
+</tr>
+<tr>
+<td>Thử nghiệm</td>
+<td>recommendation → payment</td>
+<td>Cạnh mới, cần tra lại định danh và policy, rồi xác nhận kết quả request.</td>
+</tr>
+</tbody>
+</table>
+<p>Thử detector cạnh mới bằng phép so tập cạnh trước khi triển khai GNN. Chuẩn bị bảng có <code>run_id</code>, <code>window_start</code>, <code>src_workload</code>, <code>dst_workload</code>, <code>connect_attempts</code>, <code>outcome_known</code>, <code>label</code>. Dữ liệu mạng L4 mô tả kết nối, còn dữ liệu proxy hoặc API mô tả yêu cầu gRPC. Khi có đủ lần chạy độc lập, tách train, validation và test theo run rồi giữ tập test cố định cho mọi mô hình. Đọc <a href="08-du-lieu-va-thuc-nghiem.html">cách chuẩn hóa và gán nhãn</a>.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Baseline học được nhiều lần gọi tới một đích có đồng nghĩa đích đó được phép?</strong> Kiểm kê hành vi và quyết định phân quyền là hai việc riêng. Đối chiếu chính sách và nguồn gốc dữ liệu đã dùng để học.</li>
+<li><strong>Cạnh mới có luôn là tấn công?</strong> Có thể là rollout hợp lệ hoặc thay đổi ánh xạ IP. Kiểm tra phiên bản, nguồn và kết quả request.</li>
+<li><strong>Nên dùng R24 hay R23 cho tuần này?</strong> Nếu đã thu process events và có ít run, thử R24 trước. Nếu có telemetry mạng đủ phủ và nhiều run có nhãn, triển khai detector cạnh mới để chuẩn bị cho R23.</li>
+</ol>
+<p>Tiếp theo <a href="12-danh-gia-va-phan-ung.html">đánh giá detector và phản ứng</a>.</p><div class="finish"><button class="button" data-complete="11-phat-hien-bat-thuong" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="10-istio-policy-enforcement.html">← Thực thi chính sách với Istio</a><a href="12-danh-gia-va-phan-ung.html">Đánh giá detector và phản ứng →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#ba-muc-phat-hien-de-so-sanh">Ba mức phát hiện để so sánh</a></li>
+<li><a href="#r24-procatch-va-huong-phu-hop-de-thu-truoc">R24 PROCATCH và hướng phù hợp để thử trước</a><ul>
+<li><a href="#bai-thuc-hanh-lay-cam-hung-tu-procatch">Bài thực hành lấy cảm hứng từ PROCATCH</a></li>
+</ul>
+</li>
+<li><a href="#r23-gataku-va-huong-phat-hien-theo-do-thi">R23 GATAKU và hướng phát hiện theo đồ thị</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

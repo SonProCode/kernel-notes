@@ -1,0 +1,148 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thực thi chính sách với Istio · Kernel Notes</title><meta name="description" content="Dùng mTLS và AuthorizationPolicy để chỉ cho checkout gọi Charge, rồi kiểm chứng bằng hai danh tính.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-3">← Lộ trình học</a><div class="eyebrow">BÀI 09 · TUẦN 3 · R19 · R20 · 7 PHÚT ĐỌC</div>
+<h1>Thực thi chính sách với Istio</h1><p>Dùng mTLS và AuthorizationPolicy để chỉ cho checkout gọi Charge, rồi kiểm chứng bằng hai danh tính.</p></header>
+<div class="shell reading"><article class="prose"><p>Trong lab Online Boutique, checkout cần gọi dịch vụ thanh toán. Giả sử một Pod recommendation bị xâm nhập và cố gửi cùng yêu cầu ấy. Tuần 2 giúp ta thấy một lần thử kết nối. Tuần 3 đặt thêm một điều kiện cụ thể: chỉ tiến trình chạy dưới danh tính workload checkout được gọi phương thức thanh toán ở đích.</p>
+<h2 id="service-mesh-sidecar-va-mtls">Service mesh, sidecar và mTLS</h2>
+<p><strong>Service mesh</strong> bổ sung một lớp xử lý lưu lượng giữa các workload. Trong chế độ sidecar của Istio, một proxy Envoy chạy bên cạnh container ứng dụng. Các proxy là <strong>data plane</strong> vì trực tiếp xử lý dữ liệu. Istiod nằm ở <strong>control plane</strong>, phân phối cấu hình và tham gia quản lý danh tính, chứng chỉ. Khi traffic đi qua đúng đường mesh, proxy phía đích có thể áp chính sách trước khi chuyển yêu cầu vào ứng dụng. Bài lab dưới đây dùng sidecar. Với ambient, cần tìm hiểu điểm thực thi L4 và waypoint L7 trước khi áp dụng ví dụ tương đương. <a href="https://istio.io/latest/docs/concepts/security/">R19 Istio Security</a></p>
+<p><strong>mTLS</strong> là TLS xác thực hai phía. Proxy đích có thể lấy danh tính phía gửi từ chứng chỉ mesh. Danh tính này thường gắn với namespace và Kubernetes ServiceAccount, ví dụ <code>cluster.local/ns/boutique/sa/checkoutservice</code> nếu trust domain là <code>cluster.local</code>. Token ServiceAccount dùng với Kubernetes API và danh tính peer xuất hiện trong kết nối mTLS là hai ngữ cảnh khác nhau. Nếu hai ứng dụng dùng chung ServiceAccount hoặc đối thủ đã chiếm chính Pod checkout, policy chỉ dựa vào ServiceAccount sẽ không phân biệt được hai tác nhân đó. <a href="https://istio.io/latest/docs/concepts/security/">R19 Istio Security</a></p>
+<table>
+<thead>
+<tr>
+<th>Lớp</th>
+<th>Điều kiểm tra</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kubernetes RBAC</td>
+<td>Quyền thao tác với Kubernetes API</td>
+<td>Checkout có được đọc Secret qua API server không?</td>
+</tr>
+<tr>
+<td>NetworkPolicy</td>
+<td>Luồng mạng L3/L4 được phép</td>
+<td>Nguồn có đường tới Pod đích qua TCP/50051 không?</td>
+</tr>
+<tr>
+<td>PeerAuthentication</td>
+<td>Kiểu xác thực peer được chấp nhận ở đích</td>
+<td>Payment chỉ nhận kết nối mTLS trong đường mesh.</td>
+</tr>
+<tr>
+<td>AuthorizationPolicy</td>
+<td>Danh tính và thao tác được phép ở workload đích</td>
+<td>Chỉ checkout được gọi phương thức Charge.</td>
+</tr>
+<tr>
+<td>Kiểm tra nghiệp vụ</td>
+<td>Quyền và dữ liệu của yêu cầu tại ứng dụng</td>
+<td>Yêu cầu có gắn với đơn hàng hợp lệ không?</td>
+</tr>
+</tbody>
+</table>
+<p>Nguồn tham chiếu. <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">R7 Network Policies</a>, <a href="https://istio.io/latest/docs/concepts/security/">R19 Istio Security</a>, <a href="https://istio.io/latest/docs/reference/config/security/authorization-policy/">R20 AuthorizationPolicy</a></p>
+<h2 id="doc-mot-authorizationpolicy">Đọc một AuthorizationPolicy</h2>
+<p><code>metadata.namespace</code> cùng <code>spec.selector</code> xác định <strong>workload đích</strong>. Trong một rule, <code>from</code> chọn chủ thể nguồn, <code>to</code> chọn thao tác, <code>when</code> thêm điều kiện. Một rule cần khớp các nhóm điều kiện đã khai báo. Nhiều lựa chọn trong danh sách nguồn hoặc thao tác cho phép khớp một lựa chọn. Khai báo rõ namespace và label giúp kiểm tra phạm vi trước khi áp dụng. <a href="https://istio.io/latest/docs/reference/config/security/authorization-policy/">R20 cấu trúc policy</a></p>
+<p>Thứ tự xét truy cập là CUSTOM, rồi DENY, rồi ALLOW. Một DENY khớp có thể chặn dù có ALLOW khớp. Sau khi vượt qua CUSTOM/DENY, nếu workload có ít nhất một ALLOW áp dụng thì yêu cầu phải khớp một ALLOW. Nếu không có ALLOW áp dụng, yêu cầu qua bước này. Ví dụ, thêm một ALLOW hẹp cho payment có thể làm các client hợp lệ khác mất quyền. Kiểm tra toàn bộ policy ở namespace workload và root namespace của mesh. AUDIT đánh dấu yêu cầu để audit nếu có tích hợp hỗ trợ. Với TCP thuần, trường HTTP như path hoặc method có thể vắng mặt. Trong DENY, thuộc tính vắng mặt có thể được coi là khớp, vì vậy cần giới hạn cổng và xác minh giao thức. <a href="https://istio.io/latest/docs/reference/config/security/authorization-policy/">R20 thứ tự và giới hạn với TCP</a></p>
+<h2 id="vi-du-checkout-goi-payment-trong-online-boutique">Ví dụ checkout gọi payment trong Online Boutique</h2>
+<p>Manifest upstream v0.10.7 có label Pod <code>app: paymentservice</code>, Service gRPC TCP/50051 và ServiceAccount checkout <code>checkoutservice</code>. Định nghĩa protobuf dùng package <code>hipstershop</code> và RPC <code>PaymentService.Charge</code>. Trong gRPC qua HTTP/2, proxy có thể đối chiếu path <code>/hipstershop.PaymentService/Charge</code>. Xác minh các giá trị với manifest đang chạy, nhất là khi dùng overlay hoặc đổi namespace. <a href="https://github.com/GoogleCloudPlatform/microservices-demo/tree/v0.10.7">R8 manifest và protobuf v0.10.7</a></p>
+<p>Hai manifest sau dành cho namespace lab <code>boutique</code>. Giả định các caller đã vào mesh, API Istio hỗ trợ <code>security.istio.io/v1</code> và proxy nhận diện luồng ở cổng 50051 là gRPC. Kiểm kê health check và các client trước khi bật cấu hình chặn thật. Ví dụ dùng <code>serviceAccounts</code> để so khớp peer theo chứng chỉ mTLS. <a href="https://istio.io/latest/docs/concepts/security/">R19 Istio Security</a>, <a href="https://istio.io/latest/docs/reference/config/security/authorization-policy/">R20 các trường Source và Operation</a></p>
+<pre><code class="language-yaml">apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: payment-mtls
+  namespace: boutique
+spec:
+  selector:
+    matchLabels:
+      app: paymentservice
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: payment-charge-from-checkout
+  namespace: boutique
+spec:
+  selector:
+    matchLabels:
+      app: paymentservice
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            serviceAccounts: [&quot;boutique/checkoutservice&quot;]
+      to:
+        - operation:
+            ports: [&quot;50051&quot;]
+            methods: [&quot;POST&quot;]
+            paths: [&quot;/hipstershop.PaymentService/Charge&quot;]
+</code></pre>
+<h2 id="chay-phep-thu-co-doi-chung">Chạy phép thử có đối chứng</h2>
+<ol>
+<li>Chuẩn bị mesh ở cluster lab và kiểm tra sidecar thực sự có mặt ở cả hai đầu. Chỉ thêm label injection cho namespace sẽ không sửa Pod đang chạy. Cần tạo lại workload theo cơ chế triển khai phù hợp. Kiểm tra controller, selector và proxy bằng các lệnh dưới đây. <a href="https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/">Istio sidecar installation</a></li>
+<li>Chạy đối chứng trước policy với <strong>cùng invocation gRPC</strong>, một lần từ checkout hợp lệ và một lần từ một client lab trong mesh có ServiceAccount khác. Dùng protobuf v0.10.7 và payload thử nghiệm. Đừng dùng một phép <code>nc</code> để kiểm tra quyền gọi RPC. Nếu dùng grpcurl, cung cấp protobuf khi server không có reflection. Thử riêng hành trình checkout qua frontend để phát hiện ảnh hưởng nghiệp vụ.</li>
+<li>Tách mTLS STRICT và AuthorizationPolicy thành hai lần thay đổi. Khi bản Istio hỗ trợ, thử authorization với annotation <code>istio.io/dry-run: "true"</code>; quan sát quyết định dự kiến rồi gỡ annotation để enforcement trong lab. Dry-run là tính năng thử nghiệm và cần kiểm tra đường log/metric đã cấu hình. <a href="https://istio.io/latest/docs/tasks/security/authorization/authz-dry-run/">Istio Dry Run</a></li>
+<li>Chạy lại hai client. Kỳ vọng checkout vẫn thực hiện được Charge, client mesh khác bị từ chối ở đích. Thử client ngoài mesh riêng để xem tác động của STRICT. Ghi status, log proxy cùng thời gian và nguồn, cùng kết quả nghiệp vụ.</li>
+<li>Nếu cả hai client lỗi, lần lượt kiểm tra lớp mạng, sidecar, mTLS, ServiceAccount, protocol/port và path. Khi hoàn tác, phục hồi đúng cấu hình trước lần chạy và xác nhận checkout lại.</li>
+</ol>
+<pre><code class="language-bash">kubectl config current-context
+kubectl -n boutique get pod -l app=paymentservice -o wide
+kubectl -n boutique get deploy checkoutservice \
+  -o jsonpath='{.spec.template.spec.serviceAccountName}'
+kubectl -n boutique get svc paymentservice -o yaml
+istioctl analyze -n boutique
+istioctl proxy-status
+# Lưu YAML ví dụ thành payment-policy.yaml và kiểm tra API trước khi áp thật.
+kubectl apply --dry-run=server -f payment-policy.yaml
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Kết quả</th>
+<th>Có thể kết luận gì?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TCP mở, gRPC bị từ chối và có log authorization khớp</td>
+<td>Kết nối lên được, policy đã từ chối yêu cầu được quan sát.</td>
+</tr>
+<tr>
+<td>TCP timeout từ cả checkout và probe</td>
+<td>Kiểm tra đường mạng hoặc listener trước khi kết luận về L7.</td>
+</tr>
+<tr>
+<td>Request hợp lệ chạy nhưng nguồn thử cũng qua</td>
+<td>Xem lại sidecar, selector, danh tính và mọi ALLOW áp dụng.</td>
+</tr>
+<tr>
+<td>Apply thành công, proxy chưa nhận cấu hình</td>
+<td>API đã nhận manifest. Cần đo thời điểm kết nối thử đổi hành vi.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Vì sao checkout và probe cần ServiceAccount khác nhau?</strong> Policy đọc danh tính peer từ chứng chỉ. Hai nguồn có cùng danh tính có thể được cấp cùng quyền.</li>
+<li><strong>Resource đã được API server chấp nhận thì đã có enforcement chưa?</strong> Cần chứng minh cấu hình đã đến lớp thực thi và lặp lại probe với đối chứng hợp lệ.</li>
+<li><strong>Tại sao test thêm đường mTLS trước authorization?</strong> Hai lớp có thể từ chối vì hai nguyên nhân khác nhau. Thay đổi từng lớp giúp tìm được nguyên nhân của kết quả.</li>
+</ol>
+<p>Tiếp theo <a href="11-phat-hien-bat-thuong.html">Phát hiện bất thường</a>.</p><div class="finish"><button class="button" data-complete="10-istio-policy-enforcement" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="08-du-lieu-va-thuc-nghiem.html">← Từ log đến thực nghiệm</a><a href="11-phat-hien-bat-thuong.html">Phát hiện bất thường →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#service-mesh-sidecar-va-mtls">Service mesh, sidecar và mTLS</a></li>
+<li><a href="#doc-mot-authorizationpolicy">Đọc một AuthorizationPolicy</a></li>
+<li><a href="#vi-du-checkout-goi-payment-trong-online-boutique">Ví dụ checkout gọi payment trong Online Boutique</a></li>
+<li><a href="#chay-phep-thu-co-doi-chung">Chạy phép thử có đối chứng</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

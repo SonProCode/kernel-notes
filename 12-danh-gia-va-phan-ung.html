@@ -1,0 +1,90 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đánh giá detector và phản ứng · Kernel Notes</title><meta name="description" content="Đo độ trễ, đánh giá luồng bị chặn và giữ checkout hoạt động trong từng lần thử.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-3">← Lộ trình học</a><div class="eyebrow">BÀI 11 · TUẦN 3 · R18 · 5 PHÚT ĐỌC</div>
+<h1>Đánh giá detector và phản ứng</h1><p>Đo độ trễ, đánh giá luồng bị chặn và giữ checkout hoạt động trong từng lần thử.</p></header>
+<div class="shell reading"><article class="prose"><p>Mục tiêu tuần 3 là trả lời được hai câu hỏi trên cùng một lab: <strong>tín hiệu nào phát hiện hành vi mục tiêu</strong>, và <strong>policy chặn được gì trong khi vẫn giữ luồng checkout hợp lệ</strong>. Một công cụ có độ trễ thấp trong bài báo có thể khác khi chạy với hook, rule và tải của bạn.</p>
+<h2 id="r18-so-sanh-falco-tetragon-va-tracee">R18 so sánh Falco, Tetragon và Tracee</h2>
+<p>Bài của Aldien Asy Syairozi và Arizal so ba công cụ trong ba nhóm kịch bản: container escape, DoS và cloud cryptomining. Các phép đo gồm MTTD, detection rate, FPR, CPU và bộ nhớ. Trong bộ thử của tác giả, Tetragon phát hiện nhanh nhất ở hai nhóm container escape và cryptomining, Falco nhanh nhất ở DoS. Dùng bài làm mẫu cách thiết kế bảng đo theo từng kịch bản. Ba nhóm đó khác bài thử di chuyển ngang của đề tài, nên cần đo lại. Tên bài tại nhà xuất bản là <em>Comparative Analysis of eBPF-Based Runtime Security Monitoring Tools in Monitoring and Threat Detection on Kubernetes</em>. <a href="https://www.scitepress.org/Papers/2025/142727/142727.pdf">R18 bản gốc và bảng kết quả</a></p>
+<p><strong>MTTD</strong> là trung bình độ trễ phát hiện của các lần đã phát hiện, tính từ mốc bắt đầu hành vi đã quy ước đến alert đầu tiên khớp. Báo kèm tỷ lệ phát hiện và timeout để thấy số lần bị bỏ sót. Ví dụ, detector phát hiện 3/5 lần với các độ trễ 0,8, 1,1 và 1,4 giây thì MTTD của ba lần khớp là 1,1 giây, recall theo lần chạy là 60%. Hai lần còn lại ghi là bỏ sót tại thời hạn đã quy định. Dữ liệu này chỉ là minh họa. Xem thêm <a href="08-du-lieu-va-thuc-nghiem.html#danh-gia-bao-mat-va-hieu-nang">định nghĩa TP/FP và độ trễ</a>.</p>
+<h2 id="ma-tran-thi-nghiem-tuan-3">Ma trận thí nghiệm tuần 3</h2>
+<table>
+<thead>
+<tr>
+<th>Lần chạy</th>
+<th>Điều thay đổi</th>
+<th>Câu hỏi cần trả lời</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Ứng dụng và tải chuẩn</td>
+<td>Checkout thành công và mất bao lâu?</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Thêm collector và dữ liệu chuẩn hóa</td>
+<td>Event nào được thu và tỷ lệ thiếu metadata ra sao?</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Cùng dữ liệu chuẩn hóa, chạy rule cố định và detector bất thường</td>
+<td>Mô hình nào bắt được S2 hoặc S3 và cảnh báo nhầm bao nhiêu?</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Bật Istio và mTLS, giữ detector</td>
+<td>Chi phí thêm proxy là gì và đường mesh hoạt động ra sao?</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Bật AuthorizationPolicy đã kiểm tra</td>
+<td>Probe ngoài quyền bị từ chối không? Checkout còn thành công không?</td>
+</tr>
+<tr>
+<td>F</td>
+<td>Tùy chọn thử controller phản ứng ở chế độ audit rồi canary</td>
+<td>Sau alert bao lâu thì chặn thật, rollback có phục hồi luồng không?</td>
+</tr>
+</tbody>
+</table>
+<p>Cố định phiên bản, placement, workload, số replica, tần suất thử và lịch tải. Lặp lại theo run độc lập. So detector trên cùng input khi muốn đo tác động của <strong>thuật toán</strong>. Khi muốn so <strong>cả pipeline</strong> Falco và Tetragon, ghi rõ khác biệt giữa cấu hình, rule và dữ liệu mà từng công cụ nhận. Đo CPU/bộ nhớ collector và proxy theo node hoặc container nhất quán. Đo cả p95 request latency, throughput và số lần checkout lỗi.</p>
+<h2 id="phan-ung-tu-canh-bao-den-chan-co-kiem-chung">Phản ứng từ cảnh báo đến chặn có kiểm chứng</h2>
+<p>Phương án đề xuất cho lab:</p>
+<pre><code class="language-text">Telemetry → detector → cảnh báo có run_id và bằng chứng
+  → đối chiếu Pod UID, workload và ServiceAccount hiện tại
+  → quyết định của controller theo policy đã duyệt
+  → proxy hoặc lớp mạng thực thi
+  → probe hợp lệ và probe ngoài quyền kiểm chứng kết quả
+</code></pre>
+<p><strong>Ví dụ.</strong> Detector thấy shell trong recommendation rồi thấy nhiều lần thử tới payment. Tín hiệu đầu tiên tạo cảnh báo điều tra. Cảnh báo thứ hai tăng mức ưu tiên khi cùng Pod UID trong khoảng thời gian đã định. Với nguyên mẫu, controller có thể ghi đề xuất và chờ bước xác nhận của thí nghiệm trước khi áp thay đổi. Sau khi đổi cấu hình, thử lại Charge từ checkout và probe lab. Tác động đến quyền của source ServiceAccount có thể ảnh hưởng mọi Pod dùng danh tính đó; phép thử cần giới hạn scope theo mục tiêu đã định.</p>
+<p>Các trường nên lưu trong bản ghi quyết định gồm <code>event_ids</code>, <code>run_id</code>, <code>target_policy</code>, scope nguồn và đích, lý do, phiên bản trước/sau, thời điểm alert, thời điểm apply, thời điểm probe thấy từ chối và kết quả kiểm tra checkout. Controller chỉ có quyền sửa nhóm tài nguyên/policy được giao trong namespace lab. Khi nhận cùng alert nhiều lần, cập nhật một quyết định theo khóa cố định hoặc bỏ qua bản trùng để giữ trạng thái nhất quán. Ghi thời hạn và quy trình rollback cho quyết định phản ứng.</p>
+<p>Để tách kết quả, lưu cả <strong>cố gọi</strong>, <strong>bị policy từ chối</strong>, <strong>detector phát hiện</strong> và <strong>checkout hợp lệ thành công</strong>. Nếu policy chặn ngay trong lần chạy dùng để đo detector, chuỗi hành vi sau đó có thể không xảy ra. Dùng một pha quan sát và một pha enforcement khi cần so độ phủ phát hiện với hiệu quả chặn.</p>
+<h2 id="tu-kiem-tra">Tự kiểm tra</h2>
+<ol>
+<li><strong>Có 0 cảnh báo sai ở hai lần chạy bình thường, đã chứng minh FPR thấp chưa?</strong> Báo kích thước mẫu và tăng độ đa dạng đối chứng trước khi khái quát.</li>
+<li><strong>Nếu Istio chặn request nhưng detector bỏ sót, ghi thế nào?</strong> Ghi riêng policy chặn thành công và detector bỏ sót theo mục tiêu của lần chạy.</li>
+<li><strong>Tại sao cần đo luồng checkout sau rollback?</strong> Lần probe xác nhận hệ thống nghiệp vụ đã phục hồi sau thay đổi.</li>
+</ol>
+<h2 id="dau-ra-tuan-3">Đầu ra tuần 3</h2>
+<ul>
+<li>Manifest Istio có scope rõ, kèm bảng luồng cho phép và bị chặn.</li>
+<li>Một detector luật cố định và một detector đơn giản lấy cảm hứng từ R24 hoặc cạnh mạng mới theo R23.</li>
+<li>Hồ sơ run có ground truth, log và phép kiểm chứng phía đích. Bảng kết quả báo recall, precision, cảnh báo sai, MTTD, tác động tới checkout và chi phí.</li>
+<li>Tài liệu bàn giao ghi giả định, phần đã thử và việc còn cần kiểm chứng.</li>
+</ul>
+<p>Xem <a href="09-tra-cuu.html#muc-doc-theo-ma-r">danh mục nguồn</a>.</p><div class="finish"><button class="button" data-complete="12-danh-gia-va-phan-ung" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="11-phat-hien-bat-thuong.html">← Phát hiện bất thường</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#r18-so-sanh-falco-tetragon-va-tracee">R18 so sánh Falco, Tetragon và Tracee</a></li>
+<li><a href="#ma-tran-thi-nghiem-tuan-3">Ma trận thí nghiệm tuần 3</a></li>
+<li><a href="#phan-ung-tu-canh-bao-den-chan-co-kiem-chung">Phản ứng từ cảnh báo đến chặn có kiểm chứng</a></li>
+<li><a href="#tu-kiem-tra">Tự kiểm tra</a></li>
+<li><a href="#dau-ra-tuan-3">Đầu ra tuần 3</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

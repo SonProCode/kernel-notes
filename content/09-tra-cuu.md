@@ -36,7 +36,13 @@
 | R14 | Bài 6, driver, rule và JSON | [Falco Docs](../TaiLieu_Tuan1_Tuan2/PDF/R14-Falco-Documentation.pdf) · [Falco Rules](../TaiLieu_Tuan1_Tuan2/PDF/R14-Falco-Rules.pdf) |
 | R16 | Bài 7, process, file và kết nối | [Tetragon Docs](../TaiLieu_Tuan1_Tuan2/PDF/R16-Tetragon-Documentation.pdf) · [Tracing Policy](../TaiLieu_Tuan1_Tuan2/PDF/R16-Tetragon-Tracing-Policy.pdf) |
 
-[Mục lục đầy đủ 19 PDF](../TaiLieu_Tuan1_Tuan2/Muc_luc.html)
+| R18 | Tuần 3, so sánh collector và thiết kế phép đo | [Syairozi và Arizal — bài gốc](https://www.scitepress.org/Papers/2025/142727/142727.pdf) |
+| R19 | Tuần 3, danh tính và mTLS | [Istio Security](https://istio.io/latest/docs/concepts/security/) |
+| R20 | Tuần 3, cấu trúc và thứ tự policy | [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) |
+| R23 | Tuần 3, đồ thị giao tiếp và GNN | [GATAKU — bài gốc](https://digitalcollection.zhaw.ch/bitstreams/15ae5877-9515-4c65-9712-aa32a2a2cc89/download) |
+| R24 | Tuần 3, baseline tiến trình | [PROCATCH — bài gốc](https://conand.me/publications/elkhairi-procatch-2025.pdf) |
+
+[Mục lục PDF Tuần 1 và Tuần 2](../TaiLieu_Tuan1_Tuan2/Muc_luc.html)
 
 ## Mẫu bàn giao cho phiên phân tích tiếp theo
 
@@ -60,4 +66,3 @@ Giới hạn coverage hoặc trường còn thiếu
 Ví dụ yêu cầu phân tích cho một phiên sau: “Đọc bài 3 và bài 8 để lấy định nghĩa. Từ lần chạy lab-004, đối chiếu ground truth, log đúng node và policy đã lưu. Kiểm tra nguồn hợp lệ còn kết nối được không, xác định đơn vị tính chỉ số và ghi trường dữ liệu còn thiếu.”
 
 Về [mục lục học liệu](README.md).
-

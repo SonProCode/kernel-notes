@@ -1,6 +1,8 @@
 # Kernel Notes
 
-Blog tiếng Việt về Kubernetes, Zero Trust, di chuyển ngang và eBPF. Gồm tám bài học thực hành với Online Boutique và một trang tra cứu nguồn.
+Blog tiếng Việt về Kubernetes, Zero Trust, di chuyển ngang và eBPF. Gồm 11 bài học trong ba tuần với Online Boutique và một trang tra cứu nguồn.
+
+[Đọc Tuần 3 trên GitHub Pages](https://sonprocode.github.io/kernel-notes/#tuan-3)
 
 ## Chỉnh sửa bài
 
@@ -12,4 +14,3 @@ Trang lưu tiến độ trên trình duyệt. Hai ảnh trong `assets/` là minh
 
 - `hero.webp` — khối máy chủ kính xanh, góc nhìn 3/4, đường mạch đồng trên nền rừng tối, phong cách bìa tạp chí kỹ thuật.
 - `runtime.webp` — ảnh macro vi mạch graphite, đường tín hiệu xanh bạc hà và hổ phách, nền rừng tối.
-

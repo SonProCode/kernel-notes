@@ -16,6 +16,14 @@ ARTICLES = [
     ("06-falco", "Phát hiện với Falco", "Viết rule quan sát shell trong Pod và đọc cảnh báo JSON.", "R14", "terminal"),
     ("07-tetragon", "Quan sát với Tetragon", "Dùng TracingPolicy để hiểu tiến trình, truy cập file và kết nối.", "R16", "scope"),
     ("08-du-lieu-va-thuc-nghiem", "Từ log đến thực nghiệm", "Tạo baseline, gắn nhãn độc lập và tính precision, recall, độ trễ phát hiện.", "Thực hành", "chart"),
+    ("10-istio-policy-enforcement", "Thực thi chính sách với Istio", "Dùng mTLS và AuthorizationPolicy để chỉ cho checkout gọi Charge, rồi kiểm chứng bằng hai danh tính.", "R19 · R20", "shield"),
+    ("11-phat-hien-bat-thuong", "Phát hiện bất thường", "So sánh baseline tiến trình kiểu PROCATCH với đồ thị giao tiếp của microservices.", "R23 · R24", "scope"),
+    ("12-danh-gia-va-phan-ung", "Đánh giá detector và phản ứng", "Đo độ trễ, đánh giá luồng bị chặn và giữ checkout hoạt động trong từng lần thử.", "R18", "chart"),
+]
+WEEKS = [
+    (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
+    (3, 8, "Quan sát và thực hành", "Dựng lab, đọc telemetry và kiểm chứng giả thuyết."),
+    (8, len(ARTICLES), "Thực thi và phát hiện bất thường", "Giới hạn quyền gọi payment, xây detector và đo kết quả."),
 ]
 ICONS = {
     "layers":"M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5",
@@ -80,7 +88,7 @@ def article_html(slug):
     text = text.replace("../TaiLieu_Tuan1_Tuan2/R8-Online-Boutique-v0.10.7.zip", "https://github.com/GoogleCloudPlatform/microservices-demo/archive/refs/tags/v0.10.7.zip")
     text = text.replace("../TaiLieu_Tuan1_Tuan2/Muc_luc.html", "#muc-doc-theo-ma-r")
     text = text.replace("](README.md)", "](./)")
-    text = re.sub(r"\]\((\d{2}-[\w-]+)\.md(?:#([^)]*))?\)", lambda m:f"]({m[1]}.html" + ("#" + slugify(m[2]) if m[2] else "") + ")", text)
+    text = re.sub(r"\]\((?:\.\./HocLieu_Tuan1_Tuan2/)?(\d{2}-[\w-]+)\.md(?:#([^)]*))?\)", lambda m:f"]({m[1]}.html" + ("#" + slugify(m[2]) if m[2] else "") + ")", text)
     engine = markdown.Markdown(extensions=["fenced_code","tables","toc"], extension_configs={"toc":{"slugify":lambda value, separator:slugify(value)}})
     body = engine.convert("\n".join(text.splitlines()[1:]))
     return body, engine.toc
@@ -90,9 +98,12 @@ def slugify(value):
     ascii_value = unicodedata.normalize("NFKD",value.lower().replace("đ","d")).encode("ascii","ignore").decode()
     return re.sub(r"[^a-z0-9_-]+","-",ascii_value).strip("-")
 
+def week_for(index):
+    return next(week for week, (start, end, _, _) in enumerate(WEEKS, 1) if start <= index < end)
+
 def card(index, article):
     slug,title,desc,refs,key=article
-    week = 1 if index<3 else 2
+    week = week_for(index)
     return f"""<article class="card" data-week="{week}" data-search="{escape(title+' '+desc+' '+refs, quote=True)}">
 <div class="card-top"><span class="topic-icon">{icon(key)}</span><span class="card-number">BÀI {index+1:02d}</span></div>
 <h3><a href="{slug}.html">{escape(title)}</a></h3><p>{escape(desc)}</p>
@@ -100,16 +111,18 @@ def card(index, article):
 
 def home():
     groups=[]
-    for i,(a,b,title,desc) in enumerate([(0,3,"Nền tảng bảo mật","Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),(3,8,"Quan sát và thực hành","Dựng lab, đọc telemetry và kiểm chứng giả thuyết.")],1):
-        groups.append(f'<section class="week" data-group="{i}"><header><span>0{i}</span><div><h2>{title}</h2><p>{desc}</p></div></header><div class="cards">{"".join(card(j,ARTICLES[j]) for j in range(a,b))}</div></section>')
+    filter_buttons = []
+    for i,(a,b,title,desc) in enumerate(WEEKS,1):
+        groups.append(f'<section class="week" id="tuan-{i}" data-group="{i}"><header><span>{i:02d}</span><div><h2>{title}</h2><p>{desc}</p></div></header><div class="cards">{"".join(card(j,ARTICLES[j]) for j in range(a,b))}</div></section>')
+        filter_buttons.append(f'<button aria-pressed="false" data-filter="{i}">Tuần {i}</button>')
     body=f"""<section class="shell hero"><div class="hero-copy"><div class="kicker"><i></i> NHẬT KÝ HỌC BẢO MẬT CLOUD NATIVE</div>
 <h1>Bảo mật từ <em>kernel</em><br>đến Kubernetes<span class="mint">.</span></h1>
 <p>Học cách các microservice giao tiếp, lần theo dấu vết bằng eBPF và bảo vệ cluster với Zero Trust. Thực hành trên một cửa hàng mô phỏng.</p>
 <div class="hero-actions"><a class="button" href="{ARTICLES[0][0]}.html">Bắt đầu học <span>→</span></a><a class="quiet" href="#lo-trinh">Xem lộ trình ↘</a></div>
-</div><figure class="hero-visual"><img src="assets/hero.webp" alt="Các khối máy chủ xanh trong mô hình mạng phát sáng" decoding="async" fetchpriority="high"><figcaption><span>●</span> KERNEL LAB <b>01 / 02</b></figcaption></figure></section>
-<div class="shell facts"><div><b>02</b> tuần học</div><div><b>08</b> bài hướng dẫn</div><div><b>01</b> lab Online Boutique</div><div class="progress-tile"><span data-progress>0 / 8 bài đã đọc</span><progress value="0" max="8" aria-label="Tiến độ đọc"></progress></div></div>
+</div><figure class="hero-visual"><img src="assets/hero.webp" alt="Các khối máy chủ xanh trong mô hình mạng phát sáng" decoding="async" fetchpriority="high"><figcaption><span>●</span> KERNEL LAB <b>01 / {len(WEEKS):02d}</b></figcaption></figure></section>
+<div class="shell facts"><div><b>{len(WEEKS):02d}</b> tuần học</div><div><b>{len(ARTICLES):02d}</b> bài hướng dẫn</div><div><b>01</b> lab Online Boutique</div><div class="progress-tile"><span data-progress>0 / {len(ARTICLES)} bài đã đọc</span><progress value="0" max="{len(ARTICLES)}" aria-label="Tiến độ đọc"></progress></div></div>
 <section class="shell curriculum" id="lo-trinh"><div class="section-head"><div><div class="eyebrow">ĐỌC THEO THỨ TỰ HOẶC CHỌN CHỦ ĐỀ</div><h2>Lộ trình học</h2></div><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Tìm bài hoặc mã R…" aria-label="Tìm bài hoặc mã nguồn tham khảo"></label></div>
-<div class="filters" aria-label="Lọc theo tuần"><button aria-pressed="true" data-filter="all">Tất cả bài</button><button aria-pressed="false" data-filter="1">Tuần 1</button><button aria-pressed="false" data-filter="2">Tuần 2</button></div><p id="empty" hidden>Chưa tìm thấy bài phù hợp. Thử tên chủ đề hoặc mã R.</p>
+<div class="filters" aria-label="Lọc theo tuần"><button aria-pressed="true" data-filter="all">Tất cả bài</button>{"".join(filter_buttons)}</div><p id="empty" hidden>Chưa tìm thấy bài phù hợp. Thử tên chủ đề hoặc mã R.</p>
 {"".join(groups)}</section>"""
     return layout("Kernel Notes — Bảo mật Kubernetes & eBPF", body)
 
@@ -119,7 +132,7 @@ def article_page(index, record):
     cover = '<figure class="article-cover"><img src="assets/runtime.webp" alt="Vi mạch graphite với các đường tín hiệu xanh và hổ phách"></figure>' if slug == "05-ebpf-runtime-telemetry" else ""
     prev = f'<a href="{ARTICLES[index-1][0]}.html">← {escape(ARTICLES[index-1][1])}</a>' if index>0 else '<a href="./#lo-trinh">← Lộ trình</a>'
     next_link = f'<a href="{ARTICLES[index+1][0]}.html">{escape(ARTICLES[index+1][1])} →</a>' if index+1<len(ARTICLES) else '<a href="09-tra-cuu.html">Tra cứu →</a>'
-    return layout(title+" · Kernel Notes", f"""<div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#lo-trinh">← Lộ trình học</a><div class="eyebrow">BÀI {index+1:02d} · TUẦN {1 if index<3 else 2} · {refs} · {minutes(slug)} PHÚT ĐỌC</div>
+    return layout(title+" · Kernel Notes", f"""<div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-{week_for(index)}">← Lộ trình học</a><div class="eyebrow">BÀI {index+1:02d} · TUẦN {week_for(index)} · {refs} · {minutes(slug)} PHÚT ĐỌC</div>
 <h1>{escape(title)}</h1><p>{escape(desc)}</p></header>
 <div class="shell reading"><article class="prose">{cover}{body}<div class="finish"><button class="button" data-complete="{slug}" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề">{prev}{next_link}</nav></article><aside class="toc-panel"><h2>Trong bài này</h2>{toc}</aside></div>""",desc)
 
