@@ -1,0 +1,24 @@
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: lab.slot
+              operator: In
+              values: [w1, w2]
+
+tetragon:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  exportAllowList: |-
+    {"namespace":["boutique"],"event_set":["PROCESS_EXEC","PROCESS_EXIT","PROCESS_KPROBE"]}
+  prometheus:
+    enabled: true
+    metricsLabelFilter: "namespace,workload"
+    serviceMonitor:
+      enabled: true
+      extraLabels:
+        release: monitoring
+      scrapeInterval: 15s

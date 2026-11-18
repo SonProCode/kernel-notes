@@ -1,0 +1,41 @@
+alertmanager:
+  enabled: false
+
+# These control-plane endpoints are not exposed by the current K3s setup.
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+
+prometheus-node-exporter:
+  tolerations:
+    - operator: Exists
+      effect: NoSchedule
+
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    retention: 1d
+    retentionSize: 1GB
+    scrapeInterval: 30s
+    nodeSelector:
+      lab.slot: w2
+    resources:
+      requests:
+        cpu: 200m
+        memory: 384Mi
+
+grafana:
+  nodeSelector:
+    lab.slot: w1
+  persistence:
+    enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+

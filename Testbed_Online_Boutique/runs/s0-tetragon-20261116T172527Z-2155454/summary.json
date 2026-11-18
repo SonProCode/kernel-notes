@@ -1,0 +1,26 @@
+{
+  "run_id": "s0-tetragon-20261116T172527Z-2155454",
+  "start_utc": "2026-11-16T17:32:26+00:00",
+  "end_utc": "2026-11-16T17:47:26+00:00",
+  "total_events": 3,
+  "events_by_type": {
+    "process_exit": 3
+  },
+  "events_by_node": {
+    "lab-w1": 3,
+    "lab-w2": 0
+  },
+  "tcp_connect_attempts_by_node": {
+    "lab-w1": 0,
+    "lab-w2": 0
+  },
+  "events_by_workload": {
+    "redis-cart": 3
+  },
+  "quality_counts": {
+    "outside_window": 33
+  },
+  "agent_uids_and_restart_counts_unchanged": true,
+  "capture_stderr_empty": true,
+  "basic_capture_checks_passed": false
+}

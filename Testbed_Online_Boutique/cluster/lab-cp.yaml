@@ -1,0 +1,13 @@
+node-name: lab-cp
+node-ip: 192.168.141.142
+tls-san:
+  - 192.168.141.142
+agent-token-file: /etc/rancher/k3s/agent-join-secret
+flannel-backend: vxlan
+node-taint:
+  - "lab.role=control-plane:NoSchedule"
+disable:
+  - traefik
+  - servicelb
+  - local-storage
+flannel-iface: ens33

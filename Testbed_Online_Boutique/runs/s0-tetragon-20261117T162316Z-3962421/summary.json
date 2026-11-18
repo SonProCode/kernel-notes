@@ -1,0 +1,41 @@
+{
+  "run_id": "s0-tetragon-20261117T162316Z-3962421",
+  "start_utc": "2026-11-17T16:24:05+00:00",
+  "end_utc": "2026-11-17T16:25:05+00:00",
+  "total_events": 9318,
+  "events_by_type": {
+    "tcp_send": 9318
+  },
+  "events_by_node": {
+    "lab-w1": 5019,
+    "lab-w2": 4299
+  },
+  "tcp_connect_attempts_by_node": {
+    "lab-w1": 0,
+    "lab-w2": 0
+  },
+  "tcp_sends_by_node": {
+    "lab-w1": 5019,
+    "lab-w2": 4299
+  },
+  "events_by_workload": {
+    "loadgenerator": 164,
+    "frontend": 3627,
+    "cartservice": 555,
+    "redis-cart": 188,
+    "adservice": 240,
+    "checkoutservice": 245,
+    "currencyservice": 1322,
+    "productcatalogservice": 1901,
+    "emailservice": 143,
+    "recommendationservice": 636,
+    "paymentservice": 93,
+    "shippingservice": 204
+  },
+  "quality_counts": {
+    "outside_window": 6390
+  },
+  "agent_uids_and_restart_counts_unchanged": true,
+  "capture_stderr_empty": true,
+  "basic_capture_checks_passed": true
+}

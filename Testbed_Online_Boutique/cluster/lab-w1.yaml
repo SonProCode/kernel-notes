@@ -1,0 +1,7 @@
+server: https://192.168.141.142:6443
+token-file: /etc/rancher/k3s/agent-token
+node-name: lab-w1
+node-ip: 192.168.141.143
+node-label:
+  - "lab.slot=w1"
+flannel-iface: ens33

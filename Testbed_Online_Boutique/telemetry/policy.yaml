@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicyNamespaced
+metadata:
+  name: boutique-tcp-connect
+  namespace: boutique
+spec:
+  kprobes:
+    - call: tcp_connect
+      syscall: false
+      args:
+        - index: 0
+          type: sock
+    - call: tcp_sendmsg
+      syscall: false
+      args:
+        - index: 0
+          type: sock
+        - index: 2
+          type: int

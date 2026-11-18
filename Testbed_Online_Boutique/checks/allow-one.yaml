@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-one-client
+  namespace: policy-lab
+spec:
+  podSelector:
+    matchLabels:
+      app: lab-http
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              lab-client: allowed
+      ports:
+        - protocol: TCP
+          port: 8080
+

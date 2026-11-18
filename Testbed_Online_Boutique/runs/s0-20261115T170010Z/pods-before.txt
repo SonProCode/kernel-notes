@@ -1,0 +1,13 @@
+NAME                                     READY   STATUS    RESTARTS        AGE     IP           NODE     NOMINATED NODE   READINESS GATES
+adservice-cb86f4674-zkfcj                1/1     Running   0               3h26m   10.42.1.8    lab-w1   <none>           <none>
+cartservice-5d6d477c97-f7k2b             1/1     Running   0               3h26m   10.42.1.10   lab-w1   <none>           <none>
+checkoutservice-c857746d6-l72w2          1/1     Running   0               3h26m   10.42.1.9    lab-w1   <none>           <none>
+currencyservice-5cf4f495cc-hhl4q         1/1     Running   0               3h26m   10.42.2.4    lab-w2   <none>           <none>
+emailservice-6f4778fcc9-cznjr            1/1     Running   1 (3h26m ago)   3h26m   10.42.2.5    lab-w2   <none>           <none>
+frontend-74744cf5cf-ddkqg                1/1     Running   0               3h26m   10.42.1.12   lab-w1   <none>           <none>
+loadgenerator-78dfdbf5b9-2pssb           1/1     Running   0               105s    10.42.1.16   lab-w1   <none>           <none>
+paymentservice-5bf7b9bcff-6zttz          1/1     Running   0               3h26m   10.42.2.6    lab-w2   <none>           <none>
+productcatalogservice-77df4f5655-45t24   1/1     Running   0               3h26m   10.42.2.7    lab-w2   <none>           <none>
+recommendationservice-595cd688cf-wrgfd   1/1     Running   0               3h26m   10.42.2.9    lab-w2   <none>           <none>
+redis-cart-76f69bb74-86jxn               1/1     Running   0               3h26m   10.42.1.11   lab-w1   <none>           <none>
+shippingservice-59dbdddc8c-bw7dp         1/1     Running   0               3h26m   10.42.2.8    lab-w2   <none>           <none>

@@ -1,0 +1,173 @@
+{
+  "uid": "boutique-tetragon-s0",
+  "title": "Online Boutique · Runtime telemetry S0",
+  "tags": [
+    "boutique",
+    "tetragon"
+  ],
+  "schemaVersion": 39,
+  "version": 2,
+  "timezone": "utc",
+  "refresh": "15s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Số agent scrape thành công",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(up{namespace=\"telemetry\",service=\"tetragon\"} == 1) or vector(0)",
+          "legendFormat": "{{instance}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Sự kiện Boutique theo loại",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (event_type) (rate(tetragon_events_total{namespace=\"boutique\"}[2m]))",
+          "legendFormat": "{{event_type}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Hoạt động TCP theo workload và hook",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (workload, hook) (rate(tetragon_policy_events_total{namespace=\"boutique\",policy=\"boutique-tcp-connect\"}[2m]))",
+          "legendFormat": "{{workload}} · {{hook}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Lỗi export và mất sự kiện trong 5 phút",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(increase(tetragon_events_export_failed_total{service=\"tetragon\"}[5m]))",
+          "legendFormat": "Lỗi xuất"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(increase(tetragon_export_ratelimit_events_dropped_total{service=\"tetragon\"}[5m]))",
+          "legendFormat": "Vượt giới hạn export"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(increase(tetragon_observer_ringbuf_events_lost_total{service=\"tetragon\"}[5m]))",
+          "legendFormat": "Mất ở ring buffer"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(increase(tetragon_observer_ringbuf_queue_events_lost_total{service=\"tetragon\"}[5m]))",
+          "legendFormat": "Mất ở hàng đợi"
+        }
+      ]
+    }
+  ]
+}

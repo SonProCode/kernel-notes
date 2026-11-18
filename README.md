@@ -14,3 +14,17 @@ Trang lưu tiến độ trên trình duyệt. Hai ảnh trong `assets/` là minh
 
 - `hero.webp` — khối máy chủ kính xanh, góc nhìn 3/4, đường mạch đồng trên nền rừng tối, phong cách bìa tạp chí kỹ thuật.
 - `runtime.webp` — ảnh macro vi mạch graphite, đường tín hiệu xanh bạc hà và hổ phách, nền rừng tối.
+
+## Hướng dẫn lab và kết quả thực nghiệm
+
+Repo lưu blog, học liệu, tài liệu nguồn và các file triển khai thực tế.
+
+- [Hướng dẫn dựng Kubernetes và Online Boutique](Testbed_Online_Boutique/README.md)
+- [Prometheus, Grafana và baseline S0](Testbed_Online_Boutique/monitoring/README.md)
+- [GĐ3 và script Tetragon](Testbed_Online_Boutique/telemetry/README.md)
+- [Danh mục kết quả và cách mở log](Testbed_Online_Boutique/runs/README.md)
+- [Học liệu tuần 1–2](HocLieu_Tuan1_Tuan2/)
+- [Học liệu tuần 3](HocLieu_Tuan3/)
+- [Tài liệu tham khảo và bản PDF](TaiLieu_Tuan1_Tuan2/)
+
+Bản tổng hợp được đưa lên ngày 18/11/2026, giờ Việt Nam. Log chứa địa chỉ nội bộ và tên Pod của lab. File SHA256SUMS.txt trong thư mục testbed ghi mã kiểm tra của từng file thuộc testbed.
