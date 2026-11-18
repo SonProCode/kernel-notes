@@ -1,0 +1,9 @@
+{
+  "test_result": "failed_cleanup_with_old_runner",
+  "cause": "source staging used incorrect working directory; old runner lacked SIGTERM handler",
+  "loadgenerator_restored_to_zero": true,
+  "orphaned_collectors_terminated": [
+    "1704705",
+    "1704734"
+  ]
+}

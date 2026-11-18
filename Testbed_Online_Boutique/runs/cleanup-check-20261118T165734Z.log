@@ -1,0 +1,13 @@
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s0-20261118T165734Z-1707230
+setup
+warmup
+Traceback (most recent call last):
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 241, in <module>
+    run(args)
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 163, in run
+    pause(args.warmup)
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 75, in pause
+    time.sleep(min(2, max(0, deadline - time.monotonic())))
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 238, in interrupted
+    raise KeyboardInterrupt(f"Signal {signum}")
+KeyboardInterrupt: Signal 15

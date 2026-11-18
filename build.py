@@ -25,6 +25,7 @@ ARTICLES = [
     ("14-prometheus-grafana-s0", "Prometheus, Grafana và tải S0", "Cài bộ giám sát, mở dashboard và sinh traffic bình thường bằng Locust.", "Lab · S0", "chart"),
     ("15-tetragon-thu-telemetry", "Thu log Tetragon trên hai worker", "Hiểu từng bước cài agent, quan sát TCP và chạy script thu baseline 15 phút.", "GĐ3 · R16", "scope"),
     ("16-ket-qua-baseline", "Đọc kết quả baseline thực tế", "Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.", "GĐ3 · Kết quả", "pulse"),
+    ("17-gd4-thuc-nghiem", "GĐ4 · Tạo dữ liệu attack và normal", "Kế hoạch S1–S5, quy tắc nhãn và tiến độ pilot trên hai worker.", "GĐ4 · S1–S5", "terminal"),
 ]
 WEEKS = [
     (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
@@ -79,6 +80,7 @@ def layout(title, body, meta="Học bảo mật Kubernetes và eBPF từ đầu 
 </div></header><main id="main">{body}</main><footer class="shell footer"><a class="logo" href="./">{icon("layers")} Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>"""
 
 LAB_SOURCES = {
+    "17-gd4-thuc-nghiem": "Testbed_Online_Boutique/experiments/README.md",
     "13-lab-k3s-thuc-te": "Testbed_Online_Boutique/README.md",
     "14-prometheus-grafana-s0": "Testbed_Online_Boutique/monitoring/README.md",
     "15-tetragon-thu-telemetry": "Testbed_Online_Boutique/telemetry/README.md",
@@ -90,6 +92,9 @@ def read(slug):
         return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
     source = LAB_SOURCES[slug]
     text = (ROOT/source).read_text(encoding="utf-8-sig")
+    if slug == "17-gd4-thuc-nghiem":
+        progress = ROOT / "Testbed_Online_Boutique/experiments/RESULTS.md"
+        text += "\n\n" + progress.read_text(encoding="utf-8").replace("# Kết quả khởi động", "## Kết quả khởi động", 1)
     if slug == "16-ket-qua-baseline":
         report = ROOT / "Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/analysis/README.md"
         text += "\n\n" + report.read_text(encoding="utf-8").replace("# Phân tích baseline", "## Phân tích baseline", 1)

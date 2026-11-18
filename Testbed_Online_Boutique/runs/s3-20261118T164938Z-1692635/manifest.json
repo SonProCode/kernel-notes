@@ -1,0 +1,34 @@
+{
+  "schema_version": 3,
+  "run_id": "s3-20261118T164938Z-1692635",
+  "scenario_id": "S3",
+  "mode": "smoke",
+  "status": "completed",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 10,
+  "pre_seconds": 5,
+  "recovery_seconds": 5,
+  "measurement_seconds": 900,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "af845e1a7d8671141de278ac69e954b6412bc6f38bc36eb5d0f6bef48c810147",
+    "actor.py": "7fce8161cd3be05bfc3a291c94355307b8b3e56c26371cf8add34d184d7ff1df",
+    "label.py": "28df32a5e2c6144ab2e0102da831e44a44b3bd374d34f1fea8917ffc38392b84"
+  },
+  "git_commit": null,
+  "actor": {
+    "name": "gd4-1692635",
+    "uid": "feca63d2-c8b3-446c-ab8a-445e000aae72",
+    "ip": "10.42.1.24",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0"
+  },
+  "capture_start": "2026-11-18T16:49:57.653461+00:00",
+  "measurement_end": "2026-11-18T16:50:50.488478+00:00",
+  "finished": "2026-11-18T16:50:53.554039+00:00"
+}

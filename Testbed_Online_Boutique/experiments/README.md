@@ -339,3 +339,14 @@ Bắt đầu bằng ma trận giao tiếp kỳ vọng và phiên bản schema/ma
 
 Khi đường thu và nhãn đã được kiểm chứng, thực hiện S1 pilot. Kết quả pilot sẽ quyết định cấu hình cụ thể của những lượt chính thức.
 
+
+
+## Tiến độ triển khai ngày 18/11/2026
+
+Đã bắt đầu phần chuẩn bị tuần 11 và pilot S1. Hướng dẫn dùng bộ công cụ hiện tại nằm trong [IMPLEMENTATION.md](IMPLEMENTATION.md). Ma trận [expected-communications.csv](expected-communications.csv) có 17 cạnh cấu hình, gồm 16 cạnh tới dịch vụ đang triển khai và một cạnh tới thành phần tùy chọn.
+
+Hai lượt smoke file trên lab-w1 và lab-w2 đã đối chiếu được 3/3 thao tác đọc fixture ở mỗi lượt. Lượt S1 pilot đầu trên lab-w1 đã đối chiếu được 22/22 thao tác TCP và gán 22 sự kiện attack theo receipt. Đây là kết quả pilot với warm-up và cửa sổ trước/sau rút ngắn.
+
+Các kịch bản S2, chuỗi runtime abuse S3 đầy đủ, S4 và S5 nằm trong các bước tiếp theo. Bộ dữ liệu chính thức và các lượt lặp sẽ được thu sau khi kiểm chứng từng pilot.
+
+Báo cáo checkpoint và các lượt kiểm thử nằm trong [RESULTS.md](RESULTS.md).

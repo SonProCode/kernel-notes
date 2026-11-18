@@ -1,0 +1,28 @@
+{
+  "schema_version": 3,
+  "run_id": "s0-20261118T165734Z-1707230",
+  "scenario_id": "S0",
+  "mode": "smoke",
+  "status": "interrupted",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 300,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "measurement_seconds": 1,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "c7ce3e149d77dc44d501cc5d95ad0021b0953184c325899c7e88dff505ad5f33",
+    "actor.py": "7fce8161cd3be05bfc3a291c94355307b8b3e56c26371cf8add34d184d7ff1df",
+    "label.py": "6856dda4857c65360b42c4bf276e2f5e02f5b04c0d8e7f8645ae2eb3999adaae"
+  },
+  "git_commit": null,
+  "capture_start": "2026-11-18T16:57:35.316420+00:00",
+  "error": "KeyboardInterrupt: Signal 15",
+  "finished": "2026-11-18T16:57:55.287814+00:00"
+}

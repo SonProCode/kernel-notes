@@ -1,0 +1,28 @@
+{
+  "events_by_type": {
+    "tcp_send": 12087,
+    "process_exec": 8,
+    "process_exit": 8,
+    "tcp_connect_attempt": 32
+  },
+  "events_by_label": {
+    "unknown": 9033,
+    "normal": 3080,
+    "attack": 22
+  },
+  "events_by_node": {
+    "lab-w1": 6543,
+    "lab-w2": 5592
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 22,
+  "operations_with_matched_event": 22,
+  "unmatched_operations": [],
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}

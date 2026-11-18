@@ -1,0 +1,26 @@
+{
+  "schema_version": 3,
+  "run_id": "s0-20261118T165608Z-1704557",
+  "scenario_id": "S0",
+  "mode": "smoke",
+  "status": "running",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 300,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "measurement_seconds": 1,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "af845e1a7d8671141de278ac69e954b6412bc6f38bc36eb5d0f6bef48c810147",
+    "actor.py": "7fce8161cd3be05bfc3a291c94355307b8b3e56c26371cf8add34d184d7ff1df",
+    "label.py": "28df32a5e2c6144ab2e0102da831e44a44b3bd374d34f1fea8917ffc38392b84"
+  },
+  "git_commit": null,
+  "capture_start": "2026-11-18T16:56:09.523970+00:00"
+}

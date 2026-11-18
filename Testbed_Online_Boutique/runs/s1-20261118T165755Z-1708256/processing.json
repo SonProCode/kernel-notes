@@ -1,0 +1,7 @@
+{
+  "label_version": "v2",
+  "processed_at": "2026-11-18T17:00:01.493222+00:00",
+  "previous_archive_sha256": "2ace938f957af97d2f7559e5cc10cf7deb2a47a6ed4b4b54b962f2de2380464a",
+  "label_script_sha256": "9b34cf3711eb51880a6d7108dc773cfb9a520b6933bb1d095294ca57048adabb",
+  "reason": "Keep post-measurement collector tail in finalize phase with unknown label"
+}

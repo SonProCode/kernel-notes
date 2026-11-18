@@ -1,0 +1,3 @@
+{"operation_id": "file-0000", "kind": "file_read", "path": "/tmp/gd4-fixture/token", "started": "2026-11-18T16:50:42.455633+00:00", "ended": "2026-11-18T16:50:42.455841+00:00", "outcome": "read_completed", "byte_count": 19}
+{"operation_id": "file-0001", "kind": "file_read", "path": "/tmp/gd4-fixture/token", "started": "2026-11-18T16:50:43.456329+00:00", "ended": "2026-11-18T16:50:43.456729+00:00", "outcome": "read_completed", "byte_count": 19}
+{"operation_id": "file-0002", "kind": "file_read", "path": "/tmp/gd4-fixture/token", "started": "2026-11-18T16:50:44.457007+00:00", "ended": "2026-11-18T16:50:44.457261+00:00", "outcome": "read_completed", "byte_count": 19}
