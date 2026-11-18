@@ -1,0 +1,83 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prometheus, Grafana và tải S0 · Kernel Notes</title><meta name="description" content="Cài bộ giám sát, mở dashboard và sinh traffic bình thường bằng Locust.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 13 · LAB THỰC TẾ · Lab · S0 · 5 PHÚT ĐỌC</div>
+<h1>Prometheus, Grafana và tải S0</h1><p>Cài bộ giám sát, mở dashboard và sinh traffic bình thường bằng Locust.</p></header>
+<div class="shell reading"><article class="prose"><p>Chạy các lệnh trên <strong>192.168.141.142</strong>, trong <code>~/Testbed_Online_Boutique</code>. Cụm đã có metrics-server để chạy <code>kubectl top</code>. Bước này thêm <strong>Prometheus</strong> để giữ số liệu theo thời gian và <strong>Grafana</strong> để hiển thị chúng. Sau đó chạy tải người dùng bình thường bằng loadgenerator của Online Boutique.</p>
+<h2 id="1-xac-nhan-luong-mua-hang-truoc-khi-bat-tai">1 Xác nhận luồng mua hàng trước khi bật tải</h2>
+<p>Mở frontend bằng port-forward và SSH tunnel như ở bước 4. Thử <strong>xem sản phẩm → thêm vào giỏ → checkout giả lập</strong>. Ghi thành công hay thất bại và thời gian vào nhật ký. HTTP 200 ở trang chủ mới xác nhận đường truy cập tới frontend, còn checkout kiểm tra thêm các backend như payment và shipping.</p>
+<pre><code class="language-bash">sudo k3s kubectl -n boutique get pods -o wide
+sudo k3s kubectl -n boutique rollout status deployment/emailservice --timeout=60s
+</code></pre>
+<p>Một restart cũ của emailservice đã được ghi nhận trong lần khởi động. So sánh cột RESTARTS trước và sau pha đo. Tiếp tục khi các Pod đều Ready, checkout thành công và restart không tăng.</p>
+<h2 id="2-cai-prometheus-va-grafana">2 Cài Prometheus và Grafana</h2>
+<p>File <code>monitoring/values-s0.yaml</code> chọn một Prometheus trên worker 2, Grafana trên worker 1 và node exporter trên các node. Alertmanager cùng các scrape job của endpoint control-plane không dùng trong lab đã được tắt. Prometheus đặt retention tối đa theo thời gian 1 ngày và theo kích thước 1 GB. Bộ cấu hình này dùng dữ liệu tạm trong Pod, phù hợp lần thử S0 vì lab đang tắt provisioner local-storage. Xuất kết quả cần giữ trước khi xoá hoặc tạo lại Pod. <a href="https://prometheus-community.github.io/helm-charts/">Prometheus Community Helm Charts</a>, <a href="https://prometheus-operator.dev/docs/platform/storage/">Prometheus Operator Storage</a>.</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+ls monitoring/values-s0.yaml
+sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+sudo helm repo update
+sudo helm --kubeconfig /etc/rancher/k3s/k3s.yaml upgrade --install monitoring \
+  prometheus-community/kube-prometheus-stack \
+  --version 93.3.0 --namespace monitoring --create-namespace \
+  -f monitoring/values-s0.yaml --wait --timeout 10m
+sudo k3s kubectl -n monitoring get pods,svc -o wide
+</code></pre>
+<p>Nếu helm hết thời gian chờ, dùng <code>sudo k3s kubectl -n monitoring get events --sort-by=.metadata.creationTimestamp</code> và xem Pod nào Pending hoặc không kéo được image. Chỉ bắt đầu đo sau khi cả Prometheus và Grafana Ready.</p>
+<h2 id="3-kiem-tra-co-du-lieu-that">3 Kiểm tra có dữ liệu thật</h2>
+<p>Chạy hai port-forward trong hai phiên SSH riêng. Dùng tên Service từ <code>get svc</code> nếu bạn đổi tên release.</p>
+<pre><code class="language-bash">sudo k3s kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
+</code></pre>
+<pre><code class="language-bash">sudo k3s kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80
+</code></pre>
+<p>Từ PowerShell trên Windows, mở một tunnel cho cả hai cổng.</p>
+<pre><code class="language-powershell">ssh -N -L 9090:127.0.0.1:9090 -L 3000:127.0.0.1:3000 sonth32@192.168.141.142
+</code></pre>
+<ul>
+<li>Ở <strong>http://localhost:9090/targets</strong>, kiểm tra target kubelet/cAdvisor và node-exporter từ hai worker. Trong Prometheus, chạy <code>up</code>, rồi truy vấn <code>container_memory_working_set_bytes{namespace="boutique"}</code> để kiểm tra có dữ liệu ứng dụng.</li>
+<li>Ở <strong>http://localhost:3000</strong>, đăng nhập Grafana bằng user <code>admin</code> và đọc mật khẩu trong terminal riêng bằng lệnh dưới đây. Chọn dashboard Kubernetes hoặc Explore với datasource Prometheus. Xác minh đồ thị có dữ liệu cho namespace <code>boutique</code>. Không đưa mật khẩu vào biên bản. <a href="https://grafana.com/docs/grafana/latest/setup-grafana/installation/helm/">Grafana Helm</a>.</li>
+</ul>
+<pre><code class="language-bash">sudo k3s kubectl -n monitoring get secret monitoring-grafana \
+  -o jsonpath='{.data.admin-password}' | base64 --decode
+echo
+</code></pre>
+<h2 id="4-bat-traffic-binh-thuong-va-luu-ket-qua">4 Bật traffic bình thường và lưu kết quả</h2>
+<p>Bộ sinh tải v0.10.7 dùng Locust và gọi <code>frontend:80</code> <strong>từ trong cluster</strong>. Manifest đặt <code>USERS=10</code>, <code>RATE=1</code> và mỗi người dùng gửi yêu cầu theo hành trình của mẫu. Một replica loadgenerator chạy 10 người dùng ảo theo cấu hình này. Tunnel của trình duyệt có thể đóng khi thử tải.</p>
+<pre><code class="language-bash">RUNDIR=&quot;runs/s0-$(date -u +%Y%m%dT%H%M%SZ)&quot;
+mkdir -p &quot;$RUNDIR&quot;
+date -u | tee &quot;$RUNDIR/start.txt&quot;
+sudo k3s kubectl -n boutique get pods -o wide &gt; &quot;$RUNDIR/pods-before.txt&quot;
+sudo k3s kubectl top nodes &gt; &quot;$RUNDIR/nodes-before.txt&quot;
+sudo k3s kubectl -n boutique scale deployment/loadgenerator --replicas=1
+sudo k3s kubectl -n boutique rollout status deployment/loadgenerator --timeout=180s
+sudo k3s kubectl -n boutique logs deployment/loadgenerator --tail=30
+</code></pre>
+<p>Chờ khoảng <strong>2 phút warm-up</strong>, rồi quan sát <strong>15 phút</strong> cho lần thử đầu. Ghi thời gian UTC, thời lượng, 10 người dùng ảo, request rate, tỷ lệ lỗi và độ trễ từ Locust nếu log có các cột đó. Lưu CPU/RAM theo namespace từ Grafana, cùng số Pod restart và kết quả checkout thử. Prometheus mặc định đo node/container và trạng thái tài nguyên; để báo p95 <strong>request</strong> cần số liệu từ Locust hoặc nguồn đo ứng dụng tương ứng.</p>
+<pre><code class="language-bash">date -u | tee &quot;$RUNDIR/end.txt&quot;
+sudo k3s kubectl -n boutique logs deployment/loadgenerator &gt; &quot;$RUNDIR/locust.log&quot;
+sudo k3s kubectl -n boutique get pods -o wide &gt; &quot;$RUNDIR/pods-after.txt&quot;
+sudo k3s kubectl top nodes &gt; &quot;$RUNDIR/nodes-after.txt&quot;
+sudo k3s kubectl -n boutique scale deployment/loadgenerator --replicas=0
+</code></pre>
+<p>Nếu mở phiên SSH mới, đặt lại biến <code>RUNDIR</code> bằng đúng thư mục lần chạy trước khi lưu. Chụp màn hình hoặc xuất dữ liệu Grafana trước khi xóa stack hoặc thay Pod. Apply lại overlay Online Boutique cũng sẽ đưa loadgenerator về 0.</p>
+<p><strong>Tiêu chí hoàn thành S0.</strong> Checkout giả lập hoạt động, loadgenerator tạo được request bình thường có số liệu, Prometheus và Grafana quan sát được hai worker và Pod của <code>boutique</code>, và restart không tăng trong cửa sổ đo. Giữ các kết quả của lần này để so sánh khi thêm eBPF hoặc policy.</p>
+<h2 id="xem-lai-mot-lan-chay-khi-grafana-chua-hien-so-lieu">Xem lại một lần chạy khi Grafana chưa hiện số liệu</h2>
+<p>Vào <strong>Dashboards → Kubernetes / Compute Resources / Namespace (Pods)</strong>, chọn <strong>Prometheus</strong> và namespace <code>boutique</code>, rồi đặt khoảng thời gian trùng với lần chạy trong <code>start.txt</code> và <code>end.txt</code>. Nếu dashboard có ô Cluster để trống trong lab một cụm, giữ mặc định. CPU Usage và Memory Usage (w/o cache) là hai biểu đồ cần xem trước.</p>
+<p>Nếu dashboard trống, vào <strong>Explore → Prometheus → Code</strong>, chọn khoảng thời gian, chạy từng truy vấn:</p>
+<pre><code class="language-promql">sum by (pod) (container_memory_working_set_bytes{job=&quot;kubelet&quot;,metrics_path=&quot;/metrics/cadvisor&quot;,namespace=&quot;boutique&quot;,container!=&quot;&quot;,image!=&quot;&quot;}) / 1024 / 1024
+</code></pre>
+<pre><code class="language-promql">kube_deployment_status_replicas_available{namespace=&quot;boutique&quot;,deployment=&quot;loadgenerator&quot;}
+</code></pre>
+<p>Truy vấn đầu hiển thị RAM mỗi Pod theo MiB. Truy vấn thứ hai xác nhận thời điểm bộ sinh tải có một replica. Số request và độ trễ xem trong <code>locust.log</code>, vì cấu hình hiện tại chưa đưa metrics Locust vào Prometheus.</p><div class="finish"><button class="button" data-complete="14-prometheus-grafana-s0" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="13-lab-k3s-thuc-te.html">← Dựng cụm K3s trên ba VM</a><a href="15-tetragon-thu-telemetry.html">Thu log Tetragon trên hai worker →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-xac-nhan-luong-mua-hang-truoc-khi-bat-tai">1 Xác nhận luồng mua hàng trước khi bật tải</a></li>
+<li><a href="#2-cai-prometheus-va-grafana">2 Cài Prometheus và Grafana</a></li>
+<li><a href="#3-kiem-tra-co-du-lieu-that">3 Kiểm tra có dữ liệu thật</a></li>
+<li><a href="#4-bat-traffic-binh-thuong-va-luu-ket-qua">4 Bật traffic bình thường và lưu kết quả</a></li>
+<li><a href="#xem-lai-mot-lan-chay-khi-grafana-chua-hien-so-lieu">Xem lại một lần chạy khi Grafana chưa hiện số liệu</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

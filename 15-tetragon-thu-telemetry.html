@@ -1,0 +1,153 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thu log Tetragon trên hai worker · Kernel Notes</title><meta name="description" content="Hiểu từng bước cài agent, quan sát TCP và chạy script thu baseline 15 phút.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 14 · LAB THỰC TẾ · GĐ3 · R16 · 9 PHÚT ĐỌC</div>
+<h1>Thu log Tetragon trên hai worker</h1><p>Hiểu từng bước cài agent, quan sát TCP và chạy script thu baseline 15 phút.</p></header>
+<div class="shell reading"><article class="prose"><p>Mục tiêu của tuần 7–10 là lấy một bộ log đại diện cho traffic bình thường trong namespace <code>boutique</code> và có dashboard kiểm tra được đường thu dữ liệu. Bộ script dùng Tetragon <strong>1.8.0</strong> trên <code>lab-w1</code> và <code>lab-w2</code>, hai worker của cụm K3s. Tôi chọn Tetragon trước vì giai đoạn này cần nhìn thấy tiến trình và kết nối TCP theo workload. Nếu đề cương yêu cầu so sánh Falco, chạy Falco ở một lượt riêng với cùng tải để đo được ảnh hưởng của mỗi công cụ.</p>
+<table>
+<thead>
+<tr>
+<th>Tuần</th>
+<th>Công việc</th>
+<th>Kết quả cần thấy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td>Cài Tetragon trên hai worker và chạy hai Pod kiểm tra.</td>
+<td>Mỗi worker ghi được <code>process_exec</code>, <code>tcp_connect</code> và <code>tcp_sendmsg</code> từ Pod kiểm tra.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Chạy thử ngắn, sau đó đo một lượt S0 15 phút với Locust 10 user.</td>
+<td>Có log riêng của hai worker, mốc UTC, log Locust và snapshot cụm trước/sau.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Chuẩn hóa log thành NDJSON và kiểm tra dữ liệu thiếu.</td>
+<td>Có schema v2, số sự kiện theo node/workload và số kết nối thiếu đích.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Đọc dashboard, so lại với lượt S0 đã đo và lặp thêm các lượt cùng cấu hình.</td>
+<td>Có bộ log baseline, ảnh dashboard và ghi chú sự cố hoặc chênh lệch qua từng lượt.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="chay-tren-lab-cp">Chạy trên lab-cp</h2>
+<p>Từ Windows, mở SSH vào control-plane. Chạy các lệnh sau trong terminal của VM. Helm và Prometheus/Grafana dùng theo cụm hiện tại.</p>
+<pre><code class="language-bash">ssh sonth32@192.168.141.142
+cd ~/Testbed_Online_Boutique
+
+sudo bash telemetry/01-install.sh
+sudo bash telemetry/02-smoke.sh
+</code></pre>
+<h3 id="buoc-1-01-install-sh-lam-gi">Bước 1 · <code>01-install.sh</code> làm gì?</h3>
+<h4 id="1-kiem-tra-cum-va-tao-namespace-telemetry">1. Kiểm tra cụm và tạo namespace <code>telemetry</code></h4>
+<p>Script kiểm tra Helm, Python 3, trạng thái <code>Ready</code> của hai worker, nhãn <code>lab.slot</code> và hai namespace hiện có. <code>boutique</code> chứa ứng dụng Online Boutique, còn <code>monitoring</code> chứa Prometheus và Grafana. Script cũng kiểm tra cụm đã có CRD <code>ServiceMonitor</code>. CRD là định nghĩa giúp Kubernetes hiểu thêm một kiểu tài nguyên.</p>
+<p>Helm đọc kubeconfig của K3s để kết nối tới cụm. Cờ <code>--create-namespace</code> tạo <code>telemetry</code> nếu chưa có. Namespace là cách nhóm tài nguyên Kubernetes theo tên. Trong lab, <code>telemetry</code> là nơi đặt các thành phần quan sát của Tetragon. Helm dùng <code>upgrade --install</code> để cài release ở lần đầu và cập nhật release đó khi chạy lại. File <code>values-tetragon.yaml</code> chứa cấu hình riêng của lab. <a href="https://tetragon.io/docs/installation/kubernetes/">Cài Tetragon bằng Helm</a></p>
+<h4 id="2-dat-mot-agent-tetragon-tren-moi-worker">2. Đặt một agent Tetragon trên mỗi worker</h4>
+<p>Helm tạo một <strong>DaemonSet</strong>. DaemonSet đặt một Pod agent lên mỗi node phù hợp với bộ lọc <code>lab.slot</code>, ở đây là <code>lab-w1</code> và <code>lab-w2</code>. Agent chạy với quyền cần thiết để quan sát hoạt động trong kernel của chính worker đó. Ví dụ, nếu Pod <code>checkoutservice</code> nằm trên <code>lab-w1</code>, agent trên <code>lab-w1</code> ghi nhận sự kiện của tiến trình trong Pod đó.</p>
+<p>Sau khi Helm cài xong, script đợi DaemonSet triển khai rồi kiểm tra có một Pod agent <code>Ready</code> trên từng worker. Kết quả mong đợi là hai agent.</p>
+<h4 id="3-cho-prometheus-biet-cho-lay-so-lieu">3. Cho Prometheus biết chỗ lấy số liệu</h4>
+<ul>
+<li><strong>Service</strong> cung cấp đầu mối để Prometheus tìm các endpoint của hai agent. Mỗi agent cung cấp các bộ đếm ở đường dẫn <code>/metrics</code>.</li>
+<li><strong>ServiceMonitor</strong> chỉ cho Prometheus Operator biết Service nào cần theo dõi, đọc đường dẫn nào và đọc bao lâu một lần. Chart tạo ServiceMonitor với nhãn <code>release=monitoring</code> để bộ Prometheus của lab chọn đúng tài nguyên này.</li>
+<li><strong>Prometheus</strong> đọc từng endpoint mỗi 15 giây. Thao tác đọc định kỳ này gọi là <em>scrape</em>. Ví dụ, nếu bộ đếm tăng từ 100 lên 130 giữa hai lần đọc, Prometheus có thể tính tốc độ sự kiện từ mức tăng đó. <a href="https://tetragon.io/docs/installation/metrics/">Cấu hình metrics của Tetragon</a></li>
+</ul>
+<h4 id="4-ap-dung-policy-de-ghi-su-kien-tcp-trong-boutique">4. Áp dụng policy để ghi sự kiện TCP trong <code>boutique</code></h4>
+<p><code>policy.yaml</code> tạo một <code>TracingPolicyNamespaced</code> tên <code>boutique-tcp-connect</code> trong namespace <code>boutique</code>. Policy gắn hai điểm quan sát (<em>hook</em>) trong kernel. <code>tcp_connect</code> ghi lần thử mở kết nối mới. <code>tcp_sendmsg</code> ghi lúc tiến trình gửi dữ liệu qua TCP, kể cả khi kết nối đã được mở trong warm-up. Agent có thể ghi lại tiến trình, IP và cổng đích. Policy chạy ở chế độ quan sát. Một kết nối có thể được tái sử dụng cho nhiều request HTTP hoặc gRPC, vì vậy hãy dùng Locust khi cần đếm request.</p>
+<p>Script chạy <code>kubectl apply --dry-run=server</code> để nhờ Kubernetes kiểm tra manifest, sau đó mới lưu policy bằng <code>kubectl apply</code>. Bước 2 bên dưới kiểm tra agent thật sự ghi được sự kiện trên cả hai worker. <a href="https://tetragon.io/docs/concepts/tracing-policy/k8s-filtering/">Policy theo namespace</a>, <a href="https://tetragon.io/docs/use-cases/network-observability/">Quan sát kết nối TCP</a></p>
+<h4 id="5-nap-dashboard-vao-grafana">5. Nạp dashboard vào Grafana</h4>
+<p>Script đóng gói <code>dashboard.json</code> vào một <strong>ConfigMap</strong>, tài nguyên lưu cấu hình trong Kubernetes. ConfigMap nằm trong namespace <code>monitoring</code> và mang nhãn <code>grafana_dashboard=1</code>. Thành phần đi kèm Grafana theo dõi nhãn này và nạp dashboard <strong>Online Boutique · Runtime telemetry S0</strong>.</p>
+<pre><code class="language-text">Mỗi worker → Tetragon → /metrics → Prometheus → Grafana
+                     └→ export-stdout → 03-baseline.sh → file log theo worker
+</code></pre>
+<p>Trong Grafana, bạn xem tốc độ sự kiện theo loại hoặc workload. Khi cần xem một sự kiện cụ thể, chẳng hạn Pod nào đã thử kết nối tới IP và cổng nào, mở log mà <code>03-baseline.sh</code> thu từ từng agent.</p>
+<h3 id="buoc-2-kiem-tra-agent-thuc-su-ghi-log">Bước 2 · Kiểm tra agent thực sự ghi log</h3>
+<p><code>02-smoke.sh</code> tạo một Pod tạm trên mỗi worker và dùng <code>wget</code> gọi <code>http://frontend:80/</code> từ trong cụm. Script xác nhận log agent tương ứng có sự kiện chạy tiến trình, mở kết nối và gửi TCP từ đúng Pod kiểm tra. Pod tạm được dọn khi script kết thúc. Log kiểm tra nằm trong <code>runs/smoke-tetragon-*</code>.</p>
+<p>Tiếp theo, mở Grafana bằng tunnel hiện có tại <a href="http://localhost:3000">localhost:3000</a> và tìm dashboard <strong>Online Boutique · Runtime telemetry S0</strong>. Chờ panel <strong>Số agent scrape thành công</strong> lên <strong>2</strong>. Nếu hiện 0 hoặc 1, kiểm tra Prometheus Targets và đầu ra sau trước khi bắt đầu lần đo chính.</p>
+<pre><code class="language-bash">sudo k3s kubectl -n telemetry get pods,svc,endpointslice,servicemonitors -o wide
+sudo k3s kubectl -n telemetry describe servicemonitor tetragon
+sudo k3s kubectl -n monitoring get cm boutique-runtime-s0 --show-labels
+</code></pre>
+<h2 id="chay-tai-va-lay-log">Chạy tải và lấy log</h2>
+<p>Lượt S0 ngày 17/11/2026 đã phục vụ khoảng 1.983 request trong 15 phút. File chuẩn hóa có 3 sự kiện Redis. Cả 19 lần mở kết nối TCP ghi được trên <code>lab-w1</code> đều nằm trước cửa sổ đo. Từ schema v2, <code>tcp_send</code> cho biết workload vẫn trao đổi dữ liệu trong khoảng đo dù tái sử dụng kết nối. Xem hai hook trong panel <strong>Hoạt động TCP theo workload và hook</strong>. <a href="https://raw.githubusercontent.com/cilium/tetragon/v1.8.0/examples/tracingpolicy/tcp-connect.yaml">Ví dụ policy upstream</a></p>
+<p>Lượt thử schema v2 lúc 23:24–23:25 ngày 17/11/2026, giờ Việt Nam, thu được 9.318 sự kiện gửi TCP trong 60 giây (5.019 từ lab-w1 và 4.299 từ lab-w2). Các kiểm tra thu log đạt và loadgenerator đã về 0 replica. Thư mục trên lab-cp là <code>runs/s0-tetragon-20261117T162316Z-3962421</code>.</p>
+<p>Có thể chạy lượt ngắn để thử cả đường thu. Dùng lượt đủ 15 phút khi lập bộ log baseline.</p>
+<pre><code class="language-bash"># Chạy thử 1 phút sau 30 giây warm-up
+sudo env WARMUP_SECONDS=30 MEASURE_SECONDS=60 bash telemetry/03-baseline.sh
+
+# Chạy S0 chính thức với warm-up 400 giây và đo 900 giây
+sudo bash telemetry/03-baseline.sh
+</code></pre>
+<p>Chạy từng lượt tuần tự. Bắt đầu với <code>loadgenerator</code> ở 0 replica. Script bật nó lên 1 replica, đợi Locust báo đủ 10 user, chờ warm-up rồi mới ghi mốc bắt đầu đo. <code>RATE=1</code> là tốc độ tạo user ảo, tính theo user/giây. Tốc độ HTTP thực tế lấy từ Locust. Script đưa loadgenerator về 0 khi kết thúc hoặc khi nhận Ctrl+C. Giữ nguyên số user, phiên bản workload và đường sinh tải giữa các lượt. 400 giây warm-up được chọn gần với lượt S0 đã ghi trước đó. Mở Grafana ở chế độ UTC và chọn đúng khoảng trong <code>measure-start.txt</code> / <code>measure-end.txt</code>.</p>
+<table>
+<thead>
+<tr>
+<th>File trong <code>runs/s0-tetragon-*</code></th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>raw/lab-w1.ndjson</code>, <code>raw/lab-w2.ndjson</code></td>
+<td>Log gốc theo worker, gồm cả giai đoạn warm-up, và các file <code>.stderr</code> tương ứng.</td>
+</tr>
+<tr>
+<td><code>telemetry.ndjson</code></td>
+<td>Một sự kiện trên mỗi dòng JSON, chỉ trong khoảng đo <code>[start, end)</code>.</td>
+</tr>
+<tr>
+<td><code>summary.json</code></td>
+<td>Số sự kiện theo loại, workload và node. Có số dòng lỗi, số kết nối thiếu đích và kiểm tra agent có restart hay đổi Pod trong khi đo.</td>
+</tr>
+<tr>
+<td><code>scenario.txt</code>, <code>measure-*.txt</code>, <code>locust.log</code></td>
+<td>Tham số tải, giờ UTC và log Locust có timestamp. Các bảng Locust là thống kê tích lũy và có thể gồm warm-up. Đọc p95 cho đúng khoảng đo cần nguồn độ trễ có thể tách riêng khoảng này.</td>
+</tr>
+<tr>
+<td><code>boutique-*.json</code>, <code>agents-*.json</code>, <code>nodes-*.txt</code></td>
+<td>Snapshot Deployment, Pod, Service, EndpointSlice, agent và CPU/RAM tại hai mốc. Xem đồ thị CPU/RAM trong Grafana để đánh giá cả khoảng đo.</td>
+</tr>
+</tbody>
+</table>
+<p>Script chạy bằng root trên VM, nên dùng <code>sudo cat</code> hoặc <code>sudo less</code> để đọc thư mục kết quả. Log thô có thể chứa tham số lệnh và địa chỉ nội bộ. Giữ thư mục <code>runs/</code> trên lab hoặc trong nơi lưu dữ liệu nghiên cứu riêng.</p>
+<h2 id="doc-mot-su-kien">Đọc một sự kiện</h2>
+<p>Ví dụ minh họa theo schema v2 với địa chỉ IP giả định.</p>
+<pre><code class="language-json">{&quot;schema_version&quot;:2,&quot;timestamp&quot;:&quot;2026-11-16T09:00:00Z&quot;,&quot;source&quot;:&quot;tetragon&quot;,&quot;scenario&quot;:&quot;S0&quot;,&quot;run_id&quot;:&quot;s0-tetragon-example&quot;,&quot;event_type&quot;:&quot;tcp_connect_attempt&quot;,&quot;node&quot;:&quot;lab-w1&quot;,&quot;namespace&quot;:&quot;boutique&quot;,&quot;workload&quot;:&quot;checkoutservice&quot;,&quot;pod&quot;:&quot;checkoutservice-abc&quot;,&quot;pod_uid&quot;:&quot;example-uid&quot;,&quot;container&quot;:&quot;server&quot;,&quot;binary&quot;:&quot;/src/checkoutservice&quot;,&quot;exec_id&quot;:&quot;example-exec&quot;,&quot;policy&quot;:&quot;boutique-tcp-connect&quot;,&quot;socket&quot;:{&quot;src_ip&quot;:&quot;10.42.1.10&quot;,&quot;src_port&quot;:null,&quot;dst_ip&quot;:&quot;10.42.2.15&quot;,&quot;dst_port&quot;:50051},&quot;bytes_requested&quot;:null}
+</code></pre>
+<p>Sự kiện này cho biết tiến trình của <code>checkoutservice</code> trên <code>lab-w1</code> đã thử mở một kết nối TCP đến IP và cổng quan sát được ở kernel. Có thể tra IP với Service ClusterIP hoặc Pod IP trong snapshot của lượt đo. Nếu địa chỉ đã bị NAT, hãy ghi chú IP quan sát được và đối chiếu với EndpointSlice trước khi gán tên đích. Cổng nguồn có thể chưa được gán lúc hook chạy. Một kết nối HTTP/2 hoặc gRPC có thể phục vụ nhiều request, nên dùng Locust để đánh giá request/s và tỷ lệ lỗi HTTP. Sự kiện <code>tcp_send</code> có thêm <code>bytes_requested</code>, số byte tiến trình yêu cầu gửi tại thời điểm hook. Số này có thể khác số byte thực sự gửi thành công. Một lần gửi TCP có thể mang một phần request hoặc dữ liệu của nhiều request. Với <code>process_exec</code> hoặc <code>process_exit</code>, <code>socket</code> là <code>null</code>. Các trường vắng mặt trong dữ liệu gốc cũng ghi <code>null</code>. <a href="https://tetragon.io/docs/concepts/events/">Sự kiện Tetragon</a>, <a href="https://tetragon.io/docs/reference/metrics/">Metric Tetragon</a></p>
+<p>Đọc <code>summary.json</code> trước. Cần có ít nhất một sự kiện <code>tcp_send</code> trong cửa sổ đo từ mỗi worker, JSON và timestamp hợp lệ, agent không đổi Pod hoặc tăng restart, và không có lỗi từ các luồng thu. Xem thêm panel mất sự kiện và lỗi export trong cả khoảng đo. Nếu panel hiện <code>No data</code>, kiểm tra target và tên metric trong Prometheus trước khi diễn giải. Khi so với lượt S0 cũ, dùng số liệu của từng lượt, kiểm tra lỗi checkout và ghi chú lượt nào thiếu p95. Lưu ảnh dashboard cùng khoảng UTC để dễ đối chiếu.</p>
+<h2 id="dung-thu-khi-can">Dừng thu khi cần</h2>
+<p>Để gỡ các hook TCP và tiếp tục giữ agent, chạy từ thư mục testbed:</p>
+<pre><code class="language-bash">sudo k3s kubectl delete -f telemetry/policy.yaml
+</code></pre>
+<p>Để gỡ cả agent và dashboard:</p>
+<pre><code class="language-bash">sudo helm --kubeconfig /etc/rancher/k3s/k3s.yaml -n telemetry uninstall tetragon
+sudo k3s kubectl -n monitoring delete configmap boutique-runtime-s0 --ignore-not-found
+</code></pre><div class="finish"><button class="button" data-complete="15-tetragon-thu-telemetry" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="14-prometheus-grafana-s0.html">← Prometheus, Grafana và tải S0</a><a href="16-ket-qua-baseline.html">Đọc kết quả baseline thực tế →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#chay-tren-lab-cp">Chạy trên lab-cp</a><ul>
+<li><a href="#buoc-1-01-install-sh-lam-gi">Bước 1 · 01-install.sh làm gì?</a><ul>
+<li><a href="#1-kiem-tra-cum-va-tao-namespace-telemetry">1. Kiểm tra cụm và tạo namespace telemetry</a></li>
+<li><a href="#2-dat-mot-agent-tetragon-tren-moi-worker">2. Đặt một agent Tetragon trên mỗi worker</a></li>
+<li><a href="#3-cho-prometheus-biet-cho-lay-so-lieu">3. Cho Prometheus biết chỗ lấy số liệu</a></li>
+<li><a href="#4-ap-dung-policy-de-ghi-su-kien-tcp-trong-boutique">4. Áp dụng policy để ghi sự kiện TCP trong boutique</a></li>
+<li><a href="#5-nap-dashboard-vao-grafana">5. Nạp dashboard vào Grafana</a></li>
+</ul>
+</li>
+<li><a href="#buoc-2-kiem-tra-agent-thuc-su-ghi-log">Bước 2 · Kiểm tra agent thực sự ghi log</a></li>
+</ul>
+</li>
+<li><a href="#chay-tai-va-lay-log">Chạy tải và lấy log</a></li>
+<li><a href="#doc-mot-su-kien">Đọc một sự kiện</a></li>
+<li><a href="#dung-thu-khi-can">Dừng thu khi cần</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

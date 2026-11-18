@@ -4,6 +4,8 @@ import os
 import re
 import math
 import markdown
+import posixpath
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent
 CONTENT = ROOT / "content"
@@ -19,11 +21,16 @@ ARTICLES = [
     ("10-istio-policy-enforcement", "Thực thi chính sách với Istio", "Dùng mTLS và AuthorizationPolicy để chỉ cho checkout gọi Charge, rồi kiểm chứng bằng hai danh tính.", "R19 · R20", "shield"),
     ("11-phat-hien-bat-thuong", "Phát hiện bất thường", "So sánh baseline tiến trình kiểu PROCATCH với đồ thị giao tiếp của microservices.", "R23 · R24", "scope"),
     ("12-danh-gia-va-phan-ung", "Đánh giá detector và phản ứng", "Đo độ trễ, đánh giá luồng bị chặn và giữ checkout hoạt động trong từng lần thử.", "R18", "chart"),
+    ("13-lab-k3s-thuc-te", "Dựng cụm K3s trên ba VM", "Cấu hình ba máy, triển khai Online Boutique và kiểm tra luồng giao tiếp.", "Lab · R8", "shop"),
+    ("14-prometheus-grafana-s0", "Prometheus, Grafana và tải S0", "Cài bộ giám sát, mở dashboard và sinh traffic bình thường bằng Locust.", "Lab · S0", "chart"),
+    ("15-tetragon-thu-telemetry", "Thu log Tetragon trên hai worker", "Hiểu từng bước cài agent, quan sát TCP và chạy script thu baseline 15 phút.", "GĐ3 · R16", "scope"),
+    ("16-ket-qua-baseline", "Đọc kết quả baseline thực tế", "Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.", "GĐ3 · Kết quả", "pulse"),
 ]
 WEEKS = [
     (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
     (3, 8, "Quan sát và thực hành", "Dựng lab, đọc telemetry và kiểm chứng giả thuyết."),
-    (8, len(ARTICLES), "Thực thi và phát hiện bất thường", "Giới hạn quyền gọi payment, xây detector và đo kết quả."),
+    (8, 11, "Thực thi và phát hiện bất thường", "Giới hạn quyền gọi payment, xây detector và đo kết quả."),
+    (11, len(ARTICLES), "Lab thực tế và kết quả đo", "Thực hành trên ba VM, thu telemetry và đọc bộ baseline đã chạy."),
 ]
 ICONS = {
     "layers":"M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5",
@@ -67,12 +74,29 @@ def layout(title, body, meta="Học bảo mật Kubernetes và eBPF từ đầu 
 <link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
 <body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
 <a class="logo" href="./">{icon("layers")}<span>Kernel<span class="mint">Notes</span></span></a>
-<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="08-du-lieu-va-thuc-nghiem.html">Thực nghiệm</a></nav>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
 </div></header><main id="main">{body}</main><footer class="shell footer"><a class="logo" href="./">{icon("layers")} Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>"""
 
+LAB_SOURCES = {
+    "13-lab-k3s-thuc-te": "Testbed_Online_Boutique/README.md",
+    "14-prometheus-grafana-s0": "Testbed_Online_Boutique/monitoring/README.md",
+    "15-tetragon-thu-telemetry": "Testbed_Online_Boutique/telemetry/README.md",
+    "16-ket-qua-baseline": "Testbed_Online_Boutique/runs/README.md",
+}
+
 def read(slug):
-    return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
+    if slug not in LAB_SOURCES:
+        return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
+    source = LAB_SOURCES[slug]
+    text = (ROOT/source).read_text(encoding="utf-8-sig")
+    def repository_link(match):
+        target = match[1]
+        if target.startswith(("#", "http:", "https:", "mailto:")):
+            return match[0]
+        location = posixpath.normpath(posixpath.join(posixpath.dirname(source), target))
+        return "](https://github.com/SonProCode/kernel-notes/blob/main/" + quote(location, safe="/#") + ")"
+    return re.sub(r"\]\(([^)]+)\)", repository_link, text)
 
 def minutes(slug):
     return max(4, math.ceil(len(read(slug).split())/220))
@@ -114,13 +138,13 @@ def home():
     filter_buttons = []
     for i,(a,b,title,desc) in enumerate(WEEKS,1):
         groups.append(f'<section class="week" id="tuan-{i}" data-group="{i}"><header><span>{i:02d}</span><div><h2>{title}</h2><p>{desc}</p></div></header><div class="cards">{"".join(card(j,ARTICLES[j]) for j in range(a,b))}</div></section>')
-        filter_buttons.append(f'<button aria-pressed="false" data-filter="{i}">Tuần {i}</button>')
+        filter_buttons.append(f'<button aria-pressed="false" data-filter="{i}">{"Lab thực tế" if i == 4 else f"Tuần {i}"}</button>')
     body=f"""<section class="shell hero"><div class="hero-copy"><div class="kicker"><i></i> NHẬT KÝ HỌC BẢO MẬT CLOUD NATIVE</div>
 <h1>Bảo mật từ <em>kernel</em><br>đến Kubernetes<span class="mint">.</span></h1>
 <p>Học cách các microservice giao tiếp, lần theo dấu vết bằng eBPF và bảo vệ cluster với Zero Trust. Thực hành trên một cửa hàng mô phỏng.</p>
-<div class="hero-actions"><a class="button" href="{ARTICLES[0][0]}.html">Bắt đầu học <span>→</span></a><a class="quiet" href="#lo-trinh">Xem lộ trình ↘</a></div>
+<div class="hero-actions"><a class="button" href="{ARTICLES[0][0]}.html">Bắt đầu học <span>→</span></a><a class="quiet" href="16-ket-qua-baseline.html">Xem kết quả baseline ↗</a></div>
 </div><figure class="hero-visual"><img src="assets/hero.webp" alt="Các khối máy chủ xanh trong mô hình mạng phát sáng" decoding="async" fetchpriority="high"><figcaption><span>●</span> KERNEL LAB <b>01 / {len(WEEKS):02d}</b></figcaption></figure></section>
-<div class="shell facts"><div><b>{len(WEEKS):02d}</b> tuần học</div><div><b>{len(ARTICLES):02d}</b> bài hướng dẫn</div><div><b>01</b> lab Online Boutique</div><div class="progress-tile"><span data-progress>0 / {len(ARTICLES)} bài đã đọc</span><progress value="0" max="{len(ARTICLES)}" aria-label="Tiến độ đọc"></progress></div></div>
+<div class="shell facts"><div><b>{len(WEEKS):02d}</b> chặng học</div><div><b>{len(ARTICLES):02d}</b> bài hướng dẫn</div><div><b>01</b> lab Online Boutique</div><div class="progress-tile"><span data-progress>0 / {len(ARTICLES)} bài đã đọc</span><progress value="0" max="{len(ARTICLES)}" aria-label="Tiến độ đọc"></progress></div></div>
 <section class="shell curriculum" id="lo-trinh"><div class="section-head"><div><div class="eyebrow">ĐỌC THEO THỨ TỰ HOẶC CHỌN CHỦ ĐỀ</div><h2>Lộ trình học</h2></div><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Tìm bài hoặc mã R…" aria-label="Tìm bài hoặc mã nguồn tham khảo"></label></div>
 <div class="filters" aria-label="Lọc theo tuần"><button aria-pressed="true" data-filter="all">Tất cả bài</button>{"".join(filter_buttons)}</div><p id="empty" hidden>Chưa tìm thấy bài phù hợp. Thử tên chủ đề hoặc mã R.</p>
 {"".join(groups)}</section>"""
@@ -132,7 +156,7 @@ def article_page(index, record):
     cover = '<figure class="article-cover"><img src="assets/runtime.webp" alt="Vi mạch graphite với các đường tín hiệu xanh và hổ phách"></figure>' if slug == "05-ebpf-runtime-telemetry" else ""
     prev = f'<a href="{ARTICLES[index-1][0]}.html">← {escape(ARTICLES[index-1][1])}</a>' if index>0 else '<a href="./#lo-trinh">← Lộ trình</a>'
     next_link = f'<a href="{ARTICLES[index+1][0]}.html">{escape(ARTICLES[index+1][1])} →</a>' if index+1<len(ARTICLES) else '<a href="09-tra-cuu.html">Tra cứu →</a>'
-    return layout(title+" · Kernel Notes", f"""<div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-{week_for(index)}">← Lộ trình học</a><div class="eyebrow">BÀI {index+1:02d} · TUẦN {week_for(index)} · {refs} · {minutes(slug)} PHÚT ĐỌC</div>
+    return layout(title+" · Kernel Notes", f"""<div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-{week_for(index)}">← Lộ trình học</a><div class="eyebrow">BÀI {index+1:02d} · {"LAB THỰC TẾ" if week_for(index) == 4 else f"TUẦN {week_for(index)}"} · {refs} · {minutes(slug)} PHÚT ĐỌC</div>
 <h1>{escape(title)}</h1><p>{escape(desc)}</p></header>
 <div class="shell reading"><article class="prose">{cover}{body}<div class="finish"><button class="button" data-complete="{slug}" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề">{prev}{next_link}</nav></article><aside class="toc-panel"><h2>Trong bài này</h2>{toc}</aside></div>""",desc)
 
