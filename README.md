@@ -22,6 +22,7 @@ Repo lưu blog, học liệu, tài liệu nguồn và các file triển khai th�
 - [Hướng dẫn dựng Kubernetes và Online Boutique](Testbed_Online_Boutique/README.md)
 - [Prometheus, Grafana và baseline S0](Testbed_Online_Boutique/monitoring/README.md)
 - [GĐ3 và script Tetragon](Testbed_Online_Boutique/telemetry/README.md)
+- [Kế hoạch GĐ4 và thiết kế dữ liệu S1–S5](Testbed_Online_Boutique/experiments/README.md)
 - [Danh mục kết quả và cách mở log](Testbed_Online_Boutique/runs/README.md)
 - [Học liệu tuần 1–2](HocLieu_Tuan1_Tuan2/)
 - [Học liệu tuần 3](HocLieu_Tuan3/)
