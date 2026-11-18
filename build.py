@@ -90,6 +90,10 @@ def read(slug):
         return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
     source = LAB_SOURCES[slug]
     text = (ROOT/source).read_text(encoding="utf-8-sig")
+    if slug == "16-ket-qua-baseline":
+        report = ROOT / "Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/analysis/README.md"
+        text += "\n\n" + report.read_text(encoding="utf-8").replace("# Phân tích baseline", "## Phân tích baseline", 1)
+
     def repository_link(match):
         target = match[1]
         if target.startswith(("#", "http:", "https:", "mailto:")):

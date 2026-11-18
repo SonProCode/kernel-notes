@@ -5,7 +5,7 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 15 · LAB THỰC TẾ · GĐ3 · Kết quả · 4 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 15 · LAB THỰC TẾ · GĐ3 · Kết quả · 5 PHÚT ĐỌC</div>
 <h1>Đọc kết quả baseline thực tế</h1><p>Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.</p></header>
 <div class="shell reading"><article class="prose"><p>Các kết quả được sao chép từ thư mục runs trên lab-cp. Lượt baseline sơ bộ gần nhất dùng Tetragon với hai hook tcp_connect và tcp_sendmsg, 10 user ảo, warm-up 400 giây và đo 900 giây.</p>
 <p><a href="https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/dataset.tar.gz">Tải bộ log 15 phút · khoảng 17 MB</a> · <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/summary.json">Xem summary.json</a> · <a href="https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383">Xem tất cả file của lượt đo</a></p>
@@ -53,10 +53,199 @@ wc -l telemetry.ndjson
 <h2 id="kiem-tra-file-tai-ve">Kiểm tra file tải về</h2>
 <p>Từ thư mục Testbed_Online_Boutique:</p>
 <pre><code class="language-bash">sha256sum -c SHA256SUMS.txt
-</code></pre><div class="finish"><button class="button" data-complete="16-ket-qua-baseline" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="15-tetragon-thu-telemetry.html">← Thu log Tetragon trên hai worker</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+</code></pre>
+<h2 id="phan-tich-baseline-15-phut">Phân tích baseline 15 phút</h2>
+<p>Phân tích sự kiện tcp_send trong cửa sổ đo của lượt này. Đích được đối chiếu với Service ClusterIP, EndpointSlice của hai snapshot và IP nguồn có danh tính workload trong log. Việc suy ra phía server dựa trên cổng lắng nghe trong Service và EndpointSlice.</p>
+<p>Tổng cộng <strong>141,639</strong> sự kiện gửi TCP. Ánh xạ được <strong>132,163</strong> sự kiện tới một workload đích duy nhất. Có <strong>16</strong> luồng nguồn–đích–cổng gửi về phía server.</p>
+<table>
+<thead>
+<tr>
+<th>Nguồn</th>
+<th>Đích</th>
+<th style="text-align: right;">Cổng đích quan sát được</th>
+<th style="text-align: right;">Sự kiện gửi về phía server</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>frontend</td>
+<td>productcatalogservice</td>
+<td style="text-align: right;">3550</td>
+<td style="text-align: right;">23,036</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>currencyservice</td>
+<td style="text-align: right;">7000</td>
+<td style="text-align: right;">14,172</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>cartservice</td>
+<td style="text-align: right;">7070</td>
+<td style="text-align: right;">4,365</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>recommendationservice</td>
+<td style="text-align: right;">8080</td>
+<td style="text-align: right;">3,591</td>
+</tr>
+<tr>
+<td>recommendationservice</td>
+<td>productcatalogservice</td>
+<td style="text-align: right;">3550</td>
+<td style="text-align: right;">3,588</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>adservice</td>
+<td style="text-align: right;">9555</td>
+<td style="text-align: right;">2,798</td>
+</tr>
+<tr>
+<td>cartservice</td>
+<td>redis-cart</td>
+<td style="text-align: right;">6379</td>
+<td style="text-align: right;">2,643</td>
+</tr>
+<tr>
+<td>loadgenerator</td>
+<td>frontend</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">2,435</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>shippingservice</td>
+<td style="text-align: right;">50051</td>
+<td style="text-align: right;">1,328</td>
+</tr>
+<tr>
+<td>checkoutservice</td>
+<td>currencyservice</td>
+<td style="text-align: right;">7000</td>
+<td style="text-align: right;">604</td>
+</tr>
+<tr>
+<td>checkoutservice</td>
+<td>productcatalogservice</td>
+<td style="text-align: right;">3550</td>
+<td style="text-align: right;">498</td>
+</tr>
+<tr>
+<td>checkoutservice</td>
+<td>shippingservice</td>
+<td style="text-align: right;">50051</td>
+<td style="text-align: right;">431</td>
+</tr>
+<tr>
+<td>checkoutservice</td>
+<td>cartservice</td>
+<td style="text-align: right;">7070</td>
+<td style="text-align: right;">334</td>
+</tr>
+<tr>
+<td>frontend</td>
+<td>checkoutservice</td>
+<td style="text-align: right;">5050</td>
+<td style="text-align: right;">249</td>
+</tr>
+<tr>
+<td>checkoutservice</td>
+<td>emailservice</td>
+<td style="text-align: right;">5000</td>
+<td style="text-align: right;">234</td>
+</tr>
+<tr>
+<td>checkoutservice</td>
+<td>paymentservice</td>
+<td style="text-align: right;">50051</td>
+<td style="text-align: right;">166</td>
+</tr>
+</tbody>
+</table>
+<p>Số lần gửi bao gồm hoạt động giao thức trên socket. Một lần gửi có thể chứa một phần hoặc nhiều thông điệp. bytes_requested là kích thước yêu cầu gửi tại hook. File edges.csv cũng chứa chiều gửi từ server về client, thường có cổng đích tạm thời.</p>
+<p>Có 9476 sự kiện gửi tới IP chưa ánh xạ thành workload: 10.42.1.1 (2186 sự kiện), 10.42.2.1 (7290 sự kiện). Các địa chỉ này cần được đối chiếu với mạng CNI, kubelet và cấu hình probe. Phân loại chiều gửi dựa trên cổng là suy luận, cần kiểm chứng bằng cấu hình ứng dụng.</p>
+<h2 id="theo-tung-phut">Theo từng phút</h2>
+<table>
+<thead>
+<tr>
+<th>Phút tính từ mốc bắt đầu</th>
+<th style="text-align: right;">Sự kiện gửi TCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td style="text-align: right;">10,361</td>
+</tr>
+<tr>
+<td>1</td>
+<td style="text-align: right;">9,883</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">9,031</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">9,033</td>
+</tr>
+<tr>
+<td>4</td>
+<td style="text-align: right;">8,791</td>
+</tr>
+<tr>
+<td>5</td>
+<td style="text-align: right;">9,176</td>
+</tr>
+<tr>
+<td>6</td>
+<td style="text-align: right;">9,967</td>
+</tr>
+<tr>
+<td>7</td>
+<td style="text-align: right;">9,576</td>
+</tr>
+<tr>
+<td>8</td>
+<td style="text-align: right;">8,701</td>
+</tr>
+<tr>
+<td>9</td>
+<td style="text-align: right;">9,102</td>
+</tr>
+<tr>
+<td>10</td>
+<td style="text-align: right;">9,985</td>
+</tr>
+<tr>
+<td>11</td>
+<td style="text-align: right;">9,538</td>
+</tr>
+<tr>
+<td>12</td>
+<td style="text-align: right;">9,197</td>
+</tr>
+<tr>
+<td>13</td>
+<td style="text-align: right;">10,525</td>
+</tr>
+<tr>
+<td>14</td>
+<td style="text-align: right;">8,773</td>
+</tr>
+</tbody>
+</table>
+<h2 id="buoc-tiep-theo">Bước tiếp theo</h2>
+<p>Đối chiếu các luồng gửi về phía server với cấu hình và mã nguồn Online Boutique để xây danh sách giao tiếp kỳ vọng. Chạy một kịch bản thử có nhãn riêng, chẳng hạn Pod thử kết nối tới một dịch vụ ngoài danh sách giao tiếp kỳ vọng, rồi kiểm tra hệ thống ghi nhận được nguồn, đích và thời điểm. Lưu kết quả này cùng một lượt traffic bình thường để đánh giá phát hiện. Baseline hiện tại đại diện cho 10 user và cửa sổ 15 phút, nên các luồng vắng mặt cần được kiểm chứng thêm.</p><div class="finish"><button class="button" data-complete="16-ket-qua-baseline" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="15-tetragon-thu-telemetry.html">← Thu log Tetragon trên hai worker</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#mo-du-lieu-nen">Mở dữ liệu nén</a></li>
 <li><a href="#kiem-tra-file-tai-ve">Kiểm tra file tải về</a></li>
+<li><a href="#phan-tich-baseline-15-phut">Phân tích baseline 15 phút</a></li>
+<li><a href="#theo-tung-phut">Theo từng phút</a></li>
+<li><a href="#buoc-tiep-theo">Bước tiếp theo</a></li>
 </ul>
 </div>
 </aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

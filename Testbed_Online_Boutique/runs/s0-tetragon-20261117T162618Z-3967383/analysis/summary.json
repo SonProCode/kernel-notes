@@ -1,0 +1,37 @@
+{
+  "tcp_send_events": 141639,
+  "mapped_events": 132163,
+  "unresolved_destinations": [
+    {
+      "ip": "10.42.2.1",
+      "events": 7290
+    },
+    {
+      "ip": "10.42.1.1",
+      "events": 2186
+    }
+  ],
+  "direction_counts": {
+    "toward_server": 60472,
+    "toward_client": 81039,
+    "unclassified": 128
+  },
+  "distinct_server_edges": 16,
+  "events_per_minute": {
+    "0": 10361,
+    "1": 9883,
+    "2": 9031,
+    "3": 9033,
+    "4": 8791,
+    "5": 9176,
+    "6": 9967,
+    "7": 9576,
+    "8": 8701,
+    "9": 9102,
+    "10": 9985,
+    "11": 9538,
+    "12": 9197,
+    "13": 10525,
+    "14": 8773
+  }
+}
