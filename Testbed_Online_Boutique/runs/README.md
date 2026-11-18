@@ -2,6 +2,8 @@
 
 Các kết quả được sao chép từ thư mục runs trên lab-cp. Lượt baseline sơ bộ gần nhất dùng Tetragon với hai hook tcp_connect và tcp_sendmsg, 10 user ảo, warm-up 400 giây và đo 900 giây.
 
+[Tải bộ log 15 phút · khoảng 17 MB](https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/dataset.tar.gz) · [Xem summary.json](s0-tetragon-20261117T162618Z-3967383/summary.json) · [Xem tất cả file của lượt đo](https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383)
+
 | Thư mục | Kết quả |
 | --- | --- |
 | s0-tetragon-20261116T172527Z-2155454 | Đo 15 phút với hook mở kết nối. File chuẩn hóa có 3 sự kiện Redis. Các kết nối mới xuất hiện trước cửa sổ đo. Kiểm tra thu TCP không đạt. |
