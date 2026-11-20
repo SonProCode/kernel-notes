@@ -1,0 +1,17 @@
+{
+  "run_id": "s2-20261120T161015Z-1242543",
+  "mode": "pilot",
+  "actor_service_account": "gd4-1242543",
+  "legitimate_service_account": "checkoutservice",
+  "expected_callers_in_captured_matrix": [
+    "checkoutservice"
+  ],
+  "source_hashes_verified": 9,
+  "raw_network_events_verified": 34,
+  "rpc_operations_verified": 30,
+  "warmup_seconds": 30,
+  "pre_seconds": 10,
+  "recovery_seconds": 10,
+  "functional_pilot_checks_passed": true,
+  "research_scope": "S2 GĐ4 pilot; detector and mitigation effectiveness are assessed in later phases"
+}

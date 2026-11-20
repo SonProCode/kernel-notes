@@ -5,7 +5,7 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 17 · LAB THỰC TẾ · GĐ4 · S2 · 11 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 17 · LAB THỰC TẾ · GĐ4 · S2 · 12 PHÚT ĐỌC</div>
 <h1>S2 · Gọi API payment trái luồng</h1><p>Tái lập lời gọi gRPC và double check bằng phản hồi API, log server cùng Tetragon.</p></header>
 <div class="shell reading"><article class="prose"><p>Cập nhật ngày 20/11/2026, giờ Việt Nam.</p>
 <p>S2 giả lập một Pod thuộc vai trò ngoài checkout gọi trực tiếp API thanh toán của Online Boutique. Mục tiêu của GĐ4 là thực hiện được hành vi, ghi đầy đủ bằng chứng và tạo nhãn để dùng ở GĐ5. Chính sách chặn tự động sẽ được đánh giá ở GĐ6.</p>
@@ -332,7 +332,10 @@ sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
 <li><a href="https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s2-20261120T161240Z-1246649/dataset.tar.gz">Lượt 30 lời gọi từ w2</a></li>
 <li><a href="https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs">Tất cả lượt chạy và file JSON</a></li>
 </ul>
-<p>Archive chứa raw/, normalized.ndjson, labeled-windows.ndjson và source/ khi lượt đó có source snapshot. Các file manifest, receipt, log server và kết quả xác minh nằm riêng cạnh archive để đọc trực tiếp trên GitHub.</p><div class="finish"><button class="button" data-complete="18-s2-goi-api-trai-luong" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="17-gd4-thuc-nghiem.html">← GĐ4 · Tạo dữ liệu attack và normal</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<p>Archive chứa raw/, normalized.ndjson, labeled-windows.ndjson và source/ khi lượt đó có source snapshot. Các file manifest, receipt, log server và kết quả xác minh nằm riêng cạnh archive để đọc trực tiếp trên GitHub.</p>
+<h2 id="10-ra-soat-muc-dap-ung-de-cuong">10. Rà soát mức đáp ứng đề cương</h2>
+<p>Đã đối chiếu lại file đề cương cùng các dòng log gốc và identity trong snapshot. Kết quả hiện tại đáp ứng checkpoint chức năng S2 ở mức pilot GĐ4. Tập chính thức cần dùng cùng release và profile, bổ sung S0 theo schema mới và thực hiện các lượt lặp đã chốt trong kế hoạch. Các chỉ số detector và chặn sẽ đánh giá ở GĐ5/GĐ6.</p>
+<p>Xem <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S2-AUDIT.md">báo cáo rà soát S2</a> để biết phần đã chứng minh, các giới hạn và cách chạy s2_audit.py. Cờ passed của verifier xác nhận các kiểm tra đối chiếu dữ liệu đã thực hiện.</p><div class="finish"><button class="button" data-complete="18-s2-goi-api-trai-luong" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="17-gd4-thuc-nghiem.html">← GĐ4 · Tạo dữ liệu attack và normal</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#1-hanh-vi-duoc-mo-phong">1. Hành vi được mô phỏng</a></li>
 <li><a href="#2-nhung-file-da-bo-sung-hoac-cap-nhat">2. Những file đã bổ sung hoặc cập nhật</a></li>
@@ -346,6 +349,7 @@ sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
 <li><a href="#tai-bo-du-lieu">Tải bộ dữ liệu</a></li>
 </ul>
 </li>
+<li><a href="#10-ra-soat-muc-dap-ung-de-cuong">10. Rà soát mức đáp ứng đề cương</a></li>
 </ul>
 </div>
 </aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>
