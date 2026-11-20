@@ -1,0 +1,351 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S2 · Gọi API payment trái luồng · Kernel Notes</title><meta name="description" content="Tái lập lời gọi gRPC và double check bằng phản hồi API, log server cùng Tetragon.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 17 · LAB THỰC TẾ · GĐ4 · S2 · 11 PHÚT ĐỌC</div>
+<h1>S2 · Gọi API payment trái luồng</h1><p>Tái lập lời gọi gRPC và double check bằng phản hồi API, log server cùng Tetragon.</p></header>
+<div class="shell reading"><article class="prose"><p>Cập nhật ngày 20/11/2026, giờ Việt Nam.</p>
+<p>S2 giả lập một Pod thuộc vai trò ngoài checkout gọi trực tiếp API thanh toán của Online Boutique. Mục tiêu của GĐ4 là thực hiện được hành vi, ghi đầy đủ bằng chứng và tạo nhãn để dùng ở GĐ5. Chính sách chặn tự động sẽ được đánh giá ở GĐ6.</p>
+<h2 id="1-hanh-vi-duoc-mo-phong">1. Hành vi được mô phỏng</h2>
+<p>Luồng nghiệp vụ đã đối chiếu trong lab là checkoutservice → paymentservice:50051. Ma trận expected-communications.csv ghi nguồn chứng minh từ cấu hình và mã nguồn v0.10.7.</p>
+<p>Trong S2, runner tạo Pod gd4-<pid> với ServiceAccount riêng cùng tên, không gắn token tự động và không tạo RoleBinding. Pod này đóng vai nguồn ngoài quyền nghiệp vụ checkout. Nguồn gọi trực tiếp phương thức /hipstershop.PaymentService/Charge.</p>
+<p>Quy tắc quyền kỳ vọng được chốt trong manifest trước khi gọi API. Trong cấu hình hiện tại, paymentservice tiếp nhận được cuộc gọi đó vì việc thực thi quyền ở tầng L7 thuộc bước sau của luận văn.</p>
+<table>
+<thead>
+<tr>
+<th>Thuộc tính</th>
+<th>Giá trị</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ứng dụng</td>
+<td>Online Boutique v0.10.7</td>
+</tr>
+<tr>
+<td>API</td>
+<td>/hipstershop.PaymentService/Charge</td>
+</tr>
+<tr>
+<td>Đích</td>
+<td>Service paymentservice, TCP/50051</td>
+</tr>
+<tr>
+<td>Nguồn</td>
+<td>Pod actor riêng trong boutique, được đặt trên w1 hoặc w2</td>
+</tr>
+<tr>
+<td>Số gọi tối đa mỗi lượt</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Khoảng cách giữa các lần bắt đầu gọi</td>
+<td>Tối thiểu 2 giây, khi RPC chạy lâu thì lần sau đợi RPC trước hoàn tất</td>
+</tr>
+<tr>
+<td>Timeout mỗi RPC</td>
+<td>3 giây</td>
+</tr>
+<tr>
+<td>Retry cấu hình ở client</td>
+<td>Tắt qua grpc.enable_retries=0</td>
+</tr>
+<tr>
+<td>Kênh</td>
+<td>Dùng lại một kênh gRPC trong cả lượt</td>
+</tr>
+<tr>
+<td>Payload</td>
+<td>Dữ liệu thanh toán giả trong s2/fixture.json</td>
+</tr>
+<tr>
+<td>Bằng chứng API</td>
+<td>Mã gRPC OK và UUID transaction_id trong phản hồi</td>
+</tr>
+<tr>
+<td>Bằng chứng mạng</td>
+<td>Sự kiện TCP từ đúng Pod UID, tới đúng đích, trong thời gian RPC</td>
+</tr>
+<tr>
+<td>Bằng chứng phía server</td>
+<td>Log handler Charge có payload giả tương ứng và timestamp phù hợp</td>
+</tr>
+</tbody>
+</table>
+<p>Mã charge.js của phiên bản này kiểm tra dữ liệu thẻ và trả UUID cho giao dịch giả lập. Đã đối chiếu mã nguồn trước khi chạy. <a href="https://github.com/GoogleCloudPlatform/microservices-demo/blob/v0.10.7/protos/demo.proto">Proto v0.10.7</a>, <a href="https://github.com/GoogleCloudPlatform/microservices-demo/blob/v0.10.7/src/paymentservice/server.js">Handler gRPC</a>, <a href="https://github.com/GoogleCloudPlatform/microservices-demo/blob/v0.10.7/src/paymentservice/charge.js">Logic mock payment</a></p>
+<h2 id="2-nhung-file-da-bo-sung-hoac-cap-nhat">2. Những file đã bổ sung hoặc cập nhật</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Vai trò</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>runner.py</td>
+<td>Thêm S2, ServiceAccount tạm, giới hạn tài nguyên, target và cấu hình API trong manifest</td>
+</tr>
+<tr>
+<td>actor.py</td>
+<td>Gọi client S2 từ môi trường đã chuẩn bị trong Pod</td>
+</tr>
+<tr>
+<td>s2/client.py</td>
+<td>Client gRPC, tạo request giả, lưu mã trả về, UUID và payload hash cho từng thao tác</td>
+</tr>
+<tr>
+<td>s2/protos/demo.proto</td>
+<td>Proto nguyên bản từ archive v0.10.7, giữ thông tin bản quyền</td>
+</tr>
+<tr>
+<td>s2/fixture.json</td>
+<td>Định nghĩa dữ liệu giả, có fixture_id để đối chiếu</td>
+</tr>
+<tr>
+<td>s2/requirements.lock</td>
+<td>Phiên bản thư viện cùng SHA-256</td>
+</tr>
+<tr>
+<td>s2/wheels/</td>
+<td>Các wheel CPython 3.12 Linux x86_64 được tải từ PyPI</td>
+</tr>
+<tr>
+<td>s2/provenance.json</td>
+<td>Nguồn proto, phiên bản, danh sách wheel và hash</td>
+</tr>
+<tr>
+<td>s2_support.py</td>
+<td>Chuẩn bị client offline trong actor, sinh stub từ proto và lưu hash kết quả</td>
+</tr>
+<tr>
+<td>label.py</td>
+<td>Hỗ trợ receipt grpc_call và đối chiếu cả Service IP/Endpoint IP</td>
+</tr>
+<tr>
+<td>s2_verify.py</td>
+<td>Kiểm tra API, UUID, telemetry và log server</td>
+</tr>
+<tr>
+<td>check_cleanup.py</td>
+<td>Thêm kiểm thử SIGTERM cho S2, xác nhận Pod và ServiceAccount được dọn</td>
+</tr>
+</tbody>
+</table>
+<p>Client dùng grpcio=1.76.0, grpcio-tools=1.76.0 và protobuf=6.33.0. Các phụ thuộc còn lại được khóa trong requirements.lock. Bộ chuẩn bị cài từ wheel đi kèm bằng --no-index và --require-hashes, sau đó sinh demo_pb2.py và demo_pb2_grpc.py. s2-runtime.json của mỗi lượt ghi phiên bản thực tế và hash các file đã sinh.</p>
+<p>Tài nguyên actor S2 được đặt requests 50m CPU/64Mi RAM và limits 500m CPU/256Mi RAM để cài wheel và chạy gRPC. Actor chạy bằng UID 10000, không có capability bổ sung. Image Python được ghi cả image ID thực tế vào manifest.</p>
+<h2 id="3-runner-lam-gi-theo-thu-tu">3. Runner làm gì theo thứ tự</h2>
+<ol>
+<li>Giữ khóa chung với S0/S1 để tránh hai lượt chạy chồng nhau. Kiểm tra hai worker Ready, các agent và loadgenerator ở 0 replica.</li>
+<li>Tạo run_id và lưu manifest. Với S2, lưu bản sao các file nguồn và fixture vào source/ để kiểm tra lại đúng phiên bản của lượt chạy.</li>
+<li>Tạo ServiceAccount riêng và Pod actor trên worker được yêu cầu.</li>
+<li>Chuyển bộ wheel/proto/client vào actor, cài thư viện offline và sinh stub. Lưu s2-setup.log và s2-runtime.json.</li>
+<li>Chụp topology, trạng thái agent, CPU/RAM và snapshot Prometheus trước lượt chạy.</li>
+<li>Lấy Service IP và Endpoint IP của paymentservice làm danh sách đích có thể đối chiếu trong telemetry.</li>
+<li>Bắt đầu thu log Tetragon riêng từ hai worker.</li>
+<li>Bật Locust 10 user, RATE=1 và đợi đủ user. Thực hiện warm-up cùng pha pre_attack.</li>
+<li>Gọi Charge theo giới hạn đã chốt. Mỗi lời gọi tạo một receipt.</li>
+<li>Thu pha recovery, ghi measurement_end và chuyển sang finalize. Lưu log Locust và paymentservice.</li>
+<li>Đưa loadgenerator về 0, đóng collector, chụp trạng thái cuối và dọn Pod/ServiceAccount của lượt đó.</li>
+<li>Chuẩn hóa log, gán nhãn, chạy kiểm tra bằng chứng và lưu kết quả xác minh.</li>
+</ol>
+<p>Source snapshot và script_sha256 cho phép đối chiếu code khi thư mục trên VM được đồng bộ bằng SFTP và không có Git metadata. Nếu chạy từ Git checkout, manifest cũng ghi commit của checkout. Hash các file nguồn giúp nhận biết thay đổi cục bộ.</p>
+<h2 id="4-cach-chay-lai-tren-lab-cp">4. Cách chạy lại trên lab-cp</h2>
+<p>Trên VM hiện tại, bộ công cụ đã nằm trong thư mục testbed.</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+
+sudo k3s kubectl get nodes
+sudo k3s kubectl -n boutique get deployments loadgenerator paymentservice checkoutservice
+sudo k3s kubectl -n telemetry get pods
+</code></pre>
+<p>Lượt pilot 30 lời gọi, đặt nguồn trên worker thứ nhất.</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py \
+  --scenario S2 --mode pilot --node w1 \
+  --s2-calls 30 --warmup 30 --pre 10 --recovery 10
+</code></pre>
+<p>Chạy tuần tự lượt trên worker thứ hai.</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py \
+  --scenario S2 --mode pilot --node w2 \
+  --s2-calls 30 --warmup 30 --pre 10 --recovery 10
+</code></pre>
+<p>Runner in đường dẫn run ngay khi bắt đầu. Pilot dùng các pha ngắn để kiểm tra pipeline. Với lượt chính thức theo kế hoạch, giữ warm-up/pre/recovery mặc định.</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py \
+  --scenario S2 --mode official --node w1 --s2-calls 30
+</code></pre>
+<p>Thời gian thực phụ thuộc khởi động Pod, chuẩn bị thư viện và timeout. Lượt official dự kiến khoảng 12 phút cộng thời gian chuẩn bị, với warm-up 400 giây, pre_attack 120 giây, 30 lời gọi cách nhau ít nhất 2 giây và recovery 120 giây.</p>
+<h2 id="5-cac-buoc-double-check-mot-luot">5. Các bước double check một lượt</h2>
+<p>Ví dụ dưới đây dùng lượt thử 5 lời gọi đã có trên VM. Khi kiểm tra lượt khác, thay S2RUN bằng đường dẫn runner đã in và đọc số calls từ manifest.</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+S2RUN=&quot;runs/s2-20261120T160759Z-1238499&quot;
+
+sudo cat &quot;$S2RUN/manifest.json&quot;
+sudo cat &quot;$S2RUN/quality.json&quot;
+sudo python3 experiments/s2_verify.py &quot;$S2RUN&quot;
+</code></pre>
+<p>Đọc các giá trị sau trong kết quả xác minh.</p>
+<table>
+<thead>
+<tr>
+<th>Trường</th>
+<th>Điều kiện mong đợi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>expected_calls và receipts</td>
+<td>Bằng số calls đã cấu hình</td>
+</tr>
+<tr>
+<td>api_successes</td>
+<td>Mỗi receipt có grpc_code=OK, outcome=api_success</td>
+</tr>
+<tr>
+<td>unique_transaction_ids</td>
+<td>Đủ số UUID khác nhau từ phản hồi</td>
+</tr>
+<tr>
+<td>rpc_operations_with_network_event</td>
+<td>Mỗi thao tác API có ít nhất một sự kiện mạng khớp</td>
+</tr>
+<tr>
+<td>uniquely_correlated_server_calls</td>
+<td>Mỗi thao tác có đúng một log handler khớp payload và thời gian</td>
+</tr>
+<tr>
+<td>uncorrelated_operations, ambiguous_operations</td>
+<td>Danh sách rỗng</td>
+</tr>
+<tr>
+<td>passed</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<p>Xem trực tiếp các receipt và mối liên hệ với log server.</p>
+<pre><code class="language-bash">sudo head -n 2 &quot;$S2RUN/actor-receipts.ndjson&quot;
+sudo head -n 2 &quot;$S2RUN/server-matches.ndjson&quot;
+</code></pre>
+<p>server-matches.ndjson ghi số dòng trong paymentservice.log. Có thể dùng sed -n '<số dòng>p' để xem đúng dòng handler. Bộ đối chiếu dùng payload giả cùng cửa sổ thời gian RPC mở rộng 2 giây để dung sai clock/log giữa hai node. Payload có nanos khác nhau theo số thứ tự thao tác. Trường hợp nhiều dòng cùng khớp được đánh dấu ambiguous.</p>
+<p>Để xem một sự kiện mạng đã gán nhãn cùng operation_id, dùng Python chuẩn có sẵn.</p>
+<pre><code class="language-bash">sudo python3 - &quot;$S2RUN&quot; &lt;&lt;'PY'
+from pathlib import Path
+import json
+import sys
+
+run = Path(sys.argv[1])
+for line in (run / &quot;normalized.ndjson&quot;).open():
+    event = json.loads(line)
+    if event[&quot;label&quot;] == &quot;attack&quot; and event[&quot;operation_id&quot;]:
+        print(json.dumps(event, indent=2))
+        raw_path = run / event[&quot;raw_file&quot;]
+        for number, raw in enumerate(raw_path.open(), 1):
+            if number == event[&quot;raw_line&quot;]:
+                print(&quot;RAW EVENT&quot;)
+                print(json.dumps(json.loads(raw), indent=2))
+                break
+        break
+PY
+</code></pre>
+<p>Nếu dùng bản clone từ GitHub, giải nén dataset.tar.gz trong thư mục run trước khi đọc normalized/raw. Trên VM thí nghiệm, các file đó được runner lưu trực tiếp.</p>
+<pre><code class="language-bash">tar -xzf &quot;$S2RUN/dataset.tar.gz&quot; -C &quot;$S2RUN&quot;
+</code></pre>
+<h2 id="6-cach-hieu-nhan-s2">6. Cách hiểu nhãn S2</h2>
+<p>scenario_id=S2 mô tả bối cảnh lượt chạy. label=attack chỉ được gán cho sự kiện TCP từ đúng actor UID, tới Service IP hoặc Endpoint IP của payment, và nằm trong khoảng thực hiện một RPC đã ghi receipt.</p>
+<p>Bộ xử lý dùng label_version=v3. Các trường api_method_from_receipt và grpc_code_from_receipt lấy từ nhật ký client. Tetragon cung cấp bằng chứng mạng ở kernel, gồm tiến trình, Pod và socket. Phương thức gRPC được xác nhận thêm bằng client stub, phản hồi API và log handler server.</p>
+<p>Mỗi RPC có thể tương ứng nhiều sự kiện TCP. Kênh được tái sử dụng nên số lần mở kết nối mới cũng có thể thấp hơn số RPC. Đọc operations_with_matched_event để biết số thao tác đã đối chiếu được. Sự kiện thiếu căn cứ và traffic nền trong pha attack tiếp tục giữ unknown.</p>
+<p>Trong pha pre_attack/recovery, traffic nền được gán normal theo quy tắc bối cảnh hiện có. Phần sau measurement_end chuyển thành finalize/unknown. Các schema và nhãn của dataset lịch sử được giữ theo phiên bản đã công bố.</p>
+<h2 id="7-kiem-tra-cleanup">7. Kiểm tra cleanup</h2>
+<p>Sau một lượt bình thường, các lệnh sau cần cho thấy loadgenerator có 0 replica và tài nguyên tạm của lượt đã được dọn.</p>
+<pre><code class="language-bash">sudo k3s kubectl -n boutique get deployment loadgenerator
+sudo k3s kubectl -n boutique get pods -l app=gd4-actor
+sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
+</code></pre>
+<p>Có thể chạy kiểm thử SIGTERM của S2. Script dừng runner ở pha warm-up, kiểm tra manifest=interrupted, tải về 0 và Pod/ServiceAccount không còn. Lượt này được lưu riêng làm bằng chứng kiểm thử.</p>
+<pre><code class="language-bash">sudo python3 experiments/check_cleanup.py --scenario S2
+</code></pre>
+<h2 id="8-file-ket-qua-can-giu">8. File kết quả cần giữ</h2>
+<ul>
+<li>manifest.json, timeline.ndjson và source/ ghi cấu hình, pha và phiên bản thực hiện.</li>
+<li>actor-receipts.ndjson ghi từng lời gọi và phản hồi.</li>
+<li>paymentservice.log và server-matches.ndjson hỗ trợ đối chiếu handler.</li>
+<li>s2-verification.json ghi kết quả xác minh end-to-end.</li>
+<li>quality.json ghi chất lượng capture và độ phủ thao tác.</li>
+<li>raw/, normalized.ndjson và labeled-windows.ndjson lưu dữ liệu quan sát và nhãn.</li>
+<li>s2-setup.log, s2-runtime.json ghi môi trường client.</li>
+<li>Các snapshot trước/sau ghi topology, agent, tài nguyên và metric.</li>
+</ul>
+<p>Kết quả các lượt đã chạy được cập nhật trong phần báo cáo ở cuối trang. Các lượt pilot có pha rút ngắn và được ghi mode=pilot. Các lượt lặp official theo kế hoạch GĐ4 sẽ được phân biệt bằng manifest.</p>
+<h2 id="9-ket-qua-da-chay-ngay-20-11-2026">9. Kết quả đã chạy ngày 20/11/2026</h2>
+<p>Hai lượt pilot đủ 30 lời gọi trên w1 và w2 đều đạt toàn bộ các kiểm tra API, Tetragon và log server. Có thêm lượt pilot 5 lời gọi để thử client, lượt smoke 1 lời gọi để kiểm tra runner đã tích hợp verifier và lượt kiểm thử dừng giữa chừng.</p>
+<table>
+<thead>
+<tr>
+<th>Lượt chạy và file kiểm tra</th>
+<th>Worker nguồn</th>
+<th>Chế độ và trạng thái</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261120T160759Z-1238499/s2-verification.json">s2-20261120T160759Z-1238499</a></td>
+<td>w1</td>
+<td>pilot / completed</td>
+<td>5/5 API, 5 network, 5 server</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261120T161015Z-1242543/s2-verification.json">s2-20261120T161015Z-1242543</a></td>
+<td>w1</td>
+<td>pilot / completed</td>
+<td>30/30 API, 30 network, 30 server</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261120T161240Z-1246649/s2-verification.json">s2-20261120T161240Z-1246649</a></td>
+<td>w2</td>
+<td>pilot / completed</td>
+<td>30/30 API, 30 network, 30 server</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261120T161630Z-1252808/s2-verification.json">s2-20261120T161630Z-1252808</a></td>
+<td>w1</td>
+<td>smoke / completed</td>
+<td>1/1 API, 1 network, 1 server</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261120T161720Z-1254700/manifest.json">s2-20261120T161720Z-1254700</a></td>
+<td>w1</td>
+<td>smoke / interrupted</td>
+<td>Dừng chủ động ở warm-up; cleanup đạt</td>
+</tr>
+</tbody>
+</table>
+<p>Tổng cộng có 66 lời gọi mock Charge thành công trong bốn lượt hoàn tất. Mỗi lời gọi đều có UUID phản hồi, sự kiện mạng khớp và một dòng handler khớp payload/thời gian. Lượt dừng chủ động có status=interrupted và được giữ riêng.</p>
+<p>Trong hai lượt pilot 30 lời gọi, số sự kiện mạng được gán attack lần lượt là 34 và 35. Đây là số sự kiện TCP liên quan tới thao tác, trong khi số RPC đã xác nhận ở mỗi lượt là 30.</p>
+<p>Các lượt hoàn tất có dữ liệu cả hai worker, không có lỗi parse trong quality.json, agent giữ nguyên UID/restart và stderr của collector rỗng. paymentservice và checkoutservice giữ nguyên Pod UID/restart giữa hai snapshot. Ở các mốc đọc Prometheus trước/sau, hai agent up=1 và tám series counter mất sự kiện/lỗi export được kiểm tra có giá trị 0.</p>
+<p>Kiểm thử SIGTERM đã xác nhận tải trở về 0, Pod và ServiceAccount của đúng lượt được dọn. Dữ liệu lượt bị dừng vẫn được giữ để truy vết. Các lượt này dùng thời lượng pilot/smoke rút ngắn như manifest đã ghi.</p>
+<h3 id="tai-bo-du-lieu">Tải bộ dữ liệu</h3>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s2-20261120T161015Z-1242543/dataset.tar.gz">Lượt 30 lời gọi từ w1</a></li>
+<li><a href="https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s2-20261120T161240Z-1246649/dataset.tar.gz">Lượt 30 lời gọi từ w2</a></li>
+<li><a href="https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs">Tất cả lượt chạy và file JSON</a></li>
+</ul>
+<p>Archive chứa raw/, normalized.ndjson, labeled-windows.ndjson và source/ khi lượt đó có source snapshot. Các file manifest, receipt, log server và kết quả xác minh nằm riêng cạnh archive để đọc trực tiếp trên GitHub.</p><div class="finish"><button class="button" data-complete="18-s2-goi-api-trai-luong" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="17-gd4-thuc-nghiem.html">← GĐ4 · Tạo dữ liệu attack và normal</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-hanh-vi-duoc-mo-phong">1. Hành vi được mô phỏng</a></li>
+<li><a href="#2-nhung-file-da-bo-sung-hoac-cap-nhat">2. Những file đã bổ sung hoặc cập nhật</a></li>
+<li><a href="#3-runner-lam-gi-theo-thu-tu">3. Runner làm gì theo thứ tự</a></li>
+<li><a href="#4-cach-chay-lai-tren-lab-cp">4. Cách chạy lại trên lab-cp</a></li>
+<li><a href="#5-cac-buoc-double-check-mot-luot">5. Các bước double check một lượt</a></li>
+<li><a href="#6-cach-hieu-nhan-s2">6. Cách hiểu nhãn S2</a></li>
+<li><a href="#7-kiem-tra-cleanup">7. Kiểm tra cleanup</a></li>
+<li><a href="#8-file-ket-qua-can-giu">8. File kết quả cần giữ</a></li>
+<li><a href="#9-ket-qua-da-chay-ngay-20-11-2026">9. Kết quả đã chạy ngày 20/11/2026</a><ul>
+<li><a href="#tai-bo-du-lieu">Tải bộ dữ liệu</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

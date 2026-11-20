@@ -1,0 +1,13 @@
+{
+  "expected_calls": 5,
+  "receipts": 5,
+  "api_successes": 5,
+  "unique_transaction_ids": 5,
+  "rpc_operations_with_network_event": 5,
+  "uniquely_correlated_server_calls": 5,
+  "uncorrelated_operations": [],
+  "ambiguous_operations": [],
+  "clock_tolerance_seconds": 2,
+  "verifier_sha256": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+  "passed": true
+}

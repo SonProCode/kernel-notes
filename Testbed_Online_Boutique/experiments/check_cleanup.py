@@ -1,23 +1,27 @@
-"""Prove SIGTERM cleanup using a short S0 setup on the lab."""
+"""Prove SIGTERM cleanup for an S0 or S2 run on the lab."""
 from datetime import datetime, timezone
 import json
+import argparse
 from pathlib import Path
 import subprocess
 import time
 
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--scenario", choices=["S0", "S2"], default="S0")
+args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 started = {p.name for p in (root / "runs").iterdir() if p.is_dir()}
 log = root / "runs" / ("cleanup-check-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ".log")
 with log.open("w") as stream:
     process = subprocess.Popen(["python3", str(root / "experiments/runner.py"),
-                                "--scenario", "S0", "--mode", "smoke",
+                                "--scenario", args.scenario, "--mode", "smoke",
                                 "--warmup", "300", "--measurement", "1"],
                                stdout=stream, stderr=subprocess.STDOUT)
     try:
         deadline = time.monotonic() + 100
         run = None
         while time.monotonic() < deadline:
-            candidates = [p for p in (root / "runs").glob("s0-*") if p.name not in started]
+            candidates = [p for p in (root / "runs").glob(args.scenario.lower()+"-*") if p.name not in started]
             if candidates:
                 run = sorted(candidates)[-1]
                 timeline = run / "timeline.ndjson"
@@ -39,4 +43,17 @@ replicas = subprocess.check_output(["k3s","kubectl","-n","boutique","get","deplo
 manifest = json.loads((run / "manifest.json").read_text())
 assert replicas == "0", replicas
 assert manifest["status"] == "interrupted", manifest
+if args.scenario == "S2":
+    for kind in ("pods", "serviceaccounts"):
+        deadline = time.monotonic() + 60
+        while True:
+            response = json.loads(subprocess.check_output(
+                ["k3s","kubectl","-n","boutique","get",kind,
+                 "-l","experiment-run="+manifest["run_id"],"-o","json"],text=True))
+            if not response["items"]:
+                break
+            if time.monotonic() >= deadline:
+                raise AssertionError(f"Resources remain after cleanup: {kind}")
+            time.sleep(2)
+
 print("SIGTERM cleanup verified", run.name, "loadgenerator=0", "status=interrupted")

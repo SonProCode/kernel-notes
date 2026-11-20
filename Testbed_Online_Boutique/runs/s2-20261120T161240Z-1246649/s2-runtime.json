@@ -1,0 +1,15 @@
+{
+  "versions": {
+    "grpcio": "1.76.0",
+    "grpcio-tools": "1.76.0",
+    "protobuf": "6.33.0",
+    "setuptools": "84.2.1",
+    "typing_extensions": "4.16.0"
+  },
+  "generated_sha256": {
+    "demo_pb2_grpc.py": "289ce2d543eef4aef004b5c92e3f3720f6e9e4c76d12da12a9da01ed5b9a440a",
+    "demo_pb2.py": "25fdca84bdca1428c302a70cbdb277b403e06fd90cfab159d6e03f60d76dd8f2"
+  },
+  "bundle_sha256": "9b1580e18f51e5bc26bbc4ce372a270c34259b397c815257436d35cad6ad44b3",
+  "proto_sha256": "b1f2fa42c0a9305211bf51fba7d8b5832cd3defd7b8855c327ebd5b1f0f86884"
+}

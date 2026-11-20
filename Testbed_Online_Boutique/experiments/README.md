@@ -350,3 +350,5 @@ Hai lượt smoke file trên lab-w1 và lab-w2 đã đối chiếu được 3/3 
 Các kịch bản S2, chuỗi runtime abuse S3 đầy đủ, S4 và S5 nằm trong các bước tiếp theo. Bộ dữ liệu chính thức và các lượt lặp sẽ được thu sau khi kiểm chứng từng pilot.
 
 Báo cáo checkpoint và các lượt kiểm thử nằm trong [RESULTS.md](RESULTS.md).
+
+Ngày 20/11/2026 đã triển khai S2 gọi Charge bằng gRPC. Các bước chạy lại và xác minh từng lời gọi được ghi trong [S2.md](S2.md).

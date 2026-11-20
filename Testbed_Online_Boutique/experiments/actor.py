@@ -5,6 +5,7 @@ import ipaddress
 import json
 from pathlib import Path
 import socket
+import sys
 import time
 
 
@@ -12,7 +13,12 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def perform(scenario, targets):
+def perform(scenario, targets, calls=30):
+    if scenario == "S2":
+        sys.path.insert(0, "/tmp/gd4-s2")
+        from gd4_s2_client import perform as charge
+        charge(targets, calls)
+        return
     if scenario == "S3":
         path = Path("/tmp/gd4-fixture/token")
         for index in range(3):
@@ -54,7 +60,8 @@ def perform(scenario, targets):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("scenario", choices=["S1", "S3"])
+    parser.add_argument("scenario", choices=["S1", "S2", "S3"])
     parser.add_argument("--targets", default="[]")
+    parser.add_argument("--calls", type=int, default=30)
     args = parser.parse_args()
-    perform(args.scenario, json.loads(args.targets))
+    perform(args.scenario, json.loads(args.targets), args.calls)

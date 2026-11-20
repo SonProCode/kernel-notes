@@ -1,0 +1,9 @@
+Looking in links: /tmp/gd4-s2/wheels
+Processing /tmp/gd4-s2/wheels/grpcio-1.76.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /tmp/gd4-s2/requirements.lock (line 1))
+Processing /tmp/gd4-s2/wheels/grpcio_tools-1.76.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from -r /tmp/gd4-s2/requirements.lock (line 2))
+Processing /tmp/gd4-s2/wheels/protobuf-6.33.0-cp39-abi3-manylinux2014_x86_64.whl (from -r /tmp/gd4-s2/requirements.lock (line 3))
+Processing /tmp/gd4-s2/wheels/setuptools-84.2.1-py3-none-any.whl (from -r /tmp/gd4-s2/requirements.lock (line 4))
+Processing /tmp/gd4-s2/wheels/typing_extensions-4.16.0-py3-none-any.whl (from -r /tmp/gd4-s2/requirements.lock (line 5))
+Installing collected packages: typing_extensions, setuptools, protobuf, grpcio, grpcio_tools
+Successfully installed grpcio-1.76.0 grpcio_tools-1.76.0 protobuf-6.33.0 setuptools-84.2.1 typing_extensions-4.16.0
+{"versions": {"grpcio": "1.76.0", "grpcio-tools": "1.76.0", "protobuf": "6.33.0", "setuptools": "84.2.1", "typing_extensions": "4.16.0"}, "generated_sha256": {"demo_pb2_grpc.py": "289ce2d543eef4aef004b5c92e3f3720f6e9e4c76d12da12a9da01ed5b9a440a", "demo_pb2.py": "25fdca84bdca1428c302a70cbdb277b403e06fd90cfab159d6e03f60d76dd8f2"}}

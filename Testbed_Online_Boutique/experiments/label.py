@@ -27,8 +27,14 @@ def normalize(run):
     windows = {}
     index = {}
     for receipt in receipts:
-        key = (receipt.get("ip"), receipt.get("port")) if receipt["kind"] == "tcp_connect" else receipt["path"]
-        index.setdefault(key, []).append(receipt)
+        if receipt["kind"] == "grpc_call":
+            keys = [(ip(address), receipt["port"]) for address in receipt["target_ips"]]
+        elif receipt["kind"] == "tcp_connect":
+            keys = [(ip(receipt["ip"]), receipt["port"])]
+        else:
+            keys = [receipt["path"]]
+        for key in keys:
+            index.setdefault(key, []).append(receipt)
     with (run / "normalized.ndjson").open("w", encoding="utf-8") as out:
         for node in ("lab-w1", "lab-w2"):
             path = run / "raw" / f"{node}.ndjson"
@@ -74,9 +80,11 @@ def normalize(run):
                 if is_actor and operation and (
                     (kind == "tcp_connect_attempt" and operation["kind"] == "tcp_connect")
                     or (kind == "file_read_permission" and operation["kind"] == "file_read")
+                    or (kind in ("tcp_connect_attempt", "tcp_send") and operation["kind"] == "grpc_call")
                 ):
                     label = "attack" if manifest["mode"] != "smoke" else "unknown"
-                    evidence = "actor_uid_operation_time_target"
+                    evidence = ("actor_uid_rpc_time_target" if operation["kind"] == "grpc_call"
+                                else "actor_uid_operation_time_target")
                     coverage[operation["operation_id"]] += 1
                 labels[label] += 1
                 counts[kind] += 1
@@ -93,9 +101,11 @@ def normalize(run):
                     "parent_exec_id": (payload.get("parent") or {}).get("exec_id"),
                     "socket": sock, "file_path": file_path,
                     "kernel_return": payload.get("return"),
-                    "label": label, "evidence": evidence, "label_version": "v2",
+                    "label": label, "evidence": evidence, "label_version": "v3",
                     "operation_id": operation["operation_id"] if is_actor and operation else None,
-                    "raw_file": str(path.relative_to(run)), "raw_line": number,
+                    "raw_file": path.relative_to(run).as_posix(), "raw_line": number,
+                    "api_method_from_receipt": operation.get("method") if is_actor and operation else None,
+                    "grpc_code_from_receipt": operation.get("grpc_code") if is_actor and operation else None,
                 }
                 out.write(json.dumps(record, ensure_ascii=False) + "\n")
                 offset = int((when - timestamp(manifest["capture_start"])).total_seconds() // 10)
@@ -117,6 +127,8 @@ def normalize(run):
                "agent_state_unchanged": stable, "collector_stderr": errors,
                "operations": len(receipts), "operations_with_matched_event": len(coverage),
                "unmatched_operations": [r["operation_id"] for r in receipts if r["operation_id"] not in coverage]}
+    summary["api_successes"] = sum(r.get("outcome") == "api_success" for r in receipts)
+    summary["grpc_status_counts"] = dict(Counter(r["grpc_code"] for r in receipts if "grpc_code" in r))
     metrics = {}
     for stage in ("before", "after"):
         metric_path = run / f"metrics-{stage}.json"

@@ -2,7 +2,7 @@
 
 Ngày cập nhật 18/11/2026, giờ Việt Nam.
 
-Bản triển khai đầu tiên phục vụ phần chuẩn bị tuần 11 và pilot S1. runner.py hỗ trợ S0, S1 và kiểm thử đọc file của S3. Kế hoạch đầy đủ ở README.md mô tả các bước S2, S3 mở rộng, S4 và S5 sẽ triển khai tiếp.
+Bộ công cụ hiện hỗ trợ S0, S1, S2 và kiểm thử đọc file của S3. Hướng dẫn S2 cùng các bước double check nằm trong [S2.md](S2.md). Kế hoạch đầy đủ ở README.md mô tả các bước S2, S3 mở rộng, S4 và S5 sẽ triển khai tiếp.
 
 ## Thành phần đã triển khai
 
@@ -69,7 +69,7 @@ Lượt S0 mới dùng policy file đã cài và schema v3. Lệnh này mất kh
 
 ## Nhãn và giới hạn hiện tại
 
-Các bản ghi đã xử lý lại dùng label_version=v2, với pha finalize tách khỏi cửa sổ đo. Mỗi bản ghi có schema_version=3 và scenario_id lấy từ manifest. Các schema cũ tiếp tục được giữ trong dữ liệu lịch sử.
+Các bản ghi lịch sử đã xử lý lại dùng label_version=v2. Bộ xử lý hiện tại dùng label_version=v3 và bổ sung tương quan RPC cho S2, cùng đường dẫn raw_file dạng POSIX. Mỗi bản ghi có schema_version=3 và scenario_id lấy từ manifest. Các schema cũ tiếp tục được giữ trong dữ liệu lịch sử.
 
 - S1 gán attack khi Pod UID khớp actor, IP/cổng khớp receipt và timestamp nằm trong khoảng thực hiện operation.
 - Kiểm thử file đối chiếu thêm đường dẫn fixture và loại sự kiện.
@@ -97,4 +97,4 @@ Nếu xảy ra lỗi, xem manifest.error, actor.stderr và raw/*.stderr. Các l�
 
 ## Công việc tiếp theo
 
-Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape và các bộ đếm lỗi export/mất sự kiện tại hai mốc trước/sau. Cần đối chiếu các response gốc và khoảng scrape khi diễn giải mức mất dữ liệu. Sau pilot S1, bổ sung receipt/API cho S2, chuỗi shell/công cụ cho S3, receiver S5 và client đo request latency cho S4. Các lượt chính thức có nhãn được chạy sau khi từng pilot đã được kiểm chứng.
+Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape và các bộ đếm lỗi export/mất sự kiện tại hai mốc trước/sau. Cần đối chiếu các response gốc và khoảng scrape khi diễn giải mức mất dữ liệu. Sau pilot S2, bổ sung chuỗi shell/công cụ cho S3, receiver S5 và client đo request latency cho S4. Các lượt chính thức có nhãn được chạy sau khi từng pilot đã được kiểm chứng.

@@ -1,0 +1,40 @@
+{
+  "application_version": "v0.10.7",
+  "proto_source": "https://github.com/GoogleCloudPlatform/microservices-demo/blob/v0.10.7/protos/demo.proto",
+  "proto_sha256": "b1f2fa42c0a9305211bf51fba7d8b5832cd3defd7b8855c327ebd5b1f0f86884",
+  "mock_implementation": "https://github.com/GoogleCloudPlatform/microservices-demo/blob/v0.10.7/src/paymentservice/charge.js",
+  "package_source": "https://pypi.org",
+  "target_runtime": "CPython 3.12 Linux x86_64",
+  "wheels": [
+    {
+      "file": "grpcio-1.76.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "package": "grpcio",
+      "version": "1.76.0",
+      "sha256": "980a846182ce88c4f2f7e2c22c56aefd515daeb36149d1c897f83cf57999e0b6"
+    },
+    {
+      "file": "grpcio_tools-1.76.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "package": "grpcio_tools",
+      "version": "1.76.0",
+      "sha256": "30f1d2dda6ece285b3d9084e94f66fa721ebdba14ae76b2bc4c581c8a166535c"
+    },
+    {
+      "file": "protobuf-6.33.0-cp39-abi3-manylinux2014_x86_64.whl",
+      "package": "protobuf",
+      "version": "6.33.0",
+      "sha256": "35be49fd3f4fefa4e6e2aacc35e8b837d6703c37a2168a55ac21e9b1bc7559ef"
+    },
+    {
+      "file": "setuptools-84.2.1-py3-none-any.whl",
+      "package": "setuptools",
+      "version": "84.2.1",
+      "sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2"
+    },
+    {
+      "file": "typing_extensions-4.16.0-py3-none-any.whl",
+      "package": "typing_extensions",
+      "version": "4.16.0",
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a bounded S0/S1 pilot or S3 file smoke test on lab-cp."""
+"""Run bounded S0/S1/S2 experiments or the S3 file smoke test on lab-cp."""
 import argparse
 from datetime import datetime, timezone
 import fcntl
@@ -13,6 +13,8 @@ import time
 from urllib.parse import urlencode
 
 from label import normalize, write_json
+from s2_support import prepare_s2
+from s2_verify import verify_run
 
 ROOT = Path(__file__).resolve().parent
 
@@ -50,7 +52,7 @@ def run(args):
     print(f"Run: {output}", flush=True)
     actor_name = f"gd4-{os.getpid()}"
     collectors, handles = [], []
-    scaled, created = False, False
+    scaled, created, account_created = False, False, False
     manifest = {
         "schema_version": 3, "run_id": run_id, "scenario_id": args.scenario,
         "mode": args.mode, "status": "setup", "node": args.node,
@@ -61,10 +63,33 @@ def run(args):
         "script_sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                           for p in (ROOT / "runner.py", ROOT / "actor.py", ROOT / "label.py")},
     }
+    if args.scenario == "S2":
+        manifest["s2"] = {
+            "method": "/hipstershop.PaymentService/Charge",
+            "calls": args.s2_calls, "interval_seconds": 2,
+            "rpc_timeout_seconds": 3, "source_role": "gd4_non_checkout",
+            "expected_allowed_caller": "checkoutservice",
+            "access_expectation_source": "expected-communications.csv",
+            "fixture_id": "synthetic-payment-v1",
+        }
+        for path in (ROOT / "s2_support.py", ROOT / "s2_verify.py", ROOT / "s2/client.py",
+                     ROOT / "s2/protos/demo.proto", ROOT / "s2/requirements.lock",
+                     ROOT / "s2/fixture.json", ROOT / "expected-communications.csv"):
+            manifest["script_sha256"][path.relative_to(ROOT).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     try:
         manifest["git_commit"] = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
     except subprocess.CalledProcessError:
         manifest["git_commit"] = None
+    if args.scenario == "S2":
+        for relative in manifest["script_sha256"]:
+            source = ROOT / relative
+            target = output / "source" / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(source.read_bytes())
+        for relative in ("s2/provenance.json",):
+            target = output / "source" / relative
+            target.write_bytes((ROOT / relative).read_bytes())
+        manifest["source_snapshot"] = "source"
     write_json(output / "manifest.json", manifest)
     (output / "actor-receipts.ndjson").touch()
 
@@ -122,6 +147,19 @@ def run(args):
                                                  "capabilities": {"drop": ["ALL"]}},
                              "resources": {"requests": {"cpu": "20m", "memory": "32Mi"},
                                            "limits": {"cpu": "200m", "memory": "96Mi"}}}]}}
+            if args.scenario == "S2":
+                k("create", "-f", "-", input=json.dumps({
+                    "apiVersion": "v1", "kind": "ServiceAccount",
+                    "metadata": {"name": actor_name, "namespace": "boutique",
+                                 "labels": {"experiment-run": run_id}},
+                    "automountServiceAccountToken": False,
+                }))
+                account_created = True
+                actor["spec"]["serviceAccountName"] = actor_name
+                actor["spec"]["containers"][0]["resources"] = {
+                    "requests": {"cpu": "50m", "memory": "64Mi"},
+                    "limits": {"cpu": "500m", "memory": "256Mi"},
+                }
             k("create", "-f", "-", input=json.dumps(actor))
             created = True
             k("-n", "boutique", "wait", "--for=condition=Ready", f"pod/{actor_name}", "--timeout=120s")
@@ -131,7 +169,10 @@ def run(args):
 
             manifest["actor"] = {"name": actor_name, "uid": actual["metadata"]["uid"],
                                  "ip": actual["status"]["podIP"],
-                                 "image_id": actual["status"]["containerStatuses"][0]["imageID"]}
+                                 "image_id": actual["status"]["containerStatuses"][0]["imageID"],
+                                 "service_account": actual["spec"].get("serviceAccountName")}
+            if args.scenario == "S2":
+                manifest["s2_runtime"] = prepare_s2(actor_name, output)
         snapshot("before")
         targets = []
         if args.scenario == "S1":
@@ -139,6 +180,17 @@ def run(args):
                 for port in (svc["spec"]["ports"][0]["port"], 65000):
                     targets.append({"service": svc["metadata"]["name"],
                                     "ip": svc["spec"]["clusterIP"], "port": port})
+            manifest["targets"] = targets
+        if args.scenario == "S2":
+            service = get("-n", "boutique", "get", "service", "paymentservice")
+            endpoints = get("-n", "boutique", "get", "endpointslice",
+                            "-l", "kubernetes.io/service-name=paymentservice")
+            aliases = {service["spec"]["clusterIP"]}
+            for item in endpoints["items"]:
+                for endpoint in item["endpoints"]:
+                    aliases.update(endpoint["addresses"])
+            targets = [{"service": "paymentservice", "ip": service["spec"]["clusterIP"],
+                        "port": 50051, "target_ips": sorted(aliases)}]
             manifest["targets"] = targets
         manifest["capture_start"] = now()
         manifest["status"] = "running"
@@ -181,7 +233,8 @@ def run(args):
             pause(args.pre)
             mark("attack")
             command = ["-n", "boutique", "exec", "-i", actor_name, "-c", "actor",
-                       "--", "python3", "-", args.scenario, "--targets", json.dumps(targets)]
+                       "--", "python3", "-", args.scenario, "--targets", json.dumps(targets),
+                       "--calls", str(args.s2_calls)]
             # Capture the action stream even if the remote process fails partway.
             with (output / "actor-receipts.ndjson").open("w") as receipts, (output / "actor.stderr").open("w") as errors:
                 result = subprocess.run(["k3s", "kubectl", *command],
@@ -194,6 +247,10 @@ def run(args):
         manifest["measurement_end"] = now()
         mark("finalize")
         (output / "locust.log").write_text(k("-n", "boutique", "logs", "deployment/loadgenerator", "-c", "main", "--timestamps"))
+        if args.scenario == "S2":
+            (output / "paymentservice.log").write_text(
+                k("-n", "boutique", "logs", "deployment/paymentservice",
+                  "--since-time=" + manifest["capture_start"], "--timestamps"))
         manifest["status"] = "completed"
     except BaseException as error:
         manifest["status"] = "interrupted" if isinstance(error, KeyboardInterrupt) else "failed"
@@ -220,14 +277,26 @@ def run(args):
             write_json(output / "manifest.json", manifest)
             if created:
                 k("-n", "boutique", "delete", "pod", actor_name, "--ignore-not-found", "--wait=false")
+            if account_created:
+                k("-n", "boutique", "delete", "serviceaccount", actor_name, "--ignore-not-found")
     quality = normalize(output)
     valid_capture = quality["capture_checks_passed"]
     has_evidence = args.scenario == "S0" or quality["operations_with_matched_event"] > 0
+    if args.scenario == "S2":
+        has_evidence = (quality["operations"] == args.s2_calls
+                        and quality["operations_with_matched_event"] == args.s2_calls
+                        and quality["api_successes"] == args.s2_calls)
+    if args.scenario == "S2":
+        verification = verify_run(output)
+        manifest["s2_verification"] = verification
+        has_evidence = has_evidence and verification["passed"]
     manifest["dataset_status"] = "validated" if valid_capture and has_evidence else "failed_validation"
     manifest["matched_operations"] = quality["operations_with_matched_event"]
     write_json(output / "manifest.json", manifest)
     if not quality["capture_checks_passed"]:
         raise RuntimeError("Capture checks failed. See quality.json")
+    if args.scenario == "S2" and not has_evidence:
+        raise RuntimeError("S2 API or network evidence incomplete. See quality.json")
     if args.scenario != "S0" and quality["operations_with_matched_event"] == 0:
         raise RuntimeError("No operations matched. See quality.json")
     print(f"Completed: {output}", flush=True)
@@ -235,14 +304,17 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--scenario", required=True, choices=["S0", "S1", "S3"])
+    parser.add_argument("--scenario", required=True, choices=["S0", "S1", "S2", "S3"])
     parser.add_argument("--mode", choices=["pilot", "smoke", "official"], default="pilot")
     parser.add_argument("--node", choices=["w1", "w2"], default="w1")
     parser.add_argument("--warmup", type=int, default=400)
     parser.add_argument("--pre", type=int, default=120)
     parser.add_argument("--recovery", type=int, default=120)
     parser.add_argument("--measurement", type=int, default=900)
+    parser.add_argument("--s2-calls", type=int, default=30)
     args = parser.parse_args()
+    if not 1 <= args.s2_calls <= 30:
+        parser.error("--s2-calls must be between 1 and 30")
     if args.scenario == "S3" and args.mode != "smoke":
         parser.error("S3 currently implements the file smoke test. Use --mode smoke.")
     if min(args.warmup, args.pre, args.recovery, args.measurement) < 0:
