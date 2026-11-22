@@ -33,7 +33,7 @@ Kết quả mong đợi là 141642 dòng. Các file archive-notes.txt ghi thông
 
 ## Kiểm tra file tải về
 
-Từ thư mục Testbed_Online_Boutique:
+Trên bản clone GitHub đã tải đủ file, từ thư mục Testbed_Online_Boutique:
 
 ```bash
 sha256sum -c SHA256SUMS.txt
@@ -43,3 +43,10 @@ sha256sum -c SHA256SUMS.txt
 ## Pilot S3 runtime ngày 22/11/2026
 
 Hai lượt `s3-20261122T102500Z-378143` (w1) và `s3-20261122T102750Z-382892` (w2) đạt 18/18 thao tác mỗi lượt. Xem [hướng dẫn S3 và danh mục đầy đủ](../experiments/S3.md). Các archive mới giữ thêm `source/` để đối chiếu hash mã với manifest. Các lượt smoke lỗi và interrupted được giữ riêng và không tính là attack hoàn tất.
+
+
+## Rà soát S1–S3 và cách dùng cho người mới
+
+[Hướng dẫn bắt đầu](../experiments/USAGE.md) giải thích cách chạy và đọc kết quả. [Báo cáo rà soát 22/11](../experiments/REVIEW-S1-S2-S3.md) kiểm tra lại 10 pilot, gồm hai S1 mới đủ 22/22 trên mỗi worker, cùng smoke S2/S3 hồi quy. Các report giữ riêng trong experiments/audits; dữ liệu lịch sử không bị ghi lại bằng source hoặc nhãn mới.
+
+SHA256SUMS.txt trong repo mô tả bản xuất đã đóng gói. Thư mục làm việc trực tiếp trên VM có thể chứa raw thay cho archive và đã có lượt mới, nên cần đối chiếu manifest/source hash của từng run; không áp danh mục checksum của bản xuất lên mọi file sống trên VM.

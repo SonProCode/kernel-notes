@@ -1,6 +1,6 @@
 # Kernel Notes
 
-Blog tiếng Việt về Kubernetes, Zero Trust, di chuyển ngang và eBPF. Gồm 18 bài trong ba tuần học và phần lab thực tế, cùng một trang tra cứu nguồn.
+Blog tiếng Việt về Kubernetes, Zero Trust, di chuyển ngang và eBPF. Gồm 20 bài trong ba tuần học và phần lab thực tế, cùng một trang tra cứu nguồn.
 
 [Đọc Tuần 3 trên GitHub Pages](https://sonprocode.github.io/kernel-notes/#tuan-3)
 
@@ -37,6 +37,8 @@ Bản tổng hợp được đưa lên ngày 18/11/2026, giờ Việt Nam. Log c
 - [Thu log Tetragon trên hai worker](https://sonprocode.github.io/kernel-notes/15-tetragon-thu-telemetry.html)
 - [Kết quả baseline thực tế](https://sonprocode.github.io/kernel-notes/16-ket-qua-baseline.html)
 - [GĐ4 và tiến độ pilot](https://sonprocode.github.io/kernel-notes/17-gd4-thuc-nghiem.html)
+- [Bắt đầu sử dụng S1, S2, S3](https://sonprocode.github.io/kernel-notes/20-huong-dan-s1-s2-s3.html)
+- [S1 thăm dò Service và cổng](https://sonprocode.github.io/kernel-notes/21-s1-quet-service.html)
 - [S3 runtime abuse và hướng dẫn double check](https://sonprocode.github.io/kernel-notes/19-s3-runtime-abuse.html)
 - [S2 và hướng dẫn double check](https://sonprocode.github.io/kernel-notes/18-s2-goi-api-trai-luong.html)
 

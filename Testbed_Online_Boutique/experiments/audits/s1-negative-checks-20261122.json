@@ -1,0 +1,9 @@
+{
+  "original_22_of_22": true,
+  "missing_receipt_rejected": true,
+  "duplicate_receipt_rejected": true,
+  "missing_native_event_rejected": true,
+  "wrong_actor_uid_rejected": true,
+  "wrong_destination_rejected": true,
+  "wrong_timestamp_rejected": true
+}

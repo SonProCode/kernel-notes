@@ -1,0 +1,326 @@
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s1-20261122T131843Z-611505
+setup
+warmup
+pre_attack
+attack
+recovery
+finalize
+{
+  "events_by_type": {
+    "process_exec": 9,
+    "tcp_send": 7656,
+    "tcp_connect_attempt": 45,
+    "process_exit": 9
+  },
+  "events_by_label": {
+    "unknown": 5826,
+    "normal": 1871,
+    "attack": 22
+  },
+  "events_by_node": {
+    "lab-w1": 4140,
+    "lab-w2": 3579
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 22,
+  "operations_with_matched_event": 22,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "connect-0000": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0001": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0002": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0003": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0004": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0005": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0006": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0007": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0008": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0009": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0010": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0011": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0012": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0013": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0014": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0015": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0016": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0017": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0018": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0019": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0020": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0021": [
+      "tcp_connect_attempt"
+    ]
+  },
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s1-20261122T131843Z-611505
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s1-20261122T131941Z-613505
+setup
+warmup
+pre_attack
+attack
+recovery
+finalize
+{
+  "events_by_type": {
+    "tcp_send": 8328,
+    "process_exec": 9,
+    "process_exit": 9,
+    "tcp_connect_attempt": 32
+  },
+  "events_by_label": {
+    "unknown": 7098,
+    "normal": 1258,
+    "attack": 22
+  },
+  "events_by_node": {
+    "lab-w1": 4532,
+    "lab-w2": 3846
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 22,
+  "operations_with_matched_event": 22,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "connect-0000": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0001": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0002": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0003": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0004": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0005": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0006": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0007": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0008": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0009": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0010": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0011": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0012": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0013": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0014": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0015": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0016": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0017": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0018": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0019": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0020": [
+      "tcp_connect_attempt"
+    ],
+    "connect-0021": [
+      "tcp_connect_attempt"
+    ]
+  },
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s1-20261122T131941Z-613505
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s2-20261122T132039Z-615550
+setup
+warmup
+pre_attack
+attack
+recovery
+finalize
+{
+  "events_by_type": {
+    "tcp_send": 5981,
+    "process_exec": 8,
+    "process_exit": 9,
+    "tcp_connect_attempt": 11
+  },
+  "events_by_label": {
+    "unknown": 4248,
+    "normal": 1761
+  },
+  "events_by_node": {
+    "lab-w1": 3255,
+    "lab-w2": 2754
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 1,
+  "operations_with_matched_event": 1,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "charge-0000": [
+      "tcp_send"
+    ]
+  },
+  "api_successes": 1,
+  "grpc_status_counts": {
+    "OK": 1
+  },
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s2-20261122T132039Z-615550
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s3-20261122T132130Z-617543
+setup
+warmup
+pre_attack
+attack
+recovery
+finalize
+{
+  "events_by_type": {
+    "tcp_send": 8506,
+    "process_exec": 15,
+    "process_exit": 16,
+    "tcp_connect_attempt": 14,
+    "file_read_permission": 2
+  },
+  "events_by_label": {
+    "unknown": 7008,
+    "normal": 1545
+  },
+  "events_by_node": {
+    "lab-w1": 4608,
+    "lab-w2": 3945
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 6,
+  "operations_with_matched_event": 6,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "r0-shell": [
+      "process_exec"
+    ],
+    "r0-curl": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r0-wget": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r0-nc": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r0-nmap": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r0-token": [
+      "file_read_permission"
+    ]
+  },
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s3-20261122T132130Z-617543
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+loadgenerator     0/0     0            0           6d23h
+frontend          1/1     1            1           6d23h
+paymentservice    1/1     1            1           6d23h
+checkoutservice   1/1     1            1           6d23h
+No resources found in boutique namespace.

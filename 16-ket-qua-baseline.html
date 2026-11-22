@@ -5,7 +5,7 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 15 · LAB THỰC TẾ · GĐ3 · Kết quả · 5 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 15 · LAB THỰC TẾ · GĐ3 · Kết quả · 6 PHÚT ĐỌC</div>
 <h1>Đọc kết quả baseline thực tế</h1><p>Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.</p></header>
 <div class="shell reading"><article class="prose"><p>Các kết quả được sao chép từ thư mục runs trên lab-cp. Lượt baseline sơ bộ gần nhất dùng Tetragon với hai hook tcp_connect và tcp_sendmsg, 10 user ảo, warm-up 400 giây và đo 900 giây.</p>
 <p><a href="https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/dataset.tar.gz">Tải bộ log 15 phút · khoảng 17 MB</a> · <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/summary.json">Xem summary.json</a> · <a href="https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383">Xem tất cả file của lượt đo</a></p>
@@ -51,11 +51,14 @@ wc -l telemetry.ndjson
 </code></pre>
 <p>Kết quả mong đợi là 141642 dòng. Các file archive-notes.txt ghi thông tin đóng gói. Những lượt chỉ có file rời được giữ nguyên các file đã có.</p>
 <h2 id="kiem-tra-file-tai-ve">Kiểm tra file tải về</h2>
-<p>Từ thư mục Testbed_Online_Boutique:</p>
+<p>Trên bản clone GitHub đã tải đủ file, từ thư mục Testbed_Online_Boutique:</p>
 <pre><code class="language-bash">sha256sum -c SHA256SUMS.txt
 </code></pre>
 <h2 id="pilot-s3-runtime-ngay-22-11-2026">Pilot S3 runtime ngày 22/11/2026</h2>
-<p>Hai lượt <code>s3-20261122T102500Z-378143</code> (w1) và <code>s3-20261122T102750Z-382892</code> (w2) đạt 18/18 thao tác mỗi lượt. Xem <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S3.md">hướng dẫn S3 và danh mục đầy đủ</a>. Các archive mới giữ thêm <code>source/</code> để đối chiếu hash mã với manifest. Các lượt smoke lỗi và interrupted được giữ riêng và không tính là attack hoàn tất.</p>
+<p>Hai lượt <code>s3-20261122T102500Z-378143</code> (w1) và <code>s3-20261122T102750Z-382892</code> (w2) đạt 18/18 thao tác mỗi lượt. Xem <a href="19-s3-runtime-abuse.html">hướng dẫn S3 và danh mục đầy đủ</a>. Các archive mới giữ thêm <code>source/</code> để đối chiếu hash mã với manifest. Các lượt smoke lỗi và interrupted được giữ riêng và không tính là attack hoàn tất.</p>
+<h2 id="ra-soat-s1s3-va-cach-dung-cho-nguoi-moi">Rà soát S1–S3 và cách dùng cho người mới</h2>
+<p><a href="20-huong-dan-s1-s2-s3.html">Hướng dẫn bắt đầu</a> giải thích cách chạy và đọc kết quả. <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">Báo cáo rà soát 22/11</a> kiểm tra lại 10 pilot, gồm hai S1 mới đủ 22/22 trên mỗi worker, cùng smoke S2/S3 hồi quy. Các report giữ riêng trong experiments/audits; dữ liệu lịch sử không bị ghi lại bằng source hoặc nhãn mới.</p>
+<p>SHA256SUMS.txt trong repo mô tả bản xuất đã đóng gói. Thư mục làm việc trực tiếp trên VM có thể chứa raw thay cho archive và đã có lượt mới, nên cần đối chiếu manifest/source hash của từng run; không áp danh mục checksum của bản xuất lên mọi file sống trên VM.</p>
 <h2 id="phan-tich-baseline-15-phut">Phân tích baseline 15 phút</h2>
 <p>Phân tích sự kiện tcp_send trong cửa sổ đo của lượt này. Đích được đối chiếu với Service ClusterIP, EndpointSlice của hai snapshot và IP nguồn có danh tính workload trong log. Việc suy ra phía server dựa trên cổng lắng nghe trong Service và EndpointSlice.</p>
 <p>Tổng cộng <strong>141,639</strong> sự kiện gửi TCP. Ánh xạ được <strong>132,163</strong> sự kiện tới một workload đích duy nhất. Có <strong>16</strong> luồng nguồn–đích–cổng gửi về phía server.</p>
@@ -246,6 +249,7 @@ wc -l telemetry.ndjson
 <li><a href="#mo-du-lieu-nen">Mở dữ liệu nén</a></li>
 <li><a href="#kiem-tra-file-tai-ve">Kiểm tra file tải về</a></li>
 <li><a href="#pilot-s3-runtime-ngay-22-11-2026">Pilot S3 runtime ngày 22/11/2026</a></li>
+<li><a href="#ra-soat-s1s3-va-cach-dung-cho-nguoi-moi">Rà soát S1–S3 và cách dùng cho người mới</a></li>
 <li><a href="#phan-tich-baseline-15-phut">Phân tích baseline 15 phút</a></li>
 <li><a href="#theo-tung-phut">Theo từng phút</a></li>
 <li><a href="#buoc-tiep-theo">Bước tiếp theo</a></li>

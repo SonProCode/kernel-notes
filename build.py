@@ -26,6 +26,8 @@ ARTICLES = [
     ("15-tetragon-thu-telemetry", "Thu log Tetragon trên hai worker", "Hiểu từng bước cài agent, quan sát TCP và chạy script thu baseline 15 phút.", "GĐ3 · R16", "scope"),
     ("16-ket-qua-baseline", "Đọc kết quả baseline thực tế", "Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.", "GĐ3 · Kết quả", "pulse"),
     ("17-gd4-thuc-nghiem", "GĐ4 · Tạo dữ liệu attack và normal", "Kế hoạch S1–S5, quy tắc nhãn và tiến độ pilot trên hai worker.", "GĐ4 · S1–S5", "terminal"),
+    ("20-huong-dan-s1-s2-s3", "Bắt đầu sử dụng S1, S2, S3", "Từ SSH và thư mục làm việc tới chạy thử, đọc log, kiểm tra đạt và xử lý lỗi.", "Thực hành · Bắt đầu", "terminal"),
+    ("21-s1-quet-service", "S1 · Thăm dò Service và cổng", "Hiểu từng lần thử TCP và đối chiếu đủ danh sách đích với log kernel gốc.", "GĐ4 · S1", "network"),
     ("18-s2-goi-api-trai-luong", "S2 · Gọi API payment trái luồng", "Tái lập lời gọi gRPC và double check bằng phản hồi API, log server cùng Tetragon.", "GĐ4 · S2", "network"),
     ("19-s3-runtime-abuse", "S3 · Shell, công cụ mạng và token", "Tái lập runtime abuse và đối chiếu từng tiến trình, kết nối, lần đọc file với raw Tetragon.", "GĐ4 · S3", "terminal"),
 ]
@@ -82,6 +84,8 @@ def layout(title, body, meta="Học bảo mật Kubernetes và eBPF từ đầu 
 </div></header><main id="main">{body}</main><footer class="shell footer"><a class="logo" href="./">{icon("layers")} Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>"""
 
 LAB_SOURCES = {
+    "20-huong-dan-s1-s2-s3": "Testbed_Online_Boutique/experiments/USAGE.md",
+    "21-s1-quet-service": "Testbed_Online_Boutique/experiments/S1.md",
     "19-s3-runtime-abuse": "Testbed_Online_Boutique/experiments/S3.md",
     "18-s2-goi-api-trai-luong": "Testbed_Online_Boutique/experiments/S2.md",
     "17-gd4-thuc-nghiem": "Testbed_Online_Boutique/experiments/README.md",
@@ -96,6 +100,9 @@ def read(slug):
         return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
     source = LAB_SOURCES[slug]
     text = (ROOT/source).read_text(encoding="utf-8-sig")
+    if slug == "20-huong-dan-s1-s2-s3":
+        report = ROOT / "Testbed_Online_Boutique/experiments/REVIEW-S1-S2-S3.md"
+        text += "\n\n" + report.read_text(encoding="utf-8").replace("# Rà soát", "## Rà soát", 1)
     if slug == "17-gd4-thuc-nghiem":
         progress = ROOT / "Testbed_Online_Boutique/experiments/RESULTS.md"
         text += "\n\n" + progress.read_text(encoding="utf-8").replace("# Kết quả khởi động", "## Kết quả khởi động", 1)
@@ -108,6 +115,12 @@ def read(slug):
         if target.startswith(("#", "http:", "https:", "mailto:")):
             return match[0]
         location = posixpath.normpath(posixpath.join(posixpath.dirname(source), target))
+        document, separator, anchor = location.partition("#")
+        page = next((key for key, value in LAB_SOURCES.items() if value == document), None)
+        if document == "Testbed_Online_Boutique/experiments/REVIEW-S1-S2-S3.md":
+            return "](20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung)"
+        if page:
+            return "](" + page + ".html" + ("#" + anchor if separator else "") + ")"
         return "](https://github.com/SonProCode/kernel-notes/blob/main/" + quote(location, safe="/#") + ")"
     return re.sub(r"\]\(([^)]+)\)", repository_link, text)
 

@@ -2,6 +2,8 @@
 
 Ngày cập nhật 22/11/2026, giờ Việt Nam.
 
+Người mới bắt đầu đọc [USAGE.md](USAGE.md). Chi tiết từng kịch bản: [S1.md](S1.md), [S2.md](S2.md), [S3.md](S3.md).
+
 Bộ công cụ hỗ trợ S0, S1, S2 và S3 runtime. Hướng dẫn double check nằm trong [S2.md](S2.md) và [S3.md](S3.md). S3 có shell thật, curl/wget/nc/nmap và đọc projected token của actor. S4/S5 cùng các lượt official còn ở bước tiếp theo theo [kế hoạch](README.md).
 
 ## Thành phần đã triển khai
@@ -56,7 +58,7 @@ Pilot này giảm thời gian các pha để kiểm tra pipeline. Danh sách đ�
 
 Danh sách thực tế được lưu trong manifest.json. Thời lượng attack thực tế phụ thuộc timeout từng đích. Lượt chính thức cần giữ bộ tham số đã chốt trong kế hoạch và ghi thời lượng thực.
 
-Mỗi receipt ghi operation_id, địa chỉ, cổng, thời gian và kết quả. Với cổng đóng, outcome có thể là timeout hoặc os_error. Telemetry còn phụ thuộc đường đi kernel, nên quality.json liệt kê operation không tìm được sự kiện đối chiếu. Điều kiện hoàn tất hiện tại yêu cầu có ít nhất một operation khớp và capture_checks_passed=true. Cần đọc cả độ phủ thao tác trước khi nghiệm thu dữ liệu.
+Mỗi receipt ghi operation_id, địa chỉ, cổng, thời gian và kết quả. Với cổng đóng, outcome có thể là timeout hoặc os_error. Telemetry còn phụ thuộc đường đi kernel, nên quality.json liệt kê operation không tìm được sự kiện đối chiếu. Bản rà soát 22/11 yêu cầu đủ mọi operation khớp, receipt đúng danh sách targets và raw Tetragon đúng hook/UID/đích/thời gian. Kết quả ở s1-verification.json. Các lượt S1 mới có source snapshot; đọc [S1.md](S1.md) để biết cách kiểm tra.
 
 ## Chạy S0 bằng cấu hình mới
 

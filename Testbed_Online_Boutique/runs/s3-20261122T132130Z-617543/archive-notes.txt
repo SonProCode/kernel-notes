@@ -1,0 +1,1 @@
+Review/regression run exported from lab-cp on 2026-11-22. Archive contains raw/, source/, normalized.ndjson and labeled-windows.ndjson when produced. Extract in the run directory before direct verifiers. Historical datasets are unchanged. See experiments/REVIEW-S1-S2-S3.md and the testbed SHA256SUMS.txt.

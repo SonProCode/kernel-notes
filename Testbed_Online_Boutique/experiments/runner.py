@@ -13,6 +13,7 @@ import time
 from urllib.parse import urlencode
 
 from label import normalize, write_json
+from s1_verify import verify_s1
 from s2_support import prepare_s2
 from s2_verify import verify_run
 from s3_support import prepare_s3
@@ -92,7 +93,9 @@ def run(args):
         manifest["git_commit"] = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
     except subprocess.CalledProcessError:
         manifest["git_commit"] = None
-    if args.scenario == "S2" or s3_runtime:
+    if args.scenario == "S1":
+        manifest["script_sha256"]["s1_verify.py"] = hashlib.sha256((ROOT / "s1_verify.py").read_bytes()).hexdigest()
+    if args.scenario in ("S1", "S2") or s3_runtime:
         for relative in manifest["script_sha256"]:
             source = ROOT / relative
             target = output / "source" / relative
@@ -320,6 +323,11 @@ def run(args):
     quality = normalize(output)
     valid_capture = quality["capture_checks_passed"]
     has_evidence = args.scenario == "S0" or quality["operations_with_matched_event"] > 0
+    if args.scenario == "S1":
+        verification = verify_s1(output)
+        write_json(output / "s1-verification.json", verification)
+        manifest["s1_verification"] = verification
+        has_evidence = verification["passed"]
     if args.scenario == "S2":
         has_evidence = (quality["operations"] == args.s2_calls
                         and quality["operations_with_matched_event"] == args.s2_calls
@@ -339,6 +347,8 @@ def run(args):
         raise RuntimeError("Capture checks failed. See quality.json")
     if args.scenario == "S2" and not has_evidence:
         raise RuntimeError("S2 API or network evidence incomplete. See quality.json")
+    if args.scenario == "S1" and not has_evidence:
+        raise RuntimeError("S1 evidence incomplete. See s1-verification.json")
     if s3_runtime and not has_evidence:
         raise RuntimeError("S3 process, network or token evidence incomplete. See s3-verification.json")
     if args.scenario != "S0" and quality["operations_with_matched_event"] == 0:

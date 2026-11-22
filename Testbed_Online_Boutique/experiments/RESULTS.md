@@ -47,3 +47,8 @@ Bổ sung ngày 20/11/2026, S2 đã được triển khai và có hướng dẫn
 Trong mỗi thư mục run đã hoàn tất, dataset.tar.gz chứa raw/, normalized.ndjson và labeled-windows.ndjson. Manifest, timeline, receipt, quality và processing được giữ riêng để đọc trên GitHub.
 
 Các lượt interrupted/failed có thể chỉ có raw. Đọc manifest và postmortem trước khi chọn dữ liệu cho phân tích. Liên kết raw_file/raw_line trong bản ghi chuẩn hóa dùng được sau khi giải nén tại thư mục run.
+
+
+## Rà soát toàn bộ S1–S3 ngày 22/11/2026
+
+Đã kiểm chứng lại 10 pilot từ archive và chạy thêm smoke hồi quy S2/S3. S1 có verifier strict cho đủ từng thao tác, source snapshot và hai pilot mới trên w1/w2. Bắt đầu thực hành từ [USAGE.md](USAGE.md); xem [S1.md](S1.md) và [báo cáo rà soát đầy đủ](REVIEW-S1-S2-S3.md) để biết kết quả, hạn chế và các lỗi hướng dẫn đã sửa.

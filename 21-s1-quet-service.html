@@ -1,0 +1,181 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S1 · Thăm dò Service và cổng · Kernel Notes</title><meta name="description" content="Hiểu từng lần thử TCP và đối chiếu đủ danh sách đích với log kernel gốc.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 18 · LAB THỰC TẾ · GĐ4 · S1 · 8 PHÚT ĐỌC</div>
+<h1>S1 · Thăm dò Service và cổng</h1><p>Hiểu từng lần thử TCP và đối chiếu đủ danh sách đích với log kernel gốc.</p></header>
+<div class="shell reading"><article class="prose"><p>Cập nhật ngày 22/11/2026. Bắt đầu từ <a href="20-huong-dan-s1-s2-s3.html">hướng dẫn sử dụng chung</a> nếu bạn chưa quen SSH, thư mục làm việc hoặc file kết quả.</p>
+<h2 id="1-hieu-bai-toan-bang-mot-vi-du">1. Hiểu bài toán bằng một ví dụ</h2>
+<p>Giả sử một người đã chạy được lệnh trong một Pod. Họ chưa biết bên trong cluster có những dịch vụ nào đang nghe cổng. Họ lần lượt thử kết nối tới các địa chỉ và cổng để tìm hiểu mạng. Đó là <strong>internal reconnaissance</strong>, hay thăm dò nội bộ.</p>
+<p>Trong S1, ta biết trước danh sách đích và cho một Pod actor thử chúng. Tetragon quan sát các lần mở kết nối, rồi ta ghép log với nhật ký client để biết có nhìn thấy đủ hành vi không.</p>
+<p>Đề cương nêu dấu hiệu kỳ vọng: nhiều connection mới, nhiều service đích, cổng bất thường. Cơ chế NetworkPolicy deny và alert nằm trong phần phát hiện/thực thi về sau. GĐ4 hiện chứng minh đường thực hiện và dữ liệu có nhãn.</p>
+<h2 id="2-ip-service-va-port-la-gi">2. IP, Service và port là gì?</h2>
+<p><strong>IP</strong> là địa chỉ đích. <strong>Port</strong>, hay cổng, là số xác định nơi chương trình nhận kết nối trên địa chỉ đó. Ví dụ Service paymentservice của lab có địa chỉ nội bộ <code>10.43.35.94</code>, cổng <code>50051</code> ở lần kiểm tra hiện tại. Các IP có thể đổi nếu tạo lại Service.</p>
+<p><strong>Service</strong> cung cấp điểm truy cập ổn định tới Pod phía sau. Trong cấu hình ClusterIP của lab, Service có IP nội bộ của cluster. Actor cũng ở trong cluster nên truy cập được IP này. Máy Windows bên ngoài không tự có route tới mọi ClusterIP.</p>
+<p><strong>TCP connect</strong> là thao tác thử thiết lập kết nối. Nó chưa gửi một request mua hàng, chưa gọi đúng phương thức API và chưa chứng minh ứng dụng có lỗ hổng. Muốn xác nhận API cần bước như S2.</p>
+<p><strong>Timeout</strong> nghĩa là không nhận được phản hồi kết nối trong thời gian chờ. Nó có thể do cổng không được phục vụ, lọc mạng hoặc đường truyền. Không tự diễn giải mọi timeout là tường lửa đã chặn thành công.</p>
+<p>Nguồn khái niệm Service: <a href="https://kubernetes.io/docs/concepts/services-networking/service/">Kubernetes Service</a>.</p>
+<h2 id="3-script-s1-hien-lam-chinh-xac-nhung-gi">3. Script S1 hiện làm chính xác những gì?</h2>
+<ol>
+<li>Runner đọc các Service trong namespace boutique từ API Kubernetes.</li>
+<li>Với mỗi Service, lấy cổng đầu tiên được cấu hình và thêm cổng đối chứng 65000.</li>
+<li>Ghi danh sách có thứ tự vào <code>manifest.targets</code>.</li>
+<li>Tạo actor trên w1 hoặc w2, bật traffic Locust bình thường và thu log hai worker.</li>
+<li>Actor dùng socket TCP của Python thử lần lượt từng cặp IP/cổng.</li>
+<li>Mỗi lần lưu receipt, gồm operation_id, Service, IP, cổng, bắt đầu/kết thúc và kết quả.</li>
+<li>Chuẩn hóa Tetragon, đối chiếu đủ thao tác và dọn actor/tải.</li>
+</ol>
+<p>Giới hạn trong code: tối đa 40 đích được cung cấp tường minh, IP phải trong Service CIDR <code>10.43.0.0/16</code> của lab, timeout 1 giây/lần, một kết nối tại một thời điểm. Các lần bắt đầu cách nhau tối thiểu 0,2 giây, tức tối đa khoảng 5 lần/giây. Với timeout dài, tốc độ thực sẽ thấp hơn.</p>
+<p>S1 dùng Python socket, không cần nmap. Nmap là một công cụ được thực thi trong chuỗi runtime S3. Kịch bản S1 tập trung vào mẫu nhiều đích/cổng; S3 tập trung vào chương trình và quan hệ tiến trình.</p>
+<p>Hiện boutique có 11 Service, tương ứng 22 cặp đích. Cổng 65000 không được các Service đó công bố; kết quả ở lab đang là timeout. Actor chỉ thử kết nối rồi đóng, không gửi payload API.</p>
+<pre><code class="language-text">lab-cp chạy runner
+    │ tạo actor trên worker đã chọn
+    ▼
+actor ──TCP──► Service A : cổng ứng dụng
+      ──TCP──► Service A : 65000
+      ──TCP──► Service B : cổng ứng dụng
+      ──TCP──► Service B : 65000
+      ... tiếp tục danh sách đã ghi trong manifest
+
+Tetragon ở hai worker → raw → normalized → kiểm tra từng receipt
+</code></pre>
+<h2 id="4-lenh-chay-cho-nguoi-moi">4. Lệnh chạy cho người mới</h2>
+<p>Trong SSH tới lab-cp:</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+sudo k3s kubectl get nodes
+sudo k3s kubectl -n boutique get svc
+sudo k3s kubectl -n boutique get deployment loadgenerator
+sudo k3s kubectl -n telemetry get pods -o wide
+</code></pre>
+<p>Trước lượt thử cần worker/agent Ready và loadgenerator=0. Chạy pilot ngắn trên w1:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S1 --mode pilot --node w1 --warmup 10 --pre 5 --recovery 5
+</code></pre>
+<p><code>--node w1</code> chọn vị trí actor, không đổi nơi chạy runner. Thời gian chờ gồm tạo Pod/Locust, warm-up, 22 phép thử và recovery. Đọc dòng Run để biết tên thư mục kết quả mới.</p>
+<p>Đợi xong và kiểm tra lượt trên, rồi thử worker còn lại:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S1 --mode pilot --node w2 --warmup 10 --pre 5 --recovery 5
+</code></pre>
+<p>Profile pilot ban đầu ngày 18/11 dùng warm-up 30, pre 10, recovery 10. Các lệnh 10/5/5 trên là kiểm tra chức năng rút ngắn sau rà soát; manifest giữ tham số thực, không gom hai profile thành một cohort đo hiệu năng.</p>
+<p>Khi triển khai bộ chính thức đã chốt, tham số mặc định là warm-up 400, pre 120 và recovery 120 giây:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S1 --mode official --node w1
+</code></pre>
+<p>Vẫn cần chốt số lượt lặp, release và S0 đối chứng theo kế hoạch GĐ4 trước khi gọi tập dữ liệu là bộ official đã nghiệm thu.</p>
+<h2 id="5-tu-kiem-tra-mot-luot-s1">5. Tự kiểm tra một lượt S1</h2>
+<p>Chọn lượt gần nhất, đối chiếu tên với dòng Run bạn vừa chạy:</p>
+<pre><code class="language-bash">RUN=$(sudo find runs -mindepth 1 -maxdepth 1 -type d -name 's1-*' | sort | tail -n 1)
+printf '%s\n' &quot;$RUN&quot;
+sudo cat &quot;$RUN/manifest.json&quot;
+sudo head -n 2 &quot;$RUN/actor-receipts.ndjson&quot;
+sudo cat &quot;$RUN/quality.json&quot;
+sudo python3 experiments/s1_verify.py &quot;$RUN&quot;
+</code></pre>
+<p>Nếu dùng bản clone chứa archive, giải nén <code>dataset.tar.gz</code> vào RUN trước khi chạy verifier. Trên VM vừa chạy, raw/normalized đã có trực tiếp.</p>
+<table>
+<thead>
+<tr>
+<th>Trường verifier</th>
+<th>Mong đợi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>expected_operations</td>
+<td>Số đích trong manifest, hiện tại 22</td>
+</tr>
+<tr>
+<td>receipts</td>
+<td>Bằng số đích, operation_id không trùng</td>
+</tr>
+<tr>
+<td>receipt_targets_valid</td>
+<td>true: từng receipt đúng Service/IP/cổng theo thứ tự</td>
+</tr>
+<tr>
+<td>operations_with_native_event</td>
+<td>Bằng số đích</td>
+</tr>
+<tr>
+<td>native_records_valid</td>
+<td>true: raw khớp hook, Pod UID, namespace, IP/cổng và thời gian</td>
+</tr>
+<tr>
+<td>unmatched_operations</td>
+<td>Danh sách rỗng</td>
+</tr>
+<tr>
+<td>capture_checks_passed, passed</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<p>Verifier mới đọc lại dòng raw của từng sự kiện; không chỉ tin số đếm trong quality.json. Nó nhận cả raw_file kiểu Windows cũ <code>raw\\lab-w1.ndjson</code> và kiểu POSIX mới <code>raw/lab-w1.ndjson</code>.</p>
+<p>Trước rà soát này, runner chỉ yêu cầu có ít nhất một thao tác S1 khớp. <strong>Đã sửa thành yêu cầu đủ mọi thao tác</strong> và xuất <code>s1-verification.json</code>. Các lượt mới lưu source snapshot; dữ liệu cũ được giữ nguyên rồi kiểm tra bằng report độc lập.</p>
+<h2 id="6-vi-du-receipt-va-cach-doc">6. Ví dụ receipt và cách đọc</h2>
+<p>Một receipt có dạng sau; IP/time minh họa lấy từ cấu hình lab, tên run quyết định giá trị thực:</p>
+<pre><code class="language-json">{
+  &quot;operation_id&quot;: &quot;connect-0000&quot;,
+  &quot;kind&quot;: &quot;tcp_connect&quot;,
+  &quot;service&quot;: &quot;adservice&quot;,
+  &quot;ip&quot;: &quot;10.43.236.91&quot;,
+  &quot;port&quot;: 9555,
+  &quot;started&quot;: &quot;2026-11-18T16:53:49.250000+00:00&quot;,
+  &quot;ended&quot;: &quot;2026-11-18T16:53:49.260000+00:00&quot;,
+  &quot;outcome&quot;: &quot;connected&quot;
+}
+</code></pre>
+<p>Nghĩa là actor đã thử kết nối cổng 9555 của adservice và kết nối thành công. Một receipt khác thử cổng 65000 có thể có outcome=timeout; đó vẫn là thao tác thăm dò đã được thực hiện.</p>
+<p>Raw Tetragon tương ứng là <code>process_kprobe</code> với <code>function_name: tcp_connect</code>, process của actor và socket đích. Bản chuẩn hóa đặt <code>event_type: tcp_connect_attempt</code>. Hook ở thời điểm bắt đầu connect chưa tự báo kết quả cuối của kết nối; kết quả cuối lấy từ receipt.</p>
+<h2 id="7-gan-nhan-va-y-nghia-ket-qua">7. Gán nhãn và ý nghĩa kết quả</h2>
+<p>Sự kiện được gán attack khi đúng Pod UID của actor, đúng IP/cổng và nằm trong khoảng operation đã ghi. Với smoke, phép thử đó giữ unknown. Traffic nền ngoài khoảng hành vi được gán normal theo quy tắc runner; các event chưa đủ căn cứ giữ unknown.</p>
+<p>Ví dụ có 22/22 thao tác khớp nghĩa là đã nhìn thấy đủ 22 lần thử đã tạo. Nó không có nghĩa detector đạt recall 100%, không khẳng định mọi cổng đều mở và không phải 22 cuộc tấn công độc lập. Các thao tác cùng một lượt dùng chung điều kiện hệ thống; đơn vị lặp thực nghiệm cần được ghi riêng.</p>
+<h2 id="8-bang-chung-da-ra-soat">8. Bằng chứng đã rà soát</h2>
+<p>Ba pilot ngày 18/11 đều được kiểm tra lại từ raw bằng verifier mới, không sửa raw/receipt/nhãn lịch sử:</p>
+<table>
+<thead>
+<tr>
+<th>Lượt</th>
+<th>Worker</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s1-20261118T165249Z-1698505/manifest.json">s1-20261118T165249Z-1698505</a></td>
+<td>w1</td>
+<td>22/22</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s1-20261118T165440Z-1701809/manifest.json">s1-20261118T165440Z-1701809</a></td>
+<td>w2</td>
+<td>22/22</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s1-20261118T165755Z-1708256/manifest.json">s1-20261118T165755Z-1708256</a></td>
+<td>w2</td>
+<td>22/22</td>
+</tr>
+</tbody>
+</table>
+<p>Tổng 66 thao tác có raw đối chiếu. Các lượt S1 lịch sử chưa có source snapshot, nên report ghi hạn chế kiểm chứng mã nguồn thay vì tự bổ sung source hiện tại vào archive cũ. Các kết quả chạy lại sau sửa gate được bổ sung trong <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">báo cáo rà soát chung</a>.</p>
+<h2 id="9-don-tai-nguyen-va-xu-ly-loi">9. Dọn tài nguyên và xử lý lỗi</h2>
+<p>Runner tự đưa loadgenerator về 0 và xóa actor. Kiểm tra:</p>
+<pre><code class="language-bash">sudo k3s kubectl -n boutique get deployment loadgenerator
+sudo k3s kubectl -n boutique get pods -l app=gd4-actor
+</code></pre>
+<p>Nếu verifier không đạt, xem unmatched_operations rồi tìm receipt tương ứng, mốc UTC và raw của node đặt actor. Kiểm tra agent/hook còn hoạt động và collector có stderr không. Giữ run lỗi để truy vết; chạy lại tạo một tên run mới.</p>
+<p>Actor Python cho biết outcome timeout hoặc os_error khi kết nối chưa thành công. Tự thân các kết quả đó không phải lỗi runner. Lỗi nghiệm thu là hành vi không được thực hiện đủ hoặc dữ liệu cần thiết không đối chiếu được.</p><div class="finish"><button class="button" data-complete="21-s1-quet-service" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="20-huong-dan-s1-s2-s3.html">← Bắt đầu sử dụng S1, S2, S3</a><a href="18-s2-goi-api-trai-luong.html">S2 · Gọi API payment trái luồng →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-hieu-bai-toan-bang-mot-vi-du">1. Hiểu bài toán bằng một ví dụ</a></li>
+<li><a href="#2-ip-service-va-port-la-gi">2. IP, Service và port là gì?</a></li>
+<li><a href="#3-script-s1-hien-lam-chinh-xac-nhung-gi">3. Script S1 hiện làm chính xác những gì?</a></li>
+<li><a href="#4-lenh-chay-cho-nguoi-moi">4. Lệnh chạy cho người mới</a></li>
+<li><a href="#5-tu-kiem-tra-mot-luot-s1">5. Tự kiểm tra một lượt S1</a></li>
+<li><a href="#6-vi-du-receipt-va-cach-doc">6. Ví dụ receipt và cách đọc</a></li>
+<li><a href="#7-gan-nhan-va-y-nghia-ket-qua">7. Gán nhãn và ý nghĩa kết quả</a></li>
+<li><a href="#8-bang-chung-da-ra-soat">8. Bằng chứng đã rà soát</a></li>
+<li><a href="#9-don-tai-nguyen-va-xu-ly-loi">9. Dọn tài nguyên và xử lý lỗi</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

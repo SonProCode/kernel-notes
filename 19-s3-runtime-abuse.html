@@ -5,9 +5,10 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 18 · LAB THỰC TẾ · GĐ4 · S3 · 15 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 20 · LAB THỰC TẾ · GĐ4 · S3 · 15 PHÚT ĐỌC</div>
 <h1>S3 · Shell, công cụ mạng và token</h1><p>Tái lập runtime abuse và đối chiếu từng tiến trình, kết nối, lần đọc file với raw Tetragon.</p></header>
 <div class="shell reading"><article class="prose"><p>Cập nhật ngày 22/11/2026. Đây là hướng dẫn tái lập và kiểm tra <strong>pilot chức năng S3</strong> trên lab của bạn. Kết quả pilot không thay thế bộ dữ liệu chính thức có các lượt lặp và S0 đối chứng.</p>
+<p>Bắt đầu từ <a href="20-huong-dan-s1-s2-s3.html">hướng dẫn dùng chung cho người mới</a> nếu bạn cần giải thích SSH, sudo, tham số và cách chọn đúng RUN. <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">Báo cáo rà soát S1–S3</a> lưu kết quả kiểm tra lại.</p>
 <h2 id="1-s3-dang-mo-phong-chuyen-gi">1. S3 đang mô phỏng chuyện gì?</h2>
 <p>Đề cương, mục kịch bản S3, nêu: mở shell, chạy curl/wget/nc/nmap, đọc token; cần quan sát process/file events bất thường. Hãy hình dung kẻ tấn công đã có khả năng chạy lệnh trong một Pod. Họ mở trình thông dịch lệnh, dùng công cụ mạng kiểm tra dịch vụ rồi tìm credential của Pod. Lab bắt đầu từ giả định đã chạy được lệnh; không triển khai một lỗ hổng để chiếm Pod.</p>
 <p>Runner tạo một Pod actor tạm trong namespace <code>boutique</code> để đóng vai Pod bị chiếm. Pod ứng dụng Online Boutique vẫn phục vụ traffic Locust bình thường. Đây là hành vi mô phỏng có chủ đích trong lab, chưa chứng minh một ứng dụng thực tế đã bị khai thác.</p>
@@ -172,16 +173,20 @@ sudo python3 experiments/runner.py --scenario S3 --mode pilot \
 </code></pre>
 <p>Đây là lệnh cho bước dữ liệu chính thức sau pilot; không được gọi các lượt thời gian rút ngắn bên trên là official.</p>
 <h2 id="8-double-check-ket-qua-nhu-the-nao">8. Double check kết quả như thế nào?</h2>
-<p>Runner in thư mục <code>runs/s3-...</code>. Thay <code>&lt;run_id&gt;</code> bằng tên đó:</p>
-<pre><code class="language-bash">sudo python3 experiments/s3_verify.py runs/&lt;run_id&gt;
-sudo cat runs/&lt;run_id&gt;/quality.json
-sudo cat runs/&lt;run_id&gt;/manifest.json
+<p>Runner in thư mục <code>runs/s3-...</code>. Ví dụ dưới đây chọn một pilot ba vòng đã công bố; khi kiểm tra lượt bạn vừa chạy, thay giá trị RUN bằng tên runner đã in. Giải nén trước nếu đọc bản clone GitHub:</p>
+<pre><code class="language-bash">RUN='runs/s3-20261122T102500Z-378143'
+if sudo test -f &quot;$RUN/dataset.tar.gz&quot;; then
+  sudo tar -xzf &quot;$RUN/dataset.tar.gz&quot; -C &quot;$RUN&quot;
+fi
+sudo python3 experiments/s3_verify.py &quot;$RUN&quot;
+sudo cat &quot;$RUN/quality.json&quot;
+sudo cat &quot;$RUN/manifest.json&quot;
 sudo k3s kubectl -n boutique get pods -l app=gd4-actor
 sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
 sudo k3s kubectl -n boutique get deployment loadgenerator
 </code></pre>
 <p>Với runtime ba vòng, cần <code>expected_operations=18</code>, <code>operations_passed=18</code>, <code>shell_operations=3</code>, <code>network_tool_operations=12</code>, <code>token_reads=3</code>, <code>passed=true</code>. Verifier yêu cầu đủ exec, ancestry, 12 operation có connect, ba operation có file event và receipt đọc thành công. Số native records thường lớn hơn 18.</p>
-<p>Đường ghép là <strong>Pod UID + PID trong container + binary/path hoặc socket đích + thời gian operation</strong>. Cả <code>/bin/sh</code> và binary đã resolve được lưu làm alias. Mỗi bản ghi chuẩn hóa giữ <code>raw_file</code>/<code>raw_line</code>; verifier mở lại đúng dòng raw để kiểm tra. Bản v4 thêm container PID, parent exec ID và arguments của actor; giữ dữ liệu lịch sử ở phiên bản cũ.</p>
+<p>Đường ghép là <strong>Pod UID + PID trong container + binary/path hoặc socket đích + thời gian operation</strong>. Cả <code>/bin/sh</code> và binary đã resolve được lưu làm alias. Mỗi bản ghi chuẩn hóa giữ <code>raw_file</code>/<code>raw_line</code>; verifier mở lại đúng dòng raw để kiểm tra. Bản normalized v4 thêm container PID, parent exec ID và arguments của actor; manifest có schema 3 riêng. Giữ dữ liệu lịch sử ở phiên bản cũ.</p>
 <p><code>agent_and_loss_metric_checks_passed</code> yêu cầu hai agent up ở hai snapshot và chênh lệch bằng 0 của tám chuỗi metric mất/lỗi export. Đây là kiểm tra các bộ đếm đã thu và hai thời điểm scrape, không chứng minh tuyệt đối mọi sự kiện kernel đều được xuất. <code>quality.json</code> còn kiểm tra restart, stderr, JSON và dữ liệu hai node.</p>
 <p><code>manifest.status=completed</code> nghĩa là runner đã đi hết phần thực hiện và cleanup. <code>dataset_status=validated</code> cùng verifier passed mới thể hiện kiểm chứng dữ liệu thành công. Nếu failed_validation, giữ dữ liệu để tìm nguyên nhân.</p>
 <p>Muốn xem raw sau khi tải từ GitHub, giải nén <code>dataset.tar.gz</code> ngay tại thư mục run. Archive chứa <code>raw/</code>, <code>source/</code>, normalized và windows nếu lượt đó đã tạo. <code>source/</code> lưu snapshot mã của lượt; <code>script_sha256</code> trong manifest đối chiếu các file, <code>code_bundle_sha256</code> so sánh release giữa các lượt. Bundle công cụ lớn nằm trong repo và được đối chiếu bằng provenance/hash.</p>
@@ -257,6 +262,8 @@ sudo k3s kubectl -n boutique get deployment loadgenerator
 <li>Không sửa receipt hay raw của lượt lỗi để biến nó thành đạt. Lượt này không được đưa vào tập attack hoàn tất.</li>
 </ul>
 <p>Các bước đã làm: đóng gói công cụ và license → mở rộng selector file token → triển khai chuỗi runtime → thêm nhãn v4 cùng verifier raw/lineage → sửa shell alias qua smoke → chạy ba vòng trên mỗi worker cùng release → kiểm tra cleanup và hồi quy S2 → lưu dữ liệu, checksum và hướng dẫn lên GitHub/website.</p>
+<h2 id="luu-y-khi-kiem-tra-lai-bang-release-hien-tai">Lưu ý khi kiểm tra lại bằng release hiện tại</h2>
+<p>Hai pilot S3 ngày 22/11 được kiểm tra lại trong thư mục tạm từ archive và đều tiếp tục đạt 18/18. Runner mới bổ sung gate chặt cho S1; các run S3 lịch sử giữ source snapshot/hash đã chạy, không bị đổi thành source mới. Các lượt smoke mới dùng để kiểm tra tương thích được ghi riêng trong <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">báo cáo chung</a>.</p>
 <h2 id="10-sau-s3-con-gi">10. Sau S3 còn gì?</h2>
 <p>Checkpoint này kiểm tra hành vi S3 và dữ liệu đối chiếu được. Nhãn attack dựa trên kịch bản và receipt, chưa phải output của detector. Curl, shell hay đọc token không tự động là tấn công trong mọi workload; GĐ5 phải học hành vi bình thường và xét ngữ cảnh để tránh báo nhầm.</p>
 <p>Tiếp theo theo kế hoạch là pilot S4/S5, rồi chốt release và thu các lượt official cùng S0 đối chứng. Detector, precision/recall, độ trễ phát hiện, alert và cô lập Pod được đánh giá trong GĐ5/GĐ6. Chưa kết luận toàn bộ GĐ4 đã hoàn thành chỉ từ hai lượt S3 này.</p><div class="finish"><button class="button" data-complete="19-s3-runtime-abuse" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="18-s2-goi-api-trai-luong.html">← S2 · Gọi API payment trái luồng</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
@@ -275,6 +282,7 @@ sudo k3s kubectl -n boutique get deployment loadgenerator
 <li><a href="#luot-thu-loi-duoc-giu-nguyen">Lượt thử lỗi được giữ nguyên</a></li>
 </ul>
 </li>
+<li><a href="#luu-y-khi-kiem-tra-lai-bang-release-hien-tai">Lưu ý khi kiểm tra lại bằng release hiện tại</a></li>
 <li><a href="#10-sau-s3-con-gi">10. Sau S3 còn gì?</a></li>
 </ul>
 </div>

@@ -1,4 +1,4 @@
-"""Schema v3 and evidence-based labels for GĐ4 pilot runs."""
+"""Schema v4 and evidence-based labels for GĐ4 pilot runs."""
 from collections import Counter
 import ipaddress
 import json

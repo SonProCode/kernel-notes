@@ -1,0 +1,1 @@
+{"operation_id": "charge-0000", "method": "/hipstershop.PaymentService/Charge", "grpc_code": "OK", "transaction_id": "14b0d339-5a4f-4f5c-9cb1-aefd4054b4e3", "server_log": "paymentservice.log", "server_log_lines": [7], "server_times": ["2026-11-22T13:21:18.751805376Z"], "evidence": "synthetic_payload_and_time", "clock_tolerance_seconds": 2}
