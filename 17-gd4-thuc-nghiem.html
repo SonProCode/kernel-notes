@@ -5,7 +5,7 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 16 · LAB THỰC TẾ · GĐ4 · S1–S5 · 25 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 16 · LAB THỰC TẾ · GĐ4 · S1–S5 · 26 PHÚT ĐỌC</div>
 <h1>GĐ4 · Tạo dữ liệu attack và normal</h1><p>Kế hoạch S1–S5, quy tắc nhãn và tiến độ pilot trên hai worker.</p></header>
 <div class="shell reading"><article class="prose"><p>Ngày lập kế hoạch 18/11/2026, giờ Việt Nam.</p>
 <p>Kế hoạch bám mục 5, 6.2, 9 và 11 của đề cương luận văn. GĐ4 kéo dài tuần 11–14, với sản phẩm bàn giao là bộ dữ liệu attack/normal có nhãn và script tái lập S1–S5. Các mức tải, thời lượng, số lượt lặp và ngưỡng dừng dưới đây là phương án triển khai đề xuất cho lab ba VM, mỗi VM 4 GB RAM. Sau lượt thử ngắn, ghi cấu hình đã chốt vào manifest và giữ cố định trong các lượt so sánh.</p>
@@ -487,6 +487,8 @@
 <p>Các kịch bản S2, chuỗi runtime abuse S3 đầy đủ, S4 và S5 nằm trong các bước tiếp theo. Bộ dữ liệu chính thức và các lượt lặp sẽ được thu sau khi kiểm chứng từng pilot.</p>
 <p>Báo cáo checkpoint và các lượt kiểm thử nằm trong <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/RESULTS.md">RESULTS.md</a>.</p>
 <p>Ngày 20/11/2026 đã triển khai S2 gọi Charge bằng gRPC. Các bước chạy lại và xác minh từng lời gọi được ghi trong <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S2.md">S2.md</a>.</p>
+<h2 id="tien-do-s3-ngay-22-11-2026">Tiến độ S3 ngày 22/11/2026</h2>
+<p>Đã triển khai profile runtime với shell, đủ bốn công cụ curl/wget/nc/nmap và đọc projected ServiceAccount token thật của Pod actor tạm. Chỉ xuất metadata đọc token. Hướng dẫn, bằng chứng hai worker, lịch sử lỗi và cách double check nằm trong <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S3.md">S3.md</a>. Fixture giả cũ vẫn dùng cho smoke. S4/S5 và bộ official cùng S0 đối chứng là công việc tiếp theo.</p>
 <h2 id="ket-qua-khoi-dong-gd4">Kết quả khởi động GĐ4</h2>
 <p>Cập nhật ngày 19/11/2026, giờ Việt Nam.</p>
 <p>Đã triển khai phần chuẩn bị tuần 11 và pilot S1 trên lab. Đây là checkpoint đầu của GĐ4. Hướng dẫn chạy hiện tại ở <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/IMPLEMENTATION.md">IMPLEMENTATION.md</a>, kế hoạch đầy đủ ở <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/README.md">README.md</a>.</p>
@@ -567,7 +569,7 @@
 <h2 id="chat-luong-va-gioi-han">Chất lượng và giới hạn</h2>
 <p>Các lượt hoàn tất đều có dữ liệu cả hai worker, không có lỗi parse trong quality.json, agent giữ nguyên UID/restart và stderr của collector rỗng. Những lượt mới có snapshot Prometheus trước/sau. Ở các mốc đọc đã kiểm tra, hai agent đều up=1 và các bộ đếm mất ring buffer, mất hàng đợi, lỗi export và giới hạn export đều có giá trị 0. Các snapshot chịu độ phân giải scrape của Prometheus.</p>
 <p>Nhãn attack ở S1 được gán cho sự kiện TCP có căn cứ từ actor UID, thời gian và đích của receipt. Sự kiện chưa đủ căn cứ giữ unknown. Smoke file thuộc kiểm thử thiết bị đo và giữ nhãn unknown cho thao tác mô phỏng. Bộ pilot chưa phải toàn bộ dataset S1–S5 của GĐ4.</p>
-<p>Bổ sung ngày 20/11/2026, S2 đã được triển khai và có hướng dẫn tại <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S2.md">S2.md</a>. Các kịch bản tiếp theo gồm S3 chuỗi shell/công cụ/file đầy đủ, S5 receiver nhận payload giả và S4 tải phụ có request-level latency. Sau khi kiểm chứng từng pilot, thực hiện các lượt chính thức và S0 đối chiếu.</p>
+<p>Bổ sung ngày 20/11/2026, S2 đã được triển khai và có hướng dẫn tại <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S2.md">S2.md</a>. Ngày 22/11 đã triển khai S3 runtime; xem <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S3.md">S3.md</a> để kiểm tra từng thao tác, projected token và kết quả hai worker. Các kịch bản tiếp theo gồm S5 receiver nhận payload giả và S4 tải phụ có request-level latency. Sau khi kiểm chứng từng pilot, thực hiện các lượt chính thức và S0 đối chiếu.</p>
 <h2 id="mo-du-lieu">Mở dữ liệu</h2>
 <p>Trong mỗi thư mục run đã hoàn tất, dataset.tar.gz chứa raw/, normalized.ndjson và labeled-windows.ndjson. Manifest, timeline, receipt, quality và processing được giữ riêng để đọc trên GitHub.</p>
 <p>Các lượt interrupted/failed có thể chỉ có raw. Đọc manifest và postmortem trước khi chọn dữ liệu cho phân tích. Liên kết raw_file/raw_line trong bản ghi chuẩn hóa dùng được sau khi giải nén tại thư mục run.</p><div class="finish"><button class="button" data-complete="17-gd4-thuc-nghiem" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="16-ket-qua-baseline.html">← Đọc kết quả baseline thực tế</a><a href="18-s2-goi-api-trai-luong.html">S2 · Gọi API payment trái luồng →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
@@ -602,6 +604,7 @@
 <li><a href="#9-tieu-chi-nghiem-thu-gd4">9. Tiêu chí nghiệm thu GĐ4</a></li>
 <li><a href="#10-viec-lam-dau-tien-sau-ke-hoach">10. Việc làm đầu tiên sau kế hoạch</a></li>
 <li><a href="#tien-do-trien-khai-ngay-18-11-2026">Tiến độ triển khai ngày 18/11/2026</a></li>
+<li><a href="#tien-do-s3-ngay-22-11-2026">Tiến độ S3 ngày 22/11/2026</a></li>
 <li><a href="#ket-qua-khoi-dong-gd4">Kết quả khởi động GĐ4</a></li>
 <li><a href="#ket-qua-kiem-thu">Kết quả kiểm thử</a></li>
 <li><a href="#kiem-thu-dung-runner">Kiểm thử dừng runner</a></li>

@@ -38,3 +38,8 @@ Từ thư mục Testbed_Online_Boutique:
 ```bash
 sha256sum -c SHA256SUMS.txt
 ```
+
+
+## Pilot S3 runtime ngày 22/11/2026
+
+Hai lượt `s3-20261122T102500Z-378143` (w1) và `s3-20261122T102750Z-382892` (w2) đạt 18/18 thao tác mỗi lượt. Xem [hướng dẫn S3 và danh mục đầy đủ](../experiments/S3.md). Các archive mới giữ thêm `source/` để đối chiếu hash mã với manifest. Các lượt smoke lỗi và interrupted được giữ riêng và không tính là attack hoàn tất.

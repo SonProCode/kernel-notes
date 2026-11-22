@@ -25,3 +25,12 @@ spec:
             - index: 1
               operator: Equal
               values: ["4"]
+        - matchArgs:
+            - index: 0
+              operator: Prefix
+              values:
+                - /var/run/secrets/kubernetes.io/serviceaccount/
+                - /run/secrets/kubernetes.io/serviceaccount/
+            - index: 1
+              operator: Equal
+              values: ["4"]

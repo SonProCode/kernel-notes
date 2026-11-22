@@ -1,0 +1,253 @@
+{
+  "schema_version": 3,
+  "run_id": "s3-20261122T101757Z-366636",
+  "scenario_id": "S3",
+  "mode": "smoke",
+  "status": "completed",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 10,
+  "pre_seconds": 5,
+  "recovery_seconds": 5,
+  "measurement_seconds": 900,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "91b6f41b129ff877fefb2c9b5da1ff2d0b2973afea8f0b3cff721576675e65ae",
+    "actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "label.py": "2a8fc5368d045b7dba8cc9646e17591c4b419a0e45f3ff96a1bd9841d16ae0fa",
+    "s3_support.py": "ef3797aca0dd727d8e67aada057a46187e19565f885f10ba2f4974a30ed228d1",
+    "s3_verify.py": "878b60736d0dda7c9945362f4d042349b145535b39bbd375c494763fe554459d",
+    "s3/client.py": "4bed285e20b5cd4de5e08979685fe68698ed98b727d41b37a274199fe0a66676",
+    "s3/tools-provenance.json": "3a4c4931d03a0985052a2a33977463452696202deacea13a3e7041cb1f8a69b2",
+    "policies/observe-files.yaml": "bfdd235d59e83112460854d7844d26d6b1aeaf0db44f8b9b82ab7d7eaefb72f8"
+  },
+  "s3": {
+    "profile": "runtime",
+    "rounds": 1,
+    "expected_operations": 6,
+    "round_period_seconds": 30,
+    "token_audience": "gd4-s3-lab",
+    "token_expiration_requested": 600
+  },
+  "git_commit": null,
+  "source_snapshot": "source",
+  "actor": {
+    "name": "gd4-366636",
+    "uid": "8c9f6ed4-e5cd-4934-a119-065b2c9b71a8",
+    "ip": "10.42.1.44",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+    "service_account": "gd4-366636"
+  },
+  "s3_runtime": {
+    "tool_versions": {
+      "curl": "curl 7.88.1 (x86_64-pc-linux-gnu) libcurl/7.88.1 OpenSSL/3.0.15 zlib/1.2.13 brotli/1.0.9 zstd/1.5.4 libidn2/2.3.3 libpsl/0.21.2 (+libidn2/2.3.3) libssh2/1.10.0 nghttp2/1.52.0 librtmp/2.3 OpenLDAP/2.5.13",
+      "wget": "GNU Wget 1.21.3 built on linux-gnu.",
+      "nc": "OpenBSD netcat (Debian patchlevel 1.219-1)",
+      "nmap": "Nmap version 7.93 ( https://nmap.org )"
+    },
+    "bundle_sha256": "87ea03ecb379af1eed6e455327058d7245a154bc848934ad38b6e2616bee860c"
+  },
+  "targets": [
+    {
+      "service": "frontend",
+      "ip": "10.43.221.147",
+      "port": 80,
+      "target_ips": [
+        "10.42.1.12",
+        "10.43.221.147"
+      ],
+      "target_ports": [
+        80,
+        8080
+      ],
+      "expected_subject": "system:serviceaccount:boutique:gd4-366636"
+    }
+  ],
+  "capture_start": "2026-11-22T10:18:30.215761+00:00",
+  "measurement_end": "2026-11-22T10:19:54.441942+00:00",
+  "finished": "2026-11-22T10:19:57.830454+00:00",
+  "s3_verification": {
+    "expected_operations": 6,
+    "receipts": 6,
+    "operations_passed": 5,
+    "shell_operations": 1,
+    "network_tool_operations": 4,
+    "token_reads": 1,
+    "projected_token_configuration_valid": true,
+    "credential_export_scan_passed": true,
+    "native_records_verified": 12,
+    "operations": [
+      {
+        "operation_id": "r0-curl",
+        "kind": "runtime_tool",
+        "tool": "curl",
+        "checks": {
+          "operation_completed": true,
+          "has_correlated_event": true,
+          "process_exec_observed": true,
+          "parent_lineage": true,
+          "helper_is_shell_child": true,
+          "tcp_connect_observed": true
+        },
+        "event_types": {
+          "process_exec": 1,
+          "tcp_connect_attempt": 1,
+          "tcp_send": 1
+        },
+        "raw_references": [
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2038
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2084
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2085
+          }
+        ],
+        "passed": true
+      },
+      {
+        "operation_id": "r0-wget",
+        "kind": "runtime_tool",
+        "tool": "wget",
+        "checks": {
+          "operation_completed": true,
+          "has_correlated_event": true,
+          "process_exec_observed": true,
+          "parent_lineage": true,
+          "helper_is_shell_child": true,
+          "tcp_connect_observed": true
+        },
+        "event_types": {
+          "process_exec": 1,
+          "tcp_connect_attempt": 1,
+          "tcp_send": 1
+        },
+        "raw_references": [
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2151
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2152
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2153
+          }
+        ],
+        "passed": true
+      },
+      {
+        "operation_id": "r0-nc",
+        "kind": "runtime_tool",
+        "tool": "nc",
+        "checks": {
+          "operation_completed": true,
+          "has_correlated_event": true,
+          "process_exec_observed": true,
+          "parent_lineage": true,
+          "helper_is_shell_child": true,
+          "tcp_connect_observed": true
+        },
+        "event_types": {
+          "process_exec": 1,
+          "tcp_connect_attempt": 1
+        },
+        "raw_references": [
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2181
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2197
+          }
+        ],
+        "passed": true
+      },
+      {
+        "operation_id": "r0-nmap",
+        "kind": "runtime_tool",
+        "tool": "nmap",
+        "checks": {
+          "operation_completed": true,
+          "has_correlated_event": true,
+          "process_exec_observed": true,
+          "parent_lineage": true,
+          "helper_is_shell_child": true,
+          "tcp_connect_observed": true
+        },
+        "event_types": {
+          "process_exec": 1,
+          "tcp_connect_attempt": 1
+        },
+        "raw_references": [
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2267
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2268
+          }
+        ],
+        "passed": true
+      },
+      {
+        "operation_id": "r0-token",
+        "kind": "file_read",
+        "tool": null,
+        "checks": {
+          "operation_completed": true,
+          "has_correlated_event": true,
+          "projected_token_claims": true,
+          "file_read_observed": true,
+          "helper_lineage": true,
+          "bytes_read_positive": true
+        },
+        "event_types": {
+          "file_read_permission": 2
+        },
+        "raw_references": [
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2347
+          },
+          {
+            "file": "raw/lab-w1.ndjson",
+            "line": 2368
+          }
+        ],
+        "passed": true
+      },
+      {
+        "operation_id": "r0-shell",
+        "kind": "process_exec",
+        "tool": "shell",
+        "checks": {
+          "operation_completed": true,
+          "has_correlated_event": false,
+          "process_exec_observed": false,
+          "parent_lineage": false
+        },
+        "event_types": {},
+        "raw_references": [],
+        "passed": false
+      }
+    ],
+    "passed": false
+  },
+  "dataset_status": "failed_validation",
+  "matched_operations": 5
+}

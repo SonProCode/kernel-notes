@@ -1,0 +1,55 @@
+{
+  "events_by_type": {
+    "tcp_send": 8987,
+    "tcp_connect_attempt": 27,
+    "process_exec": 15,
+    "process_exit": 16,
+    "file_read_permission": 2
+  },
+  "events_by_label": {
+    "unknown": 7613,
+    "normal": 1434
+  },
+  "events_by_node": {
+    "lab-w1": 4836,
+    "lab-w2": 4211
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 6,
+  "operations_with_matched_event": 5,
+  "unmatched_operations": [
+    "r0-shell"
+  ],
+  "event_types_by_operation": {
+    "r0-curl": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r0-wget": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r0-nc": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r0-nmap": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r0-token": [
+      "file_read_permission"
+    ]
+  },
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}

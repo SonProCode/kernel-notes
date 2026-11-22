@@ -352,3 +352,8 @@ Các kịch bản S2, chuỗi runtime abuse S3 đầy đủ, S4 và S5 nằm tro
 Báo cáo checkpoint và các lượt kiểm thử nằm trong [RESULTS.md](RESULTS.md).
 
 Ngày 20/11/2026 đã triển khai S2 gọi Charge bằng gRPC. Các bước chạy lại và xác minh từng lời gọi được ghi trong [S2.md](S2.md).
+
+
+## Tiến độ S3 ngày 22/11/2026
+
+Đã triển khai profile runtime với shell, đủ bốn công cụ curl/wget/nc/nmap và đọc projected ServiceAccount token thật của Pod actor tạm. Chỉ xuất metadata đọc token. Hướng dẫn, bằng chứng hai worker, lịch sử lỗi và cách double check nằm trong [S3.md](S3.md). Fixture giả cũ vẫn dùng cho smoke. S4/S5 và bộ official cùng S0 đối chứng là công việc tiếp theo.

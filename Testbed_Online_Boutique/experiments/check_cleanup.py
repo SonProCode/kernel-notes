@@ -1,4 +1,4 @@
-"""Prove SIGTERM cleanup for an S0 or S2 run on the lab."""
+"""Prove SIGTERM cleanup for an S0, S2 or S3 run on the lab."""
 from datetime import datetime, timezone
 import json
 import argparse
@@ -7,18 +7,20 @@ import subprocess
 import time
 
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--scenario", choices=["S0", "S2"], default="S0")
+parser.add_argument("--scenario", choices=["S0", "S2", "S3"], default="S0")
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 started = {p.name for p in (root / "runs").iterdir() if p.is_dir()}
 log = root / "runs" / ("cleanup-check-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ".log")
 with log.open("w") as stream:
-    process = subprocess.Popen(["python3", str(root / "experiments/runner.py"),
-                                "--scenario", args.scenario, "--mode", "smoke",
-                                "--warmup", "300", "--measurement", "1"],
-                               stdout=stream, stderr=subprocess.STDOUT)
+    command = ["python3", str(root / "experiments/runner.py"),
+               "--scenario", args.scenario, "--mode", "smoke",
+               "--warmup", "300", "--measurement", "1"]
+    if args.scenario == "S3":
+        command += ["--s3-profile", "runtime", "--s3-rounds", "1"]
+    process = subprocess.Popen(command, stdout=stream, stderr=subprocess.STDOUT)
     try:
-        deadline = time.monotonic() + 100
+        deadline = time.monotonic() + 180
         run = None
         while time.monotonic() < deadline:
             candidates = [p for p in (root / "runs").glob(args.scenario.lower()+"-*") if p.name not in started]
@@ -43,7 +45,7 @@ replicas = subprocess.check_output(["k3s","kubectl","-n","boutique","get","deplo
 manifest = json.loads((run / "manifest.json").read_text())
 assert replicas == "0", replicas
 assert manifest["status"] == "interrupted", manifest
-if args.scenario == "S2":
+if args.scenario in ("S2","S3"):
     for kind in ("pods", "serviceaccounts"):
         deadline = time.monotonic() + 60
         while True:

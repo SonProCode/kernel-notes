@@ -1,0 +1,8 @@
+{
+  "reason": "Post-run verifier recheck added agent/loss metric checks before full pilots; raw and receipts unchanged.",
+  "rechecked_on": "2026-11-22",
+  "original_verifier_sha256": "428206dc1fc342a3078c74295494421cf2526b1cbede782c39ba7fb7b161b91e",
+  "recheck_verifier_sha256": "58c21d9af809a55b679ea14610d9d6bd8ff51999da20f2135c17e656a46d3c84",
+  "result_file": "s3-verification.json",
+  "source_snapshot": "source/ contains original captured source; full pilots contain the final verifier from launch."
+}

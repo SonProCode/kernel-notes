@@ -54,6 +54,8 @@ wc -l telemetry.ndjson
 <p>Từ thư mục Testbed_Online_Boutique:</p>
 <pre><code class="language-bash">sha256sum -c SHA256SUMS.txt
 </code></pre>
+<h2 id="pilot-s3-runtime-ngay-22-11-2026">Pilot S3 runtime ngày 22/11/2026</h2>
+<p>Hai lượt <code>s3-20261122T102500Z-378143</code> (w1) và <code>s3-20261122T102750Z-382892</code> (w2) đạt 18/18 thao tác mỗi lượt. Xem <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/S3.md">hướng dẫn S3 và danh mục đầy đủ</a>. Các archive mới giữ thêm <code>source/</code> để đối chiếu hash mã với manifest. Các lượt smoke lỗi và interrupted được giữ riêng và không tính là attack hoàn tất.</p>
 <h2 id="phan-tich-baseline-15-phut">Phân tích baseline 15 phút</h2>
 <p>Phân tích sự kiện tcp_send trong cửa sổ đo của lượt này. Đích được đối chiếu với Service ClusterIP, EndpointSlice của hai snapshot và IP nguồn có danh tính workload trong log. Việc suy ra phía server dựa trên cổng lắng nghe trong Service và EndpointSlice.</p>
 <p>Tổng cộng <strong>141,639</strong> sự kiện gửi TCP. Ánh xạ được <strong>132,163</strong> sự kiện tới một workload đích duy nhất. Có <strong>16</strong> luồng nguồn–đích–cổng gửi về phía server.</p>
@@ -243,6 +245,7 @@ wc -l telemetry.ndjson
 <ul>
 <li><a href="#mo-du-lieu-nen">Mở dữ liệu nén</a></li>
 <li><a href="#kiem-tra-file-tai-ve">Kiểm tra file tải về</a></li>
+<li><a href="#pilot-s3-runtime-ngay-22-11-2026">Pilot S3 runtime ngày 22/11/2026</a></li>
 <li><a href="#phan-tich-baseline-15-phut">Phân tích baseline 15 phút</a></li>
 <li><a href="#theo-tung-phut">Theo từng phút</a></li>
 <li><a href="#buoc-tiep-theo">Bước tiếp theo</a></li>

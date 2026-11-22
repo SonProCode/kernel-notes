@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-11-22T10:33:54.075536+00:00",
+  "passed": true,
+  "s3_pilots": [
+    {
+      "run_id": "s3-20261122T102500Z-378143",
+      "node": "w1",
+      "operations_passed": 18,
+      "native_records_verified": 39
+    },
+    {
+      "run_id": "s3-20261122T102750Z-382892",
+      "node": "w2",
+      "operations_passed": 18,
+      "native_records_verified": 39
+    }
+  ],
+  "code_bundle_sha256": "849bd6fcb85911ba1ece600bd883dd4ab0852fbd4494a36e9a27c629f6bb66f6",
+  "script_hashes_equal": true,
+  "current_scripts_match_run": true,
+  "actor_image_equal": true,
+  "cleanup_run": "s3-20261122T103055Z-388332",
+  "sigterm_cleanup_verified": true,
+  "s2_regression_run": "s2-20261122T103155Z-391001",
+  "s2_regression_passed": true,
+  "loadgenerator_replicas": 0,
+  "remaining_actor_pods": 0,
+  "remaining_experiment_serviceaccounts": 0,
+  "remaining_builder_pods": 0,
+  "available_application_replicas": {
+    "frontend": 1,
+    "checkoutservice": 1,
+    "paymentservice": 1
+  }
+}

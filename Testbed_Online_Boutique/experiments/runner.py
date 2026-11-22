@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run bounded S0/S1/S2 experiments or the S3 file smoke test on lab-cp."""
+"""Run bounded S0-S3 experiments with structured telemetry and receipts."""
 import argparse
 from datetime import datetime, timezone
 import fcntl
@@ -15,6 +15,8 @@ from urllib.parse import urlencode
 from label import normalize, write_json
 from s2_support import prepare_s2
 from s2_verify import verify_run
+from s3_support import prepare_s3
+from s3_verify import verify_s3
 
 ROOT = Path(__file__).resolve().parent
 
@@ -45,6 +47,7 @@ def run(args):
         if not any(c["type"] == "Ready" and c["status"] == "True"
                    for c in node.get("status", {}).get("conditions", [])):
             raise RuntimeError(f"Node is not Ready: {node_name}")
+    s3_runtime = args.scenario == "S3" and args.s3_profile == "runtime"
     run_id = f'{args.scenario.lower()}-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{os.getpid()}'
     output = ROOT.parent / "runs" / run_id
     output.mkdir(mode=0o700)
@@ -76,20 +79,31 @@ def run(args):
                      ROOT / "s2/protos/demo.proto", ROOT / "s2/requirements.lock",
                      ROOT / "s2/fixture.json", ROOT / "expected-communications.csv"):
             manifest["script_sha256"][path.relative_to(ROOT).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    if args.scenario == "S3":
+        manifest["s3"] = {"profile": args.s3_profile, "rounds": args.s3_rounds,
+                          "expected_operations": args.s3_rounds * 6 if s3_runtime else 3,
+                          "round_period_seconds": 30, "token_audience": "gd4-s3-lab",
+                          "token_expiration_requested": 600}
+    if s3_runtime:
+        for path in (ROOT/"s3_support.py", ROOT/"s3_verify.py", ROOT/"s3/client.py",
+                     ROOT/"s3/tools-provenance.json", ROOT/"policies/observe-files.yaml"):
+            manifest["script_sha256"][path.relative_to(ROOT).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     try:
         manifest["git_commit"] = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
     except subprocess.CalledProcessError:
         manifest["git_commit"] = None
-    if args.scenario == "S2":
+    if args.scenario == "S2" or s3_runtime:
         for relative in manifest["script_sha256"]:
             source = ROOT / relative
             target = output / "source" / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(source.read_bytes())
-        for relative in ("s2/provenance.json",):
+        for relative in (("s2/provenance.json",) if args.scenario == "S2" else ()):
             target = output / "source" / relative
             target.write_bytes((ROOT / relative).read_bytes())
         manifest["source_snapshot"] = "source"
+    manifest["code_bundle_sha256"] = hashlib.sha256(
+        json.dumps(manifest["script_sha256"], sort_keys=True).encode()).hexdigest()
     write_json(output / "manifest.json", manifest)
     (output / "actor-receipts.ndjson").touch()
 
@@ -147,7 +161,7 @@ def run(args):
                                                  "capabilities": {"drop": ["ALL"]}},
                              "resources": {"requests": {"cpu": "20m", "memory": "32Mi"},
                                            "limits": {"cpu": "200m", "memory": "96Mi"}}}]}}
-            if args.scenario == "S2":
+            if args.scenario == "S2" or s3_runtime:
                 k("create", "-f", "-", input=json.dumps({
                     "apiVersion": "v1", "kind": "ServiceAccount",
                     "metadata": {"name": actor_name, "namespace": "boutique",
@@ -160,6 +174,14 @@ def run(args):
                     "requests": {"cpu": "50m", "memory": "64Mi"},
                     "limits": {"cpu": "500m", "memory": "256Mi"},
                 }
+            if s3_runtime:
+                actor["spec"]["securityContext"] = {"runAsUser":10000,"runAsGroup":10000,"fsGroup":10000}
+                actor["spec"]["volumes"] = [{
+                    "name":"s3-token","projected":{"defaultMode":288,"sources":[{
+                        "serviceAccountToken":{"path":"token","audience":"gd4-s3-lab","expirationSeconds":600}
+                    }]}}]
+                actor["spec"]["containers"][0]["volumeMounts"] = [{
+                    "name":"s3-token","mountPath":"/var/run/secrets/kubernetes.io/serviceaccount","readOnly":True}]
             k("create", "-f", "-", input=json.dumps(actor))
             created = True
             k("-n", "boutique", "wait", "--for=condition=Ready", f"pod/{actor_name}", "--timeout=120s")
@@ -173,6 +195,8 @@ def run(args):
                                  "service_account": actual["spec"].get("serviceAccountName")}
             if args.scenario == "S2":
                 manifest["s2_runtime"] = prepare_s2(actor_name, output)
+            if s3_runtime:
+                manifest["s3_runtime"] = prepare_s3(actor_name, output)
         snapshot("before")
         targets = []
         if args.scenario == "S1":
@@ -191,6 +215,19 @@ def run(args):
                     aliases.update(endpoint["addresses"])
             targets = [{"service": "paymentservice", "ip": service["spec"]["clusterIP"],
                         "port": 50051, "target_ips": sorted(aliases)}]
+            manifest["targets"] = targets
+        if s3_runtime:
+            service = get("-n","boutique","get","service","frontend")
+            endpoints = get("-n","boutique","get","endpointslice","-l","kubernetes.io/service-name=frontend")
+            aliases = {service["spec"]["clusterIP"]}
+            ports = {80}
+            for item in endpoints["items"]:
+                ports.update(p["port"] for p in item["ports"] if p.get("port"))
+                for endpoint in item["endpoints"]:
+                    aliases.update(endpoint["addresses"])
+            targets = [{"service":"frontend","ip":service["spec"]["clusterIP"],
+                        "port":80,"target_ips":sorted(aliases),"target_ports":sorted(ports),
+                        "expected_subject":f"system:serviceaccount:boutique:{actor_name}"}]
             manifest["targets"] = targets
         manifest["capture_start"] = now()
         manifest["status"] = "running"
@@ -234,7 +271,8 @@ def run(args):
             mark("attack")
             command = ["-n", "boutique", "exec", "-i", actor_name, "-c", "actor",
                        "--", "python3", "-", args.scenario, "--targets", json.dumps(targets),
-                       "--calls", str(args.s2_calls)]
+                       "--calls", str(args.s2_calls), "--s3-profile", args.s3_profile or "file-smoke",
+                       "--rounds", str(args.s3_rounds)]
             # Capture the action stream even if the remote process fails partway.
             with (output / "actor-receipts.ndjson").open("w") as receipts, (output / "actor.stderr").open("w") as errors:
                 result = subprocess.run(["k3s", "kubectl", *command],
@@ -290,6 +328,10 @@ def run(args):
         verification = verify_run(output)
         manifest["s2_verification"] = verification
         has_evidence = has_evidence and verification["passed"]
+    if s3_runtime:
+        verification = verify_s3(output)
+        manifest["s3_verification"] = verification
+        has_evidence = verification["passed"]
     manifest["dataset_status"] = "validated" if valid_capture and has_evidence else "failed_validation"
     manifest["matched_operations"] = quality["operations_with_matched_event"]
     write_json(output / "manifest.json", manifest)
@@ -297,6 +339,8 @@ def run(args):
         raise RuntimeError("Capture checks failed. See quality.json")
     if args.scenario == "S2" and not has_evidence:
         raise RuntimeError("S2 API or network evidence incomplete. See quality.json")
+    if s3_runtime and not has_evidence:
+        raise RuntimeError("S3 process, network or token evidence incomplete. See s3-verification.json")
     if args.scenario != "S0" and quality["operations_with_matched_event"] == 0:
         raise RuntimeError("No operations matched. See quality.json")
     print(f"Completed: {output}", flush=True)
@@ -312,11 +356,17 @@ if __name__ == "__main__":
     parser.add_argument("--recovery", type=int, default=120)
     parser.add_argument("--measurement", type=int, default=900)
     parser.add_argument("--s2-calls", type=int, default=30)
+    parser.add_argument("--s3-profile",choices=["runtime","file-smoke"])
+    parser.add_argument("--s3-rounds",type=int,default=3)
     args = parser.parse_args()
+    if args.scenario == "S3" and args.s3_profile is None:
+        args.s3_profile = "file-smoke" if args.mode == "smoke" else "runtime"
+    if not 1 <= args.s3_rounds <= 3:
+        parser.error("--s3-rounds must be 1..3")
     if not 1 <= args.s2_calls <= 30:
         parser.error("--s2-calls must be between 1 and 30")
-    if args.scenario == "S3" and args.mode != "smoke":
-        parser.error("S3 currently implements the file smoke test. Use --mode smoke.")
+    if args.scenario == "S3" and args.s3_profile == "file-smoke" and args.mode != "smoke":
+        parser.error("The legacy file-smoke profile requires --mode smoke.")
     if min(args.warmup, args.pre, args.recovery, args.measurement) < 0:
         parser.error("Durations must be nonnegative")
     def interrupted(signum, frame):

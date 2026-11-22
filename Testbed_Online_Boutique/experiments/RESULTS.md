@@ -40,7 +40,7 @@ Các lượt hoàn tất đều có dữ liệu cả hai worker, không có lỗ
 
 Nhãn attack ở S1 được gán cho sự kiện TCP có căn cứ từ actor UID, thời gian và đích của receipt. Sự kiện chưa đủ căn cứ giữ unknown. Smoke file thuộc kiểm thử thiết bị đo và giữ nhãn unknown cho thao tác mô phỏng. Bộ pilot chưa phải toàn bộ dataset S1–S5 của GĐ4.
 
-Bổ sung ngày 20/11/2026, S2 đã được triển khai và có hướng dẫn tại [S2.md](S2.md). Các kịch bản tiếp theo gồm S3 chuỗi shell/công cụ/file đầy đủ, S5 receiver nhận payload giả và S4 tải phụ có request-level latency. Sau khi kiểm chứng từng pilot, thực hiện các lượt chính thức và S0 đối chiếu.
+Bổ sung ngày 20/11/2026, S2 đã được triển khai và có hướng dẫn tại [S2.md](S2.md). Ngày 22/11 đã triển khai S3 runtime; xem [S3.md](S3.md) để kiểm tra từng thao tác, projected token và kết quả hai worker. Các kịch bản tiếp theo gồm S5 receiver nhận payload giả và S4 tải phụ có request-level latency. Sau khi kiểm chứng từng pilot, thực hiện các lượt chính thức và S0 đối chiếu.
 
 ## Mở dữ liệu
 

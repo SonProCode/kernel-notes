@@ -13,11 +13,16 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
-def perform(scenario, targets, calls=30):
+def perform(scenario, targets, calls=30, s3_profile='file-smoke', rounds=3):
     if scenario == "S2":
         sys.path.insert(0, "/tmp/gd4-s2")
         from gd4_s2_client import perform as charge
         charge(targets, calls)
+        return
+    if scenario == "S3" and s3_profile == "runtime":
+        sys.path.insert(0, "/tmp/gd4-s3")
+        from client import perform as abuse
+        abuse(targets[0], rounds)
         return
     if scenario == "S3":
         path = Path("/tmp/gd4-fixture/token")
@@ -63,5 +68,7 @@ if __name__ == "__main__":
     parser.add_argument("scenario", choices=["S1", "S2", "S3"])
     parser.add_argument("--targets", default="[]")
     parser.add_argument("--calls", type=int, default=30)
+    parser.add_argument("--s3-profile", choices=["runtime","file-smoke"], default="file-smoke")
+    parser.add_argument("--rounds", type=int, default=3)
     args = parser.parse_args()
-    perform(args.scenario, json.loads(args.targets), args.calls)
+    perform(args.scenario, json.loads(args.targets), args.calls, args.s3_profile, args.rounds)

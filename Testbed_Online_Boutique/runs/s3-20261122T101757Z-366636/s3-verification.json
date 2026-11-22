@@ -1,0 +1,177 @@
+{
+  "expected_operations": 6,
+  "receipts": 6,
+  "operations_passed": 5,
+  "shell_operations": 1,
+  "network_tool_operations": 4,
+  "token_reads": 1,
+  "projected_token_configuration_valid": true,
+  "credential_export_scan_passed": true,
+  "native_records_verified": 12,
+  "operations": [
+    {
+      "operation_id": "r0-curl",
+      "kind": "runtime_tool",
+      "tool": "curl",
+      "checks": {
+        "operation_completed": true,
+        "has_correlated_event": true,
+        "process_exec_observed": true,
+        "parent_lineage": true,
+        "helper_is_shell_child": true,
+        "tcp_connect_observed": true
+      },
+      "event_types": {
+        "process_exec": 1,
+        "tcp_connect_attempt": 1,
+        "tcp_send": 1
+      },
+      "raw_references": [
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2038
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2084
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2085
+        }
+      ],
+      "passed": true
+    },
+    {
+      "operation_id": "r0-wget",
+      "kind": "runtime_tool",
+      "tool": "wget",
+      "checks": {
+        "operation_completed": true,
+        "has_correlated_event": true,
+        "process_exec_observed": true,
+        "parent_lineage": true,
+        "helper_is_shell_child": true,
+        "tcp_connect_observed": true
+      },
+      "event_types": {
+        "process_exec": 1,
+        "tcp_connect_attempt": 1,
+        "tcp_send": 1
+      },
+      "raw_references": [
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2151
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2152
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2153
+        }
+      ],
+      "passed": true
+    },
+    {
+      "operation_id": "r0-nc",
+      "kind": "runtime_tool",
+      "tool": "nc",
+      "checks": {
+        "operation_completed": true,
+        "has_correlated_event": true,
+        "process_exec_observed": true,
+        "parent_lineage": true,
+        "helper_is_shell_child": true,
+        "tcp_connect_observed": true
+      },
+      "event_types": {
+        "process_exec": 1,
+        "tcp_connect_attempt": 1
+      },
+      "raw_references": [
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2181
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2197
+        }
+      ],
+      "passed": true
+    },
+    {
+      "operation_id": "r0-nmap",
+      "kind": "runtime_tool",
+      "tool": "nmap",
+      "checks": {
+        "operation_completed": true,
+        "has_correlated_event": true,
+        "process_exec_observed": true,
+        "parent_lineage": true,
+        "helper_is_shell_child": true,
+        "tcp_connect_observed": true
+      },
+      "event_types": {
+        "process_exec": 1,
+        "tcp_connect_attempt": 1
+      },
+      "raw_references": [
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2267
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2268
+        }
+      ],
+      "passed": true
+    },
+    {
+      "operation_id": "r0-token",
+      "kind": "file_read",
+      "tool": null,
+      "checks": {
+        "operation_completed": true,
+        "has_correlated_event": true,
+        "projected_token_claims": true,
+        "file_read_observed": true,
+        "helper_lineage": true,
+        "bytes_read_positive": true
+      },
+      "event_types": {
+        "file_read_permission": 2
+      },
+      "raw_references": [
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2347
+        },
+        {
+          "file": "raw/lab-w1.ndjson",
+          "line": 2368
+        }
+      ],
+      "passed": true
+    },
+    {
+      "operation_id": "r0-shell",
+      "kind": "process_exec",
+      "tool": "shell",
+      "checks": {
+        "operation_completed": true,
+        "has_correlated_event": false,
+        "process_exec_observed": false,
+        "parent_lineage": false
+      },
+      "event_types": {},
+      "raw_references": [],
+      "passed": false
+    }
+  ],
+  "passed": false
+}

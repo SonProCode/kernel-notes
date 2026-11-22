@@ -27,6 +27,7 @@ ARTICLES = [
     ("16-ket-qua-baseline", "Đọc kết quả baseline thực tế", "Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.", "GĐ3 · Kết quả", "pulse"),
     ("17-gd4-thuc-nghiem", "GĐ4 · Tạo dữ liệu attack và normal", "Kế hoạch S1–S5, quy tắc nhãn và tiến độ pilot trên hai worker.", "GĐ4 · S1–S5", "terminal"),
     ("18-s2-goi-api-trai-luong", "S2 · Gọi API payment trái luồng", "Tái lập lời gọi gRPC và double check bằng phản hồi API, log server cùng Tetragon.", "GĐ4 · S2", "network"),
+    ("19-s3-runtime-abuse", "S3 · Shell, công cụ mạng và token", "Tái lập runtime abuse và đối chiếu từng tiến trình, kết nối, lần đọc file với raw Tetragon.", "GĐ4 · S3", "terminal"),
 ]
 WEEKS = [
     (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
@@ -81,6 +82,7 @@ def layout(title, body, meta="Học bảo mật Kubernetes và eBPF từ đầu 
 </div></header><main id="main">{body}</main><footer class="shell footer"><a class="logo" href="./">{icon("layers")} Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>"""
 
 LAB_SOURCES = {
+    "19-s3-runtime-abuse": "Testbed_Online_Boutique/experiments/S3.md",
     "18-s2-goi-api-trai-luong": "Testbed_Online_Boutique/experiments/S2.md",
     "17-gd4-thuc-nghiem": "Testbed_Online_Boutique/experiments/README.md",
     "13-lab-k3s-thuc-te": "Testbed_Online_Boutique/README.md",

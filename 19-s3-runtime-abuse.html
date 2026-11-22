@@ -1,0 +1,281 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S3 · Shell, công cụ mạng và token · Kernel Notes</title><meta name="description" content="Tái lập runtime abuse và đối chiếu từng tiến trình, kết nối, lần đọc file với raw Tetragon.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 18 · LAB THỰC TẾ · GĐ4 · S3 · 15 PHÚT ĐỌC</div>
+<h1>S3 · Shell, công cụ mạng và token</h1><p>Tái lập runtime abuse và đối chiếu từng tiến trình, kết nối, lần đọc file với raw Tetragon.</p></header>
+<div class="shell reading"><article class="prose"><p>Cập nhật ngày 22/11/2026. Đây là hướng dẫn tái lập và kiểm tra <strong>pilot chức năng S3</strong> trên lab của bạn. Kết quả pilot không thay thế bộ dữ liệu chính thức có các lượt lặp và S0 đối chứng.</p>
+<h2 id="1-s3-dang-mo-phong-chuyen-gi">1. S3 đang mô phỏng chuyện gì?</h2>
+<p>Đề cương, mục kịch bản S3, nêu: mở shell, chạy curl/wget/nc/nmap, đọc token; cần quan sát process/file events bất thường. Hãy hình dung kẻ tấn công đã có khả năng chạy lệnh trong một Pod. Họ mở trình thông dịch lệnh, dùng công cụ mạng kiểm tra dịch vụ rồi tìm credential của Pod. Lab bắt đầu từ giả định đã chạy được lệnh; không triển khai một lỗ hổng để chiếm Pod.</p>
+<p>Runner tạo một Pod actor tạm trong namespace <code>boutique</code> để đóng vai Pod bị chiếm. Pod ứng dụng Online Boutique vẫn phục vụ traffic Locust bình thường. Đây là hành vi mô phỏng có chủ đích trong lab, chưa chứng minh một ứng dụng thực tế đã bị khai thác.</p>
+<table>
+<thead>
+<tr>
+<th>Yêu cầu trong đề cương</th>
+<th>Hành vi đã triển khai</th>
+<th>Bằng chứng dùng để kiểm tra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mở shell</td>
+<td>Chạy <code>/bin/sh</code> thật mỗi vòng</td>
+<td><code>process_exec</code>, binary, Pod UID, PID và cha tiến trình</td>
+</tr>
+<tr>
+<td>curl</td>
+<td>HTTP GET <code>frontend:80/_healthz</code></td>
+<td>Exec + TCP connect + client nhận HTTP 200</td>
+</tr>
+<tr>
+<td>wget</td>
+<td>HTTP GET cùng URL</td>
+<td>Exec + TCP connect + HTTP 200</td>
+</tr>
+<tr>
+<td>nc</td>
+<td>TCP connect tới frontend cổng 80</td>
+<td>Exec + TCP connect + exit code 0</td>
+</tr>
+<tr>
+<td>nmap</td>
+<td>TCP connect scan một IP, một cổng 80</td>
+<td>Exec + TCP connect + XML xác nhận port open</td>
+</tr>
+<tr>
+<td>Đọc token</td>
+<td>Đọc projected ServiceAccount token của riêng actor</td>
+<td>File permission return 0 + receipt xác nhận đọc được byte + metadata phù hợp</td>
+</tr>
+<tr>
+<td>Process/file events</td>
+<td>Tetragon trên cả hai worker</td>
+<td>Đối chiếu bản chuẩn hóa với dòng raw gốc</td>
+</tr>
+<tr>
+<td>Cô lập Pod, alert forensics</td>
+<td>Dữ liệu S3 chuẩn bị đầu vào cho các bước sau</td>
+<td>Detector thuộc GĐ5; phản ứng tự động thuộc GĐ6</td>
+</tr>
+</tbody>
+</table>
+<p>Một vòng có <strong>6 thao tác</strong>: một shell, bốn công cụ, một lần đọc token. Ba vòng có <strong>18 thao tác</strong>, trong khoảng attack khoảng 90 giây. Tất cả công cụ mạng chỉ nhắm frontend của lab. Nmap dùng <code>-sT --unprivileged -p 80</code>, không quét subnet và không cần CAP_NET_RAW.</p>
+<h2 id="2-nhung-khai-niem-can-hieu-truoc">2. Những khái niệm cần hiểu trước</h2>
+<p><strong>Process</strong> là một chương trình đang chạy. Shell là chương trình đọc và thực thi câu lệnh. Curl và wget là hai chương trình có thể tải nội dung HTTP; nc kiểm tra kết nối TCP; nmap trong kịch bản này kiểm tra một cổng có mở không.</p>
+<p><strong>ServiceAccount</strong> là danh tính dành cho workload Kubernetes. Token là credential thể hiện danh tính đó. File token không phải chương trình nên không có <code>process_exec</code> riêng cho token; process Python đọc file sẽ xuất hiện trong file event.</p>
+<p><strong>Projected volume</strong> là cách Kubernetes đưa dữ liệu được chọn vào filesystem của Pod. Kubelet dùng symlink để cập nhật nội dung. Vì vậy đường dẫn chương trình mở có thể là <code>/var/run/secrets/kubernetes.io/serviceaccount/token</code>, trong khi kernel báo <code>/run/secrets/kubernetes.io/serviceaccount/..2026_.../token</code>. Hai chuỗi khác nhau vẫn có thể trỏ cùng một file.</p>
+<p><strong>Receipt</strong> là nhật ký do chương trình tạo hành vi ghi lại: tôi định làm gì, bắt đầu/kết thúc lúc nào, PID bao nhiêu, kết quả gì. <strong>Telemetry</strong> là quan sát từ Tetragon trong kernel. Ghép hai nguồn giúp chứng minh hành vi đã thực hiện và thiết bị đo đã nhìn thấy; receipt không tự biến thành một cảnh báo Tetragon.</p>
+<p><strong>Pod UID</strong> phân biệt hai Pod dù chúng có cùng tên. <strong>Container PID</strong> là số tiến trình nhìn từ trong container; host PID là số nhìn từ node. Ví dụ một process là PID 25 trong container có thể là PID hàng trăm nghìn trên node. Bộ ghép dùng <code>process.pod.container.pid</code>, tránh nhầm với PID host. <code>exec_id</code> và <code>parent_exec_id</code> của Tetragon dùng để kiểm tra quan hệ cha/con.</p>
+<h2 id="3-chuoi-chuong-trinh-chay-that">3. Chuỗi chương trình chạy thật</h2>
+<pre><code class="language-text">Python actor do runner khởi chạy
+└── /bin/sh                          ← một operation shell
+    └── Python helper
+        ├── curl                     ← exec + TCP
+        ├── wget                     ← exec + TCP
+        ├── nc                       ← exec + TCP
+        ├── nmap                     ← exec + TCP
+        └── đọc file token           ← file event của Python helper
+</code></pre>
+<p>Helper chạy bốn công cụ lần lượt. Sau đó chính helper đọc token. Shell còn tồn tại tới khi helper xong; một lệnh chờ ngắn ngăn shell tự thay thế bằng chương trình cuối. Kiểm tra ancestry không chỉ so tên binary: verifier tìm exec của cha rồi so <code>parent_exec_id</code> của con.</p>
+<p>Receipt shell được ghi khi shell kết thúc, nên nó có thể nằm <strong>sau</strong> các receipt công cụ trong file. Hãy đọc <code>started</code>/<code>ended</code>, không dùng thứ tự dòng receipt làm thứ tự bắt đầu hành vi.</p>
+<h2 id="4-token-trong-s3-la-token-that-pham-vi-rieng-cho-lab">4. Token trong S3 là token thật, phạm vi riêng cho lab</h2>
+<p>Smoke cũ chỉ đọc fixture giả <code>/tmp/gd4-fixture/token</code>. Profile runtime mới đọc <strong>token thật do Kubernetes cấp</strong>, ở đường dẫn ServiceAccount tiêu chuẩn, để kiểm tra đúng loại file đề cương nêu. Hai profile được giữ riêng.</p>
+<p>Mỗi lượt runtime tạo một ServiceAccount riêng, không tạo RoleBinding hay ClusterRoleBinding. Pod tắt automount mặc định rồi khai báo một projection có <code>audience: gd4-s3-lab</code>, <code>expirationSeconds: 600</code>, mount chỉ đọc. Đây là thời hạn yêu cầu 10 phút; claim hết hạn thực tế được kiểm tra tại lúc đọc. Runner xóa Pod và ServiceAccount khi kết thúc.</p>
+<p>Audience cho biết token được cấp để bên nhận nào sử dụng. Audience riêng của lab giúp tách phép đọc credential khỏi việc gọi Kubernetes API. Kịch bản <strong>chỉ đọc</strong>, không dùng token để xác thực hoặc truy cập API. Không có binding riêng không đồng nghĩa mọi cụm đều không cấp bất kỳ quyền mặc định nào; mục tiêu ở đây không phải kiểm thử quyền API.</p>
+<p>Receipt chỉ ghi số byte và bốn cờ boolean: có hình dạng JWT, audience đúng, subject đúng ServiceAccount của actor, chưa hết hạn. Việc giải mã claim trong bộ nhớ <strong>không phải</strong> xác minh chữ ký JWT. Không ghi nội dung token, payload đã giải mã, chữ ký hay hash của token vào dataset. Policy file không thu buffer nội dung. Verifier kiểm tra thêm mẫu JWT trong raw và các file xuất chính trước khi chấp nhận dữ liệu.</p>
+<p>Xem giải thích chính thức về <a href="https://kubernetes.io/docs/concepts/storage/projected-volumes/#serviceaccounttoken">ServiceAccount token projection</a>.</p>
+<h2 id="5-tetragon-quan-sat-bang-cach-nao">5. Tetragon quan sát bằng cách nào?</h2>
+<p>Tetragon mặc định quan sát vòng đời process, gồm <code>process_exec</code> và <code>process_exit</code>. Cấu hình TCP của lab bổ sung <code>tcp_connect</code>/<code>tcp_sendmsg</code>. Policy <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/policies/observe-files.yaml">observe-files.yaml</a> bổ sung <code>security_file_permission</code> và lọc quyền <code>MAY_READ</code> (mask 4).</p>
+<p>Policy file giữ selector cho fixture cũ và thêm hai prefix <code>/var/run/secrets/kubernetes.io/serviceaccount/</code>, <code>/run/secrets/kubernetes.io/serviceaccount/</code>, trong namespace boutique. Prefix bao phủ đường dẫn có thư mục symlink theo thời gian. Đây là bộ lọc do ta cấu hình; Tetragon không tự biết file nào là credential cần quan tâm.</p>
+<p><code>file_read_permission</code> là tên sự kiện chuẩn hóa của lab. Raw của Tetragon vẫn là <code>process_kprobe</code>, có <code>function_name: security_file_permission</code>, file path, mask và giá trị return. Return 0 cho biết hook cho phép thao tác kiểm tra quyền đó. Để kết luận chương trình đọc được dữ liệu, verifier còn yêu cầu receipt báo số byte dương. Một lần đọc có thể sinh nhiều event kiểm tra quyền.</p>
+<p>TCP connect event cho thấy thao tác kết nối, không tự chứng minh HTTP thành công. Vì thế curl/wget còn phải báo HTTP 200; nc báo kết nối thành công; nmap báo cổng open. Một HTTP request có thể phát sinh nhiều TCP send và process events. Không được so tổng số log bằng tổng số request hay số operation.</p>
+<p>Nguồn: <a href="https://tetragon.io/docs/use-cases/process-lifecycle/">Tetragon process lifecycle</a> và <a href="https://github.com/cilium/tetragon/blob/v1.8.0/examples/quickstart/file_monitoring.yaml">ví dụ file monitoring v1.8.0</a>.</p>
+<h2 id="6-cac-file-trien-khai-va-bo-cong-cu-da-dong-goi">6. Các file triển khai và bộ công cụ đã đóng gói</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Công dụng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/runner.py">runner.py</a></td>
+<td>Tạo actor/SA, bật Locust, thu log, chạy hành vi, dọn tài nguyên và gọi verifier</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s3/client.py">s3/client.py</a></td>
+<td>Chuỗi shell, bốn công cụ và đọc token; ghi receipt</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s3_support.py">s3_support.py</a></td>
+<td>Chép bundle vào actor và kiểm tra hash/binary/version</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s3/build_tools.py">s3/build_tools.py</a></td>
+<td>Chuẩn bị bundle nếu thiếu, hoặc xác minh bundle sẵn có</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s3/tools-provenance.json">s3/tools-provenance.json</a></td>
+<td>Phiên bản gói, hash từng binary và image builder</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s3_verify.py">s3_verify.py</a></td>
+<td>Double check từng operation và bản ghi raw</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/label.py">label.py</a></td>
+<td>Chuẩn hóa schema v4 và gán nhãn v4 cho lượt mới</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/check_cleanup.py">check_cleanup.py</a></td>
+<td>Gửi SIGTERM và kiểm tra runner đã dọn</td>
+</tr>
+</tbody>
+</table>
+<p>Bundle <code>s3/tools.tar.gz</code> khoảng 16,4 MB chứa curl 7.88.1, wget 1.21.3, OpenBSD nc Debian 1.219-1, nmap 7.93 cùng thư viện, dữ liệu nmap và thông tin license. SHA-256:</p>
+<pre><code class="language-text">87ea03ecb379af1eed6e455327058d7245a154bc848934ad38b6e2616bee860c
+</code></pre>
+<p>Builder dùng Pod tạm trong telemetry, không mount host hay token, rồi xóa Pod. Actor chạy UID/GID 10000, drop capabilities, không cho tăng đặc quyền. Dùng bundle đã kiểm hash để chạy lại đúng công cụ; nếu build mới từ kho Debian thì phiên bản có thể đổi và phải ghi thành cấu hình thực nghiệm mới.</p>
+<h2 id="7-lenh-chay-lai-tren-lab-cp">7. Lệnh chạy lại trên lab-cp</h2>
+<p>Các lệnh sau chạy trong thư mục <code>/home/sonth32/Testbed_Online_Boutique</code>, nơi có thư mục <code>experiments/</code>. Kiểm tra hai worker và hai agent đang Ready, loadgenerator đang 0, không có lượt runner khác chạy.</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+sudo k3s kubectl get nodes
+sudo k3s kubectl -n telemetry get pods -o wide
+sudo k3s kubectl -n boutique get deployment loadgenerator
+sudo python3 experiments/s3/build_tools.py
+sudo k3s kubectl apply --dry-run=server -f experiments/policies/observe-files.yaml
+sudo k3s kubectl apply -f experiments/policies/observe-files.yaml
+sudo k3s kubectl -n boutique get tracingpoliciesnamespaced
+</code></pre>
+<p>Thử một vòng rất ngắn trước. Phải ghi <code>--s3-profile runtime</code> vì mode smoke mặc định vẫn giữ phép thử fixture cũ.</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S3 --mode smoke \
+  --s3-profile runtime --s3-rounds 1 --node w1 \
+  --warmup 10 --pre 5 --recovery 5
+</code></pre>
+<p>Smoke giữ nhãn thử là unknown. Pilot sau đây có ba vòng và gán attack cho sự kiện đã đối chiếu operation:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S3 --mode pilot \
+  --s3-profile runtime --s3-rounds 3 --node w1 \
+  --warmup 30 --pre 10 --recovery 10
+sudo python3 experiments/runner.py --scenario S3 --mode pilot \
+  --s3-profile runtime --s3-rounds 3 --node w2 \
+  --warmup 30 --pre 10 --recovery 10
+</code></pre>
+<p>Trong mỗi lượt có tải Locust 10 users, RATE=1. Ba vòng S3 gồm thao tác và thời gian chờ để khoảng bắt đầu các vòng cách nhau khoảng 30 giây. Đọc timeline để biết thời lượng thực.</p>
+<p>Khi chốt cohort chính thức, cấu hình dự kiến là warm-up 400 giây, pre 120 giây, attack khoảng 90 giây, recovery 120 giây. Lặp theo kế hoạch GĐ4, giữ release và có S0 cùng policy/schema để đối chứng:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S3 --mode official \
+  --s3-profile runtime --s3-rounds 3 --node w1 \
+  --warmup 400 --pre 120 --recovery 120
+</code></pre>
+<p>Đây là lệnh cho bước dữ liệu chính thức sau pilot; không được gọi các lượt thời gian rút ngắn bên trên là official.</p>
+<h2 id="8-double-check-ket-qua-nhu-the-nao">8. Double check kết quả như thế nào?</h2>
+<p>Runner in thư mục <code>runs/s3-...</code>. Thay <code>&lt;run_id&gt;</code> bằng tên đó:</p>
+<pre><code class="language-bash">sudo python3 experiments/s3_verify.py runs/&lt;run_id&gt;
+sudo cat runs/&lt;run_id&gt;/quality.json
+sudo cat runs/&lt;run_id&gt;/manifest.json
+sudo k3s kubectl -n boutique get pods -l app=gd4-actor
+sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
+sudo k3s kubectl -n boutique get deployment loadgenerator
+</code></pre>
+<p>Với runtime ba vòng, cần <code>expected_operations=18</code>, <code>operations_passed=18</code>, <code>shell_operations=3</code>, <code>network_tool_operations=12</code>, <code>token_reads=3</code>, <code>passed=true</code>. Verifier yêu cầu đủ exec, ancestry, 12 operation có connect, ba operation có file event và receipt đọc thành công. Số native records thường lớn hơn 18.</p>
+<p>Đường ghép là <strong>Pod UID + PID trong container + binary/path hoặc socket đích + thời gian operation</strong>. Cả <code>/bin/sh</code> và binary đã resolve được lưu làm alias. Mỗi bản ghi chuẩn hóa giữ <code>raw_file</code>/<code>raw_line</code>; verifier mở lại đúng dòng raw để kiểm tra. Bản v4 thêm container PID, parent exec ID và arguments của actor; giữ dữ liệu lịch sử ở phiên bản cũ.</p>
+<p><code>agent_and_loss_metric_checks_passed</code> yêu cầu hai agent up ở hai snapshot và chênh lệch bằng 0 của tám chuỗi metric mất/lỗi export. Đây là kiểm tra các bộ đếm đã thu và hai thời điểm scrape, không chứng minh tuyệt đối mọi sự kiện kernel đều được xuất. <code>quality.json</code> còn kiểm tra restart, stderr, JSON và dữ liệu hai node.</p>
+<p><code>manifest.status=completed</code> nghĩa là runner đã đi hết phần thực hiện và cleanup. <code>dataset_status=validated</code> cùng verifier passed mới thể hiện kiểm chứng dữ liệu thành công. Nếu failed_validation, giữ dữ liệu để tìm nguyên nhân.</p>
+<p>Muốn xem raw sau khi tải từ GitHub, giải nén <code>dataset.tar.gz</code> ngay tại thư mục run. Archive chứa <code>raw/</code>, <code>source/</code>, normalized và windows nếu lượt đó đã tạo. <code>source/</code> lưu snapshot mã của lượt; <code>script_sha256</code> trong manifest đối chiếu các file, <code>code_bundle_sha256</code> so sánh release giữa các lượt. Bundle công cụ lớn nằm trong repo và được đối chiếu bằng provenance/hash.</p>
+<p>Kiểm thử dừng chủ động, chạy riêng khi không có lượt khác:</p>
+<pre><code class="language-bash">sudo python3 experiments/check_cleanup.py --scenario S3
+</code></pre>
+<p>Script chờ runner tới warm-up rồi gửi SIGTERM; cần status interrupted, loadgenerator=0, Pod/SA của lượt được xóa. Đây là lượt kiểm tra cleanup, không đưa vào tập attack hoàn tất.</p>
+<h2 id="9-ket-qua-thuc-te-va-nhat-ky-thay-doi">9. Kết quả thực tế và nhật ký thay đổi</h2>
+<p>Hai lượt pilot đầy đủ đã đạt trên cả hai worker:</p>
+<table>
+<thead>
+<tr>
+<th>Lượt chạy</th>
+<th>Placement</th>
+<th>Thao tác đạt</th>
+<th>Native records ghép operation</th>
+<th>Tổng sự kiện chuẩn hóa</th>
+<th>Dòng Aggregated cuối Locust</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s3-20261122T102500Z-378143/manifest.json">s3-20261122T102500Z-378143</a></td>
+<td>lab-w1</td>
+<td>18/18</td>
+<td>39</td>
+<td>23.704</td>
+<td>342 requests, 0 failures</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s3-20261122T102750Z-382892/manifest.json">s3-20261122T102750Z-382892</a></td>
+<td>lab-w2</td>
+<td>18/18</td>
+<td>39</td>
+<td>23.217</td>
+<td>332 requests, 0 failures</td>
+</tr>
+</tbody>
+</table>
+<p>Mỗi lượt có 3 shell, 12 công cụ mạng và 3 lần đọc token. 39 native records gồm 15 process exec được gắn operation (shell và công cụ), 12 connect, 6 send của curl/wget và 6 file permission events. Các process helper và traffic nền nằm trong các bản ghi khác. Mỗi lần đọc token sinh hai file events trong cấu hình đang chạy.</p>
+<p>Các verifier đều passed, đủ ancestry, token projection đúng, không tìm thấy chuỗi JWT trong phần xuất được kiểm tra. Hai agent không đổi UID/restart; collector stderr rỗng; không có dòng JSON không hợp lệ. Tám chuỗi bộ đếm mất/lỗi export có delta 0. Locust là thống kê tích lũy gồm cả warm-up, không phải số request chỉ trong pha attack và không phải benchmark suy giảm hiệu năng.</p>
+<p>Hai lượt dùng cùng tám hash source và cùng <code>code_bundle_sha256</code>:</p>
+<pre><code class="language-text">849bd6fcb85911ba1ece600bd883dd4ab0852fbd4494a36e9a27c629f6bb66f6
+</code></pre>
+<p>Giờ UTC thực của pha attack: w1 từ <code>10:26:02.816149</code> đến <code>10:27:33.608854</code>; w2 từ <code>10:29:07.343480</code> đến <code>10:30:38.157627</code>, ngày 22/11/2026. Xem timeline trong từng thư mục để chọn đúng vùng Grafana.</p>
+<h3 id="vi-du-log-that-de-tu-lan-theo">Ví dụ log thật để tự lần theo</h3>
+<p>Trong lượt w1 <code>s3-20261122T102500Z-378143</code>, một event đã rút gọn có các trường sau:</p>
+<pre><code class="language-json">{
+  &quot;timestamp&quot;: &quot;2026-11-22T10:26:06.125660483Z&quot;,
+  &quot;event_type&quot;: &quot;file_read_permission&quot;,
+  &quot;binary&quot;: &quot;/usr/local/bin/python3&quot;,
+  &quot;container_pid&quot;: 25,
+  &quot;file_path&quot;: &quot;/run/secrets/kubernetes.io/serviceaccount/..2026_11_22_10_25_00.1923880494/token&quot;,
+  &quot;kernel_return&quot;: {&quot;int_arg&quot;: 0},
+  &quot;operation_id&quot;: &quot;r0-token&quot;,
+  &quot;raw_file&quot;: &quot;raw/lab-w1.ndjson&quot;,
+  &quot;raw_line&quot;: 4548
+}
+</code></pre>
+<p>Diễn giải: process Python PID 25 trong container thực hiện kiểm tra quyền đọc file token; hook trả 0. Nó được ghép với receipt <code>r0-token</code> có byte_count=1086 và bốn cờ metadata đúng. Dòng 4548 trong raw là bằng chứng kernel tương ứng. Nội dung token không nằm trong ví dụ hoặc bản ghi raw này.</p>
+<h3 id="cleanup-va-hoi-quy">Cleanup và hồi quy</h3>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s3-checkpoint-20261122.json">Báo cáo checkpoint</a> xác nhận hai pilot có cùng tám hash, cùng actor image digest và source đang triển khai khớp source chạy thử. Khi kiểm tra lại từ các archive tải về trên máy quản trị, verifier tiếp tục đạt 18/18 cho cả hai; hash source trong archive khớp manifest.</p>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s3-20261122T103055Z-388332/manifest.json">s3-20261122T103055Z-388332</a> bị dừng chủ động bằng SIGTERM ở warm-up. Status interrupted là kết quả mong đợi. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/cleanup-check-20261122T103054Z.log">Log cleanup</a> có KeyboardInterrupt Signal 15; báo cáo checkpoint xác nhận không còn actor/SA.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261122T103155Z-391001/s2-verification.json">s2-20261122T103155Z-391001</a> kiểm tra hồi quy S2 sau thay đổi schema/runner: 1/1 lời gọi Charge thành công, có network event và log server tương quan, verifier passed.</li>
+<li>Kiểm tra cuối: loadgenerator=0, actor Pod=0, ServiceAccount của thí nghiệm=0, builder Pod=0. Frontend, checkoutservice, paymentservice đều available 1/1. Đây là trạng thái nghỉ sau đo; muốn sinh traffic nền tiếp phải bật một lượt mới.</li>
+</ul>
+<h3 id="luot-thu-loi-duoc-giu-nguyen">Lượt thử lỗi được giữ nguyên</h3>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s3-20261122T101757Z-366636/manifest.json">s3-20261122T101757Z-366636</a>: một vòng smoke thực hiện đủ hành vi nhưng chỉ ghép 5/6 operation. Receipt lưu đường dẫn shell resolve <code>/usr/bin/dash</code>, raw lại ghi <code>/bin/sh</code>. Verifier từ chối shell; dataset_status=failed_validation. Đây là lỗi tương quan đường dẫn, không phải thiếu lệnh shell trên máy.</li>
+<li>Sửa client để giữ binary gọi thực tế cùng danh sách alias. Kiểm tra cả đúng alias, sai PID và sai binary trước khi thử lại.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s3-20261122T102133Z-372614/manifest.json">s3-20261122T102133Z-372614</a>: smoke sau sửa đạt 6/6; sau đó mới đóng băng source và chạy hai lượt 18/18 phía trên. Verifier metric được kiểm tra bổ sung trên smoke này trước hai lượt full; vì vậy source snapshot smoke và verifier chạy lại có thể khác. Hai full pilot có verifier metric trong snapshot ngay từ đầu.</li>
+<li>Không sửa receipt hay raw của lượt lỗi để biến nó thành đạt. Lượt này không được đưa vào tập attack hoàn tất.</li>
+</ul>
+<p>Các bước đã làm: đóng gói công cụ và license → mở rộng selector file token → triển khai chuỗi runtime → thêm nhãn v4 cùng verifier raw/lineage → sửa shell alias qua smoke → chạy ba vòng trên mỗi worker cùng release → kiểm tra cleanup và hồi quy S2 → lưu dữ liệu, checksum và hướng dẫn lên GitHub/website.</p>
+<h2 id="10-sau-s3-con-gi">10. Sau S3 còn gì?</h2>
+<p>Checkpoint này kiểm tra hành vi S3 và dữ liệu đối chiếu được. Nhãn attack dựa trên kịch bản và receipt, chưa phải output của detector. Curl, shell hay đọc token không tự động là tấn công trong mọi workload; GĐ5 phải học hành vi bình thường và xét ngữ cảnh để tránh báo nhầm.</p>
+<p>Tiếp theo theo kế hoạch là pilot S4/S5, rồi chốt release và thu các lượt official cùng S0 đối chứng. Detector, precision/recall, độ trễ phát hiện, alert và cô lập Pod được đánh giá trong GĐ5/GĐ6. Chưa kết luận toàn bộ GĐ4 đã hoàn thành chỉ từ hai lượt S3 này.</p><div class="finish"><button class="button" data-complete="19-s3-runtime-abuse" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="18-s2-goi-api-trai-luong.html">← S2 · Gọi API payment trái luồng</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-s3-dang-mo-phong-chuyen-gi">1. S3 đang mô phỏng chuyện gì?</a></li>
+<li><a href="#2-nhung-khai-niem-can-hieu-truoc">2. Những khái niệm cần hiểu trước</a></li>
+<li><a href="#3-chuoi-chuong-trinh-chay-that">3. Chuỗi chương trình chạy thật</a></li>
+<li><a href="#4-token-trong-s3-la-token-that-pham-vi-rieng-cho-lab">4. Token trong S3 là token thật, phạm vi riêng cho lab</a></li>
+<li><a href="#5-tetragon-quan-sat-bang-cach-nao">5. Tetragon quan sát bằng cách nào?</a></li>
+<li><a href="#6-cac-file-trien-khai-va-bo-cong-cu-da-dong-goi">6. Các file triển khai và bộ công cụ đã đóng gói</a></li>
+<li><a href="#7-lenh-chay-lai-tren-lab-cp">7. Lệnh chạy lại trên lab-cp</a></li>
+<li><a href="#8-double-check-ket-qua-nhu-the-nao">8. Double check kết quả như thế nào?</a></li>
+<li><a href="#9-ket-qua-thuc-te-va-nhat-ky-thay-doi">9. Kết quả thực tế và nhật ký thay đổi</a><ul>
+<li><a href="#vi-du-log-that-de-tu-lan-theo">Ví dụ log thật để tự lần theo</a></li>
+<li><a href="#cleanup-va-hoi-quy">Cleanup và hồi quy</a></li>
+<li><a href="#luot-thu-loi-duoc-giu-nguyen">Lượt thử lỗi được giữ nguyên</a></li>
+</ul>
+</li>
+<li><a href="#10-sau-s3-con-gi">10. Sau S3 còn gì?</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

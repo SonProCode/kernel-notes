@@ -1,0 +1,75 @@
+{
+  "schema_version": 3,
+  "run_id": "s3-20261122T103055Z-388332",
+  "scenario_id": "S3",
+  "mode": "smoke",
+  "status": "interrupted",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 300,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "measurement_seconds": 1,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "9b0fa9e6a8e58e360d18fa76f53db6abdbceb842c7d9d582aa05051812e3d672",
+    "actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "label.py": "3290ea9d12dc058e3a6f00362db51ad6444f52576ebcc9fabd91f756b5343934",
+    "s3_support.py": "ef3797aca0dd727d8e67aada057a46187e19565f885f10ba2f4974a30ed228d1",
+    "s3_verify.py": "58c21d9af809a55b679ea14610d9d6bd8ff51999da20f2135c17e656a46d3c84",
+    "s3/client.py": "c6d105e6512973da9f016865e3df44cbe46bb2b0b2887e0577fc5309d1a31758",
+    "s3/tools-provenance.json": "3a4c4931d03a0985052a2a33977463452696202deacea13a3e7041cb1f8a69b2",
+    "policies/observe-files.yaml": "bfdd235d59e83112460854d7844d26d6b1aeaf0db44f8b9b82ab7d7eaefb72f8"
+  },
+  "s3": {
+    "profile": "runtime",
+    "rounds": 1,
+    "expected_operations": 6,
+    "round_period_seconds": 30,
+    "token_audience": "gd4-s3-lab",
+    "token_expiration_requested": 600
+  },
+  "git_commit": null,
+  "source_snapshot": "source",
+  "code_bundle_sha256": "849bd6fcb85911ba1ece600bd883dd4ab0852fbd4494a36e9a27c629f6bb66f6",
+  "actor": {
+    "name": "gd4-388332",
+    "uid": "6da84bf1-b6d7-43d7-8b9f-bece2f103da5",
+    "ip": "10.42.1.51",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+    "service_account": "gd4-388332"
+  },
+  "s3_runtime": {
+    "tool_versions": {
+      "curl": "curl 7.88.1 (x86_64-pc-linux-gnu) libcurl/7.88.1 OpenSSL/3.0.15 zlib/1.2.13 brotli/1.0.9 zstd/1.5.4 libidn2/2.3.3 libpsl/0.21.2 (+libidn2/2.3.3) libssh2/1.10.0 nghttp2/1.52.0 librtmp/2.3 OpenLDAP/2.5.13",
+      "wget": "GNU Wget 1.21.3 built on linux-gnu.",
+      "nc": "OpenBSD netcat (Debian patchlevel 1.219-1)",
+      "nmap": "Nmap version 7.93 ( https://nmap.org )"
+    },
+    "bundle_sha256": "87ea03ecb379af1eed6e455327058d7245a154bc848934ad38b6e2616bee860c"
+  },
+  "targets": [
+    {
+      "service": "frontend",
+      "ip": "10.43.221.147",
+      "port": 80,
+      "target_ips": [
+        "10.42.1.12",
+        "10.43.221.147"
+      ],
+      "target_ports": [
+        80,
+        8080
+      ],
+      "expected_subject": "system:serviceaccount:boutique:gd4-388332"
+    }
+  ],
+  "capture_start": "2026-11-22T10:31:01.892321+00:00",
+  "error": "KeyboardInterrupt: Signal 15",
+  "finished": "2026-11-22T10:31:22.032911+00:00"
+}

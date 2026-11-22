@@ -1,18 +1,18 @@
 # Chạy bộ công cụ GĐ4 hiện tại
 
-Ngày cập nhật 18/11/2026, giờ Việt Nam.
+Ngày cập nhật 22/11/2026, giờ Việt Nam.
 
-Bộ công cụ hiện hỗ trợ S0, S1, S2 và kiểm thử đọc file của S3. Hướng dẫn S2 cùng các bước double check nằm trong [S2.md](S2.md). Kế hoạch đầy đủ ở README.md mô tả các bước S2, S3 mở rộng, S4 và S5 sẽ triển khai tiếp.
+Bộ công cụ hỗ trợ S0, S1, S2 và S3 runtime. Hướng dẫn double check nằm trong [S2.md](S2.md) và [S3.md](S3.md). S3 có shell thật, curl/wget/nc/nmap và đọc projected token của actor. S4/S5 cùng các lượt official còn ở bước tiếp theo theo [kế hoạch](README.md).
 
 ## Thành phần đã triển khai
 
 | File | Công dụng |
 | --- | --- |
 | expected-communications.csv | 17 cạnh cấu hình có nguồn chứng minh, trong đó 16 cạnh tới Service hiện đang triển khai |
-| policies/observe-files.yaml | Quan sát security_file_permission cho đường dẫn fixture /tmp/gd4-fixture/token trong boutique |
-| actor.py | S1 thử TCP có giới hạn, hoặc đọc token giả để kiểm thử S3 |
+| policies/observe-files.yaml | Quan sát security_file_permission cho fixture cũ và hai prefix ServiceAccount token trong boutique |
+| actor.py | S1 thử TCP; S2 gọi RPC; S3 chạy runtime hoặc fixture smoke cũ |
 | runner.py | Điều phối Pod, tải nền, log hai worker, snapshot, timeline và cleanup |
-| label.py | Chuẩn hóa schema v3, gán nhãn từ Pod UID/thời gian/đích và tạo mẫu cửa sổ 10 giây |
+| label.py | Schema v4, nhãn v4; S3 ghép thêm container PID, binary/path và ancestry; tạo cửa sổ 10 giây |
 
 Ma trận giao tiếp được đối chiếu từ Deployment snapshot và mã nguồn Online Boutique v0.10.7. Cột deployed=False ghi cạnh tới shoppingassistantservice, thành phần tùy chọn chưa có Service trong lab. Cạnh đó được giữ để người đọc thấy khác biệt giữa cấu hình và hệ thống thực tế.
 
@@ -30,9 +30,9 @@ sudo k3s kubectl apply -f experiments/policies/observe-files.yaml
 sudo k3s kubectl -n boutique get tracingpoliciesnamespaced
 ```
 
-Policy này dùng mẫu security_file_permission của Tetragon và giới hạn đúng một đường dẫn fixture cùng quyền đọc. Sự kiện thể hiện kiểm tra quyền đọc file trong kernel. Receipt trong actor xác nhận thao tác đọc ở client đã hoàn tất. [Ví dụ upstream v1.8.0](https://github.com/cilium/tetragon/blob/v1.8.0/examples/quickstart/file_monitoring.yaml)
+Policy dùng security_file_permission, quyền đọc MAY_READ và selector cho fixture cùng prefix token (gồm đường dẫn symlink đã resolve). Sự kiện thể hiện kiểm tra quyền đọc file trong kernel. Receipt trong actor xác nhận thao tác đọc ở client đã hoàn tất. [Ví dụ upstream v1.8.0](https://github.com/cilium/tetragon/blob/v1.8.0/examples/quickstart/file_monitoring.yaml)
 
-## Kiểm thử file trên từng worker
+## Kiểm thử fixture cũ trên từng worker
 
 ```bash
 sudo python3 experiments/runner.py --scenario S3 --mode smoke --node w1 \
@@ -43,7 +43,7 @@ sudo python3 experiments/runner.py --scenario S3 --mode smoke --node w2 \
 
 Mỗi lượt có 3 lần đọc fixture giả. Cần operations_with_matched_event=3. Số file_read_permission có thể lớn hơn số thao tác đọc vì một thao tác ở thư viện có thể phát sinh nhiều lần kiểm tra quyền.
 
-mode=smoke giữ nhãn các sự kiện thử là unknown. Đây là bước kiểm tra thiết bị đo. Khi chạy bộ dữ liệu attack chính thức, dùng mode phù hợp sau khi chốt thao tác S3 đầy đủ.
+mode=smoke giữ nhãn các sự kiện thử là unknown. Đây là bước kiểm tra thiết bị đo. Muốn kiểm thử runtime mới, xem lệnh có --s3-profile runtime trong [S3.md](S3.md).
 
 ## Chạy S1 pilot
 
@@ -65,19 +65,19 @@ sudo python3 experiments/runner.py --scenario S0 --mode official \
   --warmup 400 --measurement 900
 ```
 
-Lượt S0 mới dùng policy file đã cài và schema v3. Lệnh này mất khoảng 22 phút cộng thời gian khởi động tải. S0 có phase=measurement và label=normal trong khoảng đo. Các sự kiện setup và warm-up giữ phase riêng và label=unknown.
+Lượt S0 mới dùng policy file đã cài và schema v4. Giữ cùng release/policy/schema với attack trong cohort đối chứng. Lệnh này mất khoảng 22 phút cộng thời gian khởi động tải. S0 có phase=measurement và label=normal trong khoảng đo. Các sự kiện setup và warm-up giữ phase riêng và label=unknown.
 
 ## Nhãn và giới hạn hiện tại
 
-Các bản ghi lịch sử đã xử lý lại dùng label_version=v2. Bộ xử lý hiện tại dùng label_version=v3 và bổ sung tương quan RPC cho S2, cùng đường dẫn raw_file dạng POSIX. Mỗi bản ghi có schema_version=3 và scenario_id lấy từ manifest. Các schema cũ tiếp tục được giữ trong dữ liệu lịch sử.
+Các lượt mới dùng schema_version=4 và label_version=v4. Bản v4 bổ sung PID trong container, arguments của actor và liên kết cha/con cho S3. Các lượt lịch sử v1/v2/v3 được giữ nguyên; đọc manifest và source snapshot để chọn bộ xử lý tương ứng.
 
 - S1 gán attack khi Pod UID khớp actor, IP/cổng khớp receipt và timestamp nằm trong khoảng thực hiện operation.
-- Kiểm thử file đối chiếu thêm đường dẫn fixture và loại sự kiện.
+- S3 runtime đối chiếu Pod UID, container PID, binary/path hoặc socket đích và thời gian; verifier kiểm tra parent_exec_id trên raw. Fixture smoke cũ vẫn có quy tắc riêng.
 - Traffic nền trong pre_attack/recovery có nhãn normal theo quy tắc bối cảnh của runner.
 - Traffic nền trong pha attack, response chưa liên kết được và sự kiện thiếu căn cứ giữ unknown.
 - Thời điểm kernel trước/sau biên receipt có thể khiến một thao tác chưa được khớp. Dữ liệu gốc và danh sách unmatched được giữ để kiểm tra.
-- label.py giữ binary, PID, quan hệ exec, socket, file path và kết quả hook. Nội dung đối số tiến trình hiện chưa được xuất vào schema v3. Có thể đối chiếu raw khi cần và mở rộng bộ lọc dữ liệu trong bước tiếp theo.
-- Chưa diễn giải response TCP thành một cuộc gọi API. Các quy tắc liên kết L7 sẽ được bổ sung khi viết S2.
+- label.py giữ binary, PID, quan hệ exec, socket, file path và kết quả hook. V4 xuất arguments cho actor. Nội dung token không được ghi vào receipt hoặc dataset.
+- S2 dùng receipt gRPC và log server để chứng minh API; riêng TCP event không đủ chứng minh RPC thành công. S3 dùng thêm kết quả từng công cụ và receipt đọc file.
 - File labeled-windows.ndjson tạo cửa sổ 10 giây cho từng Pod UID. Đơn vị này giữ số sự kiện attack/normal/unknown, cùng nhãn tổng hợp.
 
 ## Kết quả và khôi phục
@@ -97,4 +97,4 @@ Nếu xảy ra lỗi, xem manifest.error, actor.stderr và raw/*.stderr. Các l�
 
 ## Công việc tiếp theo
 
-Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape và các bộ đếm lỗi export/mất sự kiện tại hai mốc trước/sau. Cần đối chiếu các response gốc và khoảng scrape khi diễn giải mức mất dữ liệu. Sau pilot S2, bổ sung chuỗi shell/công cụ cho S3, receiver S5 và client đo request latency cho S4. Các lượt chính thức có nhãn được chạy sau khi từng pilot đã được kiểm chứng.
+Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape và các bộ đếm lỗi export/mất sự kiện tại hai mốc trước/sau. Cần đối chiếu các response gốc và khoảng scrape khi diễn giải mức mất dữ liệu. Sau pilot S3, bổ sung receiver S5 và client đo request latency cho S4. Các lượt chính thức có nhãn được chạy sau khi từng pilot đã được kiểm chứng.

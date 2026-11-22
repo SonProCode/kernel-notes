@@ -18,12 +18,34 @@ def write_json(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def match_s3(kind, pod, process, socket, file_path, receipts, when):
+    container_pid = (pod.get("container") or {}).get("pid")
+    for receipt in receipts:
+        if container_pid != receipt.get("container_pid"):
+            continue
+        if not timestamp(receipt["started"]) <= when <= timestamp(receipt["ended"]):
+            continue
+        if kind == "process_exec" and receipt["kind"] in ("process_exec", "runtime_tool"):
+            if process.get("binary") in receipt.get("binary_aliases", [receipt["binary"]]):
+                return receipt
+        if kind == "file_read_permission" and receipt["kind"] == "file_read":
+            if file_path in receipt.get("file_aliases", [receipt["path"]]):
+                return receipt
+        if kind in ("tcp_connect_attempt", "tcp_send") and receipt["kind"] == "runtime_tool":
+            if (ip(socket["daddr"]) in receipt["target_ips"]
+                    and socket["dport"] in receipt.get("target_ports", [receipt["port"]])):
+                return receipt
+    return None
+
+
 def normalize(run):
     manifest = json.loads((run / "manifest.json").read_text())
     actor = manifest.get("actor", {})
     receipts = [json.loads(line) for line in (run / "actor-receipts.ndjson").read_text().splitlines() if line]
     phases = [json.loads(line) for line in (run / "timeline.ndjson").read_text().splitlines()]
     counts, labels, quality, nodes, coverage = Counter(), Counter(), Counter(), Counter(), Counter()
+    event_types_by_operation = {}
+    s3_runtime = manifest.get("s3", {}).get("profile") == "runtime"
     windows = {}
     index = {}
     for receipt in receipts:
@@ -31,8 +53,10 @@ def normalize(run):
             keys = [(ip(address), receipt["port"]) for address in receipt["target_ips"]]
         elif receipt["kind"] == "tcp_connect":
             keys = [(ip(receipt["ip"]), receipt["port"])]
+        elif receipt["kind"] == "file_read":
+            keys = receipt.get("file_aliases", [receipt["path"]])
         else:
-            keys = [receipt["path"]]
+            keys = []
         for key in keys:
             index.setdefault(key, []).append(receipt)
     with (run / "normalized.ndjson").open("w", encoding="utf-8") as out:
@@ -72,6 +96,9 @@ def normalize(run):
                 operation = next((r for r in index.get(lookup, [])
                                   if timestamp(r["started"]) <= when <= timestamp(r["ended"])), None)
                 is_actor = pod.get("uid") == actor.get("uid")
+                if s3_runtime:
+                    operation = match_s3(kind, pod, process, sock, file_path, receipts, when) if is_actor else None
+
                 label, evidence = "unknown", None
                 if phase in ("pre_attack", "recovery") and not is_actor:
                     label, evidence = "normal", "background_outside_action"
@@ -81,27 +108,33 @@ def normalize(run):
                     (kind == "tcp_connect_attempt" and operation["kind"] == "tcp_connect")
                     or (kind == "file_read_permission" and operation["kind"] == "file_read")
                     or (kind in ("tcp_connect_attempt", "tcp_send") and operation["kind"] == "grpc_call")
+                    or s3_runtime
                 ):
                     label = "attack" if manifest["mode"] != "smoke" else "unknown"
                     evidence = ("actor_uid_rpc_time_target" if operation["kind"] == "grpc_call"
                                 else "actor_uid_operation_time_target")
+                    if s3_runtime:
+                        evidence = "actor_namespace_pid_binary_path_time"
                     coverage[operation["operation_id"]] += 1
+                    event_types_by_operation.setdefault(operation["operation_id"], set()).add(kind)
                 labels[label] += 1
                 counts[kind] += 1
                 nodes[node] += 1
                 record = {
-                    "schema_version": 3, "run_id": manifest["run_id"],
+                    "schema_version": 4, "run_id": manifest["run_id"],
                     "scenario_id": manifest["scenario_id"], "phase": phase,
                     "timestamp": raw["time"], "event_type": kind, "node": node,
                     "namespace": pod.get("namespace"), "pod": pod.get("name"),
                     "pod_uid": pod.get("uid"), "workload": pod.get("workload"),
                     "container_id": (pod.get("container") or {}).get("id"),
                     "binary": process.get("binary"), "pid": process.get("pid"),
+                    "container_pid": (pod.get("container") or {}).get("pid"),
+                    "arguments": process.get("arguments") if is_actor else None,
                     "exec_id": process.get("exec_id"),
                     "parent_exec_id": (payload.get("parent") or {}).get("exec_id"),
                     "socket": sock, "file_path": file_path,
                     "kernel_return": payload.get("return"),
-                    "label": label, "evidence": evidence, "label_version": "v3",
+                    "label": label, "evidence": evidence, "label_version": "v4",
                     "operation_id": operation["operation_id"] if is_actor and operation else None,
                     "raw_file": path.relative_to(run).as_posix(), "raw_line": number,
                     "api_method_from_receipt": operation.get("method") if is_actor and operation else None,
@@ -127,6 +160,7 @@ def normalize(run):
                "agent_state_unchanged": stable, "collector_stderr": errors,
                "operations": len(receipts), "operations_with_matched_event": len(coverage),
                "unmatched_operations": [r["operation_id"] for r in receipts if r["operation_id"] not in coverage]}
+    summary["event_types_by_operation"] = {key: sorted(value) for key, value in event_types_by_operation.items()}
     summary["api_successes"] = sum(r.get("outcome") == "api_success" for r in receipts)
     summary["grpc_status_counts"] = dict(Counter(r["grpc_code"] for r in receipts if "grpc_code" in r))
     metrics = {}
