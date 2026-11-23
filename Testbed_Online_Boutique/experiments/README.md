@@ -364,3 +364,6 @@ Ngày 20/11/2026 đã triển khai S2 gọi Charge bằng gRPC. Các bước ch�
 ## S4 ngày 23/11/2026
 
 Đã bổ sung runner S4 và S0 control, client HTTP có pacing/concurrency, Locust event hook ghi từng request, guard tài nguyên và xác minh native theo source port. [S4.md](S4.md) hướng dẫn chạy/đọc kết quả; [S4-RESULTS.md](S4-RESULTS.md) lưu số liệu pilot. S5 và cohort official theo kế hoạch là các bước tiếp theo.
+
+
+Xem [rà soát sâu S4 ngày 23/11/2026](S4-REVIEW.md): sửa verifier, guard, thứ tự chốt log Locust và kiểm tra cleanup; kết quả hồi quy và giới hạn của dữ liệu lịch sử được ghi riêng.

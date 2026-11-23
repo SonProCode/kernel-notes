@@ -55,3 +55,6 @@ SHA256SUMS.txt trong repo mô tả bản xuất đã đóng gói. Thư mục là
 ## S4 và S0 control ngày 23/11/2026
 
 Các run s0-s4-control-* và s4-* lưu cohort đo có request-level Locust, guard và CPU/RAM. [S4.md](../experiments/S4.md) hướng dẫn mở; [S4-RESULTS.md](../experiments/S4-RESULTS.md) so sánh control và 3/6/10 RPS. Bốn S4 pilot có 861 HTTP request được gửi, tất cả có native event khớp. Lượt s4-s4-20261123T045120Z-1837437 là smoke phát triển lỗi normalize, được giữ cùng postmortem; lượt interrupted kiểm tra cleanup giữ riêng.
+
+
+Các smoke hồi quy contract v2 và lượt failed_validation/interrupted được giữ để kiểm toán, không cộng vào cohort 861 request. Đọc [báo cáo rà soát S4](../experiments/S4-REVIEW.md) để biết từng lỗi, cách sửa và lần chạy nào được dùng xác nhận.

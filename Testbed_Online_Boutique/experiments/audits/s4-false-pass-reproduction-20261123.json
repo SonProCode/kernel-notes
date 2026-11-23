@@ -1,0 +1,50 @@
+{
+  "baseline_commit": "d6e5684",
+  "original_verifier_sha256": "3e17ea2c2b1dc24458afa410947995078de4e8f958124c5e894ea6a6db8e058a",
+  "strict_verifier_sha256": "76626644f60fced49efae009aae5c8990e7315bbfb2b32f146a05183750a157d",
+  "historical_runs_unchanged": true,
+  "cases": [
+    {
+      "case": "all_nan_resources",
+      "old_passed": true,
+      "strict_passed": false,
+      "strict_errors": [
+        "Non-finite/negative/empty resource samples: frontend_cpu_cores",
+        "Resource samples missing in phase: frontend_cpu_cores/pre_attack",
+        "Resource samples missing in phase: frontend_cpu_cores/attack",
+        "Resource samples missing in phase: frontend_cpu_cores/recovery",
+        "Non-finite/negative/empty resource samples: frontend_memory_bytes",
+        "Resource samples missing in phase: frontend_memory_bytes/pre_attack",
+        "Resource samples missing in phase: frontend_memory_bytes/attack",
+        "Resource samples missing in phase: frontend_memory_bytes/recovery",
+        "Non-finite/negative/empty resource samples: boutique_cpu_cores",
+        "Resource samples missing in phase: boutique_cpu_cores/pre_attack",
+        "Resource samples missing in phase: boutique_cpu_cores/attack",
+        "Resource samples missing in phase: boutique_cpu_cores/recovery",
+        "Non-finite/negative/empty resource samples: boutique_memory_bytes",
+        "Resource samples missing in phase: boutique_memory_bytes/pre_attack",
+        "Resource samples missing in phase: boutique_memory_bytes/attack",
+        "Resource samples missing in phase: boutique_memory_bytes/recovery"
+      ]
+    },
+    {
+      "case": "one_guard_sample",
+      "old_passed": true,
+      "strict_passed": false,
+      "strict_errors": [
+        "Guard coverage does not bracket measurement",
+        "No guard sample in phase: pre_attack",
+        "No guard sample in phase: attack",
+        "No guard sample in phase: recovery"
+      ]
+    },
+    {
+      "case": "negative_latency",
+      "old_passed": true,
+      "strict_passed": false,
+      "strict_errors": [
+        "Negative/non-finite request latency"
+      ]
+    }
+  ]
+}

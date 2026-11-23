@@ -1,0 +1,24 @@
+{
+  "run_id": "s4-20261123T094419Z-2238057",
+  "status_preserved": "completed",
+  "dataset_status_preserved": "failed_validation",
+  "excluded_from_performance_cohort": true,
+  "issues": [
+    {
+      "component": "check_cleanup.py",
+      "cause": "s4-* selector accepted transcript file instead of owned run directory; SIGTERM was never sent",
+      "fix": "Require directory, manifest and exact child PID; wait for actual receipt before SIGTERM"
+    },
+    {
+      "component": "s4/locust_wrapper.py",
+      "cause": "quitting event printed S4FINAL at 279 requests before shutdown callback S4REQ 280; one real checkout HTTP 500 retained",
+      "fix": "Keep environment on quitting, print final counter on quit after runner.quit; reject requests appearing after S4FINAL"
+    },
+    {
+      "component": "smoke duration",
+      "cause": "5-second recovery had no guard sample",
+      "fix": "Use 12 seconds for smoke phases; never waive required phase coverage"
+    }
+  ],
+  "preservation": "Original manifest, raw log, receipts, normalized records and archive were not rewritten."
+}

@@ -105,3 +105,6 @@ Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape
 ## S4 và S0 control có instrumentation
 
 Đọc [S4.md](S4.md) để dùng các tham số --s4-rate, --s4-duration, --s4-concurrency và --s4-control. Family này dùng manifest schema 4 và normalized/label v5; các run S1–S3 tiếp tục v4. Loadgenerator gốc giữ 0 replica vì có một Deployment Locust tạm cùng workload. Latency HTTP theo pha lấy từ event hook, CPU/RAM lấy từ Prometheus. Việc đóng gói archive là bước xuất GitHub, không tự diễn ra sau mọi lệnh runner.
+
+
+Xem [rà soát sâu S4 ngày 23/11/2026](S4-REVIEW.md): sửa verifier, guard, thứ tự chốt log Locust và kiểm tra cleanup; kết quả hồi quy và giới hạn của dữ liệu lịch sử được ghi riêng.

@@ -5,7 +5,7 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 21 · LAB THỰC TẾ · GĐ4 · S4 · 17 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 21 · LAB THỰC TẾ · GĐ4 · S4 · 24 PHÚT ĐỌC</div>
 <h1>S4 · Tải nội bộ và đo tác động</h1><p>Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.</p></header>
 <div class="shell reading"><article class="prose"><p>Cập nhật 23/11/2026. Bài này triển khai <strong>pilot S4 của GĐ4</strong>: tạo tải phụ, đo tác động, thu telemetry và kiểm tra hồi phục. Đọc <a href="20-huong-dan-s1-s2-s3.html">hướng dẫn chung</a> trước nếu bạn chưa quen SSH, sudo, thư mục làm việc và file kết quả.</p>
 <h2 id="1-s4-mo-phong-chuyen-gi">1. S4 mô phỏng chuyện gì?</h2>
@@ -38,8 +38,8 @@ Prometheus         → CPU/RAM frontend và namespace boutique
 </code></pre>
 <p>S4 dùng <strong>Deployment Locust tạm</strong> được sao từ template loadgenerator, cùng image và hành trình thực tế trong image. Wrapper đọc file gốc <code>/loadgen/locustfile.py</code>, đăng ký event hook rồi thực thi file gốc. Không chỉnh file trong image hoặc Deployment gốc.</p>
 <p>Loadgenerator gốc ở <strong>0 replica cả trước, trong và sau S4</strong>. Đây là chủ ý để tránh hai bộ Locust chạy trùng. Khi quan sát, tìm Pod tên <code>gd4-locust-...</code>; actor có tên <code>gd4-s4-...</code>. Các tài nguyên tạm có label experiment-run để dọn theo đúng lượt.</p>
-<p>Hook ghi method, URL không có query, timestamp, HTTP status, response time và loại lỗi; không ghi form checkout, body, cookie hay nội dung credential. Khi Locust thoát, hook ghi tổng số request. Verifier yêu cầu số dòng liên tục và bằng bộ đếm Locust để phát hiện export thiếu.</p>
-<p>Nguồn cơ chế hook: <a href="https://docs.locust.io/en/stable/extending-locust.html#event-hooks">Locust event hooks</a>. Phiên bản thực tế và hash locustfile trong image được lưu ở <code>locust-runtime.json</code>; không suy ra chỉ từ tài liệu upstream hiện tại.</p>
+<p>Hook ghi method, URL không có query, timestamp, HTTP status, response time và loại lỗi; không ghi form checkout, body, cookie hay nội dung credential. Khi Locust thoát, hook <code>quit</code> ghi tổng số request sau khi runner đã dừng người dùng; hook <code>quitting</code> xảy ra sớm hơn nên không dùng để chốt counter. Verifier yêu cầu số dòng liên tục và bằng bộ đếm Locust để phát hiện export thiếu.</p>
+<p>Nguồn cơ chế hook: <a href="https://docs.locust.io/en/2.43.0/extending-locust.html#event-hooks">Locust event hooks</a>. Phiên bản thực tế và hash locustfile trong image được lưu ở <code>locust-runtime.json</code>; không suy ra chỉ từ tài liệu upstream hiện tại.</p>
 <h2 id="4-s0-doi-chung-moi-de-so-voi-s4">4. S0 đối chứng mới để so với S4</h2>
 <p>S0 cũ 15 phút vẫn giữ làm baseline lịch sử. Để so S4, runner bổ sung <strong>S0 control dùng cùng bộ Locust có instrumentation, guard và quy trình</strong>, chỉ không bật client tải phụ.</p>
 <p>Control có <code>scenario_id=S0</code>, <code>s4.profile=control</code>, rate=0. Thư mục mang tên <code>s0-s4-control-...</code>. Pha đo tên measurement. S4 có <code>scenario_id=S4</code>, profile bounded_http; pha tăng tải tên attack.</p>
@@ -57,9 +57,9 @@ df -h .
 <p>Cần các ứng dụng available, worker/agent Ready, loadgenerator gốc=0, không còn Pod thí nghiệm trước và đĩa còn chỗ cho raw. Runner dùng khóa chung với S0–S3; chạy tuần tự từng lượt. Không cần port-forward frontend cho client trong cluster.</p>
 <h2 id="6-cac-lenh-de-chep-chay">6. Các lệnh dễ chép chạy</h2>
 <h3 id="thu-duong-chay-rat-ngan">Thử đường chạy rất ngắn</h3>
-<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode smoke --node w1 --s4-rate 3 --s4-duration 5 --s4-concurrency 2 --warmup 10 --pre 10 --recovery 10
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode smoke --node w1 --s4-rate 3 --s4-duration 12 --s4-concurrency 2 --warmup 12 --pre 12 --recovery 12
 </code></pre>
-<p>Mong đợi 15 request nếu không có slot bị bỏ qua; tất cả request đã gửi cần có native event khớp. Smoke giữ sự kiện thử ở nhãn unknown. Đây là kiểm tra thiết bị đo, không thay thế pilot so sánh.</p>
+<p>Mong đợi 36 request nếu không có slot bị bỏ qua; tất cả request đã gửi cần có native event khớp. Smoke giữ sự kiện thử ở nhãn unknown. Đây là kiểm tra thiết bị đo, không thay thế pilot so sánh.</p>
 <h3 id="control-va-ba-muc-tai-pilot">Control và ba mức tải pilot</h3>
 <p>Đợi mỗi lệnh hoàn tất và đọc verifier trước khi chạy lệnh tiếp theo:</p>
 <pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S0 --s4-control --mode pilot --node w1 --s4-duration 30 --warmup 30 --pre 30 --recovery 30
@@ -318,6 +318,8 @@ sudo k3s kubectl -n boutique delete pods,deployments,configmaps -l &quot;experim
 <pre><code class="language-bash">python3 -m unittest discover -s experiments -p test_s4.py -v
 </code></pre>
 <p>Bước tiếp theo của GĐ4 là S5 và cohort official theo kế hoạch. Module detector và mitigation được đánh giá ở các giai đoạn sau; S4 hiện cung cấp hành vi và dữ liệu để dùng cho các bước đó.</p>
+<h2 id="ra-soat-sau-va-dieu-kien-cua-ban-chay-moi">Rà soát sâu và điều kiện của bản chạy mới</h2>
+<p>Đọc <a href="22-s4-tai-noi-bo.html#ra-soat-sau-s4-ngay-23-11-2026">báo cáo rà soát S4</a> để xem các lỗi đã sửa, 45 kiểm thử và hồi quy trên lab. Bản mới ghi verification_contract=2: xác minh raw/derived, native reference, dữ liệu tài nguyên hữu hạn và coverage từng pha; guard có heartbeat tối đa 35 giây, tuổi scrape không quá 60 giây, cleanup.json xác nhận đã xóa tài nguyên tạm. Smoke dùng các pha 12 giây để có mẫu giám sát. Các run lịch sử v1 giữ nguyên bằng chứng và giới hạn riêng.</p>
 <h2 id="ket-qua-pilot-s4-ngay-23-11-2026">Kết quả pilot S4 ngày 23/11/2026</h2>
 <p>Các số dưới đây lấy từ verifier từng run. Rate là tải phụ; Locust vẫn có 10 người dùng bình thường.</p>
 <table>
@@ -388,7 +390,110 @@ sudo k3s kubectl -n boutique delete pods,deployments,configmaps -l &quot;experim
 <li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/s4-verification.json">s4-20261123T050725Z-1869684</a>: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/manifest.json">manifest</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/timeline.ndjson">timeline</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/dataset.tar.gz">archive</a>.</li>
 </ul>
 <p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-pilots-audit-20261123.json">Audit source/native và tính đồng nhất release</a>.</p>
-<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/lab-state-s4-20261123.json">Trạng thái lab sau đo và hash source đang triển khai</a>: loadgenerator gốc=0, không còn Pod/Deployment/ConfigMap/SA thí nghiệm; ba node Ready và frontend/checkout/payment available.</p><div class="finish"><button class="button" data-complete="22-s4-tai-noi-bo" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="19-s3-runtime-abuse.html">← S3 · Shell, công cụ mạng và token</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/lab-state-s4-20261123.json">Trạng thái lab sau đo và hash source đang triển khai</a>: loadgenerator gốc=0, không còn Pod/Deployment/ConfigMap/SA thí nghiệm; ba node Ready và frontend/checkout/payment available.</p>
+<p>Xem <a href="22-s4-tai-noi-bo.html#ra-soat-sau-s4-ngay-23-11-2026">rà soát sâu S4 ngày 23/11/2026</a>: sửa verifier, guard, thứ tự chốt log Locust và kiểm tra cleanup; kết quả hồi quy và giới hạn của dữ liệu lịch sử được ghi riêng.</p>
+<h2 id="ra-soat-sau-s4-ngay-23-11-2026">Rà soát sâu S4 ngày 23/11/2026</h2>
+<p>Kết luận: số liệu của cohort pilot đã công bố vẫn qua hậu kiểm chặt hơn. Lần rà soát này tìm được các trường hợp verifier hoặc công cụ kiểm thử có thể xử lý sai; đã sửa và bổ sung kiểm thử âm tính. Phạm vi kết luận là chất lượng đường thực hiện và bằng chứng pilot GĐ4.</p>
+<h2 id="1-ba-truong-hop-bao-dat-sai-da-tai-hien">1. Ba trường hợp báo đạt sai đã tái hiện</h2>
+<p>Trên bản sao của run <code>s4-20261123T050441Z-1864262</code>, dùng đúng verifier tại commit d6e5684 rồi thử lại bằng verifier mới:</p>
+<table>
+<thead>
+<tr>
+<th>Dữ liệu cố ý làm hỏng</th>
+<th>Verifier cũ</th>
+<th>Verifier mới</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tất cả mẫu CPU/RAM thành NaN</td>
+<td>passed=true</td>
+<td>Từ chối giá trị không hữu hạn và thiếu mẫu hợp lệ theo pha</td>
+</tr>
+<tr>
+<td>Guard chỉ còn một dòng</td>
+<td>passed=true</td>
+<td>Từ chối thiếu coverage các pha và heartbeat</td>
+</tr>
+<tr>
+<td>Latency âm, cả raw/derived cùng ghi sai</td>
+<td>passed=true</td>
+<td>Từ chối latency âm</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-false-pass-reproduction-20261123.json">Report tái hiện trước/sau</a> lưu commit/hash và lỗi xác minh. Đây là dữ liệu giả lỗi trong thư mục tạm; không phải số liệu pilot thật bị phát hiện có NaN hay latency âm. Raw, receipt và manifest của các run lịch sử được giữ nguyên.</p>
+<h2 id="2-cac-dieu-kien-kiem-tra-da-bo-sung">2. Các điều kiện kiểm tra đã bổ sung</h2>
+<ul>
+<li>Locust derived phải bằng các dòng S4REQ/S4META/S4FINAL trong log nguyên gốc; sequence và cả counter request/failure phải nhất quán.</li>
+<li>Latency phải hữu hạn, không âm, phù hợp khoảng thời gian; HTTP status, số byte và các bộ đếm phải có giá trị hợp lệ.</li>
+<li>Từng request actor phải đúng GET <code>/</code>, frontend trong topology snapshot, source port, khoảng attack và operation_id trong lịch gửi.</li>
+<li>Counter submitted/skipped không âm; cấu hình client phải khớp manifest, concurrency và thời lượng nằm trong profile.</li>
+<li>Timeline có đủ pha, đúng thứ tự và mốc measurement_end.</li>
+<li>Guard có mẫu trong warm-up, pre, attack/measurement và recovery; heartbeat không gián đoạn quá 35 giây, timestamp và trạng thái Pod nhất quán.</li>
+<li>Bốn resource series phải có mẫu hữu hạn, không âm, có dữ liệu ở các pha chính; không chỉ kiểm tra response chứa một mảng values.</li>
+<li>Agent up phải đúng hai worker; loss/export phải đúng bốn loại counter trên từng worker, giá trị hợp lệ và delta bằng 0.</li>
+<li>Native reference không trùng/mất, mở lại đúng dòng raw; kiểm UID, namespace PID, loại hook, socket, thời gian, phase và nhãn.</li>
+<li>Kiểm lại các số đếm quality; audit dựng lại normalized từ raw trong thư mục tạm và so toàn bộ bản ghi với bản đã công bố.</li>
+</ul>
+<p>Prometheus có quy tắc lookback/staleness; một instant query trả up=1 chưa tự chứng minh sample mới vừa được scrape. Bản thu mới bổ sung query tuổi sample ở hai snapshot và yêu cầu không quá 60 giây. <a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">Prometheus querying basics</a>.</p>
+<h2 id="3-guard-va-cleanup-cua-ban-chay-moi">3. Guard và cleanup của bản chạy mới</h2>
+<p>Controller kiểm tra cả trạng thái luồng guard và heartbeat. Nếu guard chết luồng, lỗi ghi file hoặc heartbeat quá hạn, controller dừng lượt thay vì tiếp tục tải không có giám sát. Unit tests mô phỏng các lỗi này; không gây OOM thật trên VM để thử.</p>
+<p>Trong cleanup, yêu cầu dừng guard được đặt ngay, rồi xóa actor và Locust tạm trước khi chờ guard kết thúc. Các run mới lưu cleanup.json, kiểm lại tài nguyên theo experiment-run và spec loadgenerator gốc. Nếu cleanup không xác nhận được, dataset không được đánh dấu validated.</p>
+<p>Thêm một lỗi đã phát hiện ở check_cleanup.py: glob s4-<em> có thể chọn file transcript s4-strict-regression-</em>.log thay cho thư mục run. Bộ chọn mới yêu cầu thư mục có manifest và đúng PID của child runner. Có test cho logfile giả và runner khác PID; phép thử dừng còn đợi thấy receipt thực trước khi gửi SIGTERM.</p>
+<h2 id="4-loi-chot-log-locust-va-luot-kiem-thu-that-bai">4. Lỗi chốt log Locust và lượt kiểm thử thất bại</h2>
+<p>Lượt <code>s4-20261123T094419Z-2238057</code> được giữ ở <code>dataset_status=failed_validation</code>. Ngoài lỗi selector, recovery 5 giây không có mẫu guard. Log còn cho thấy S4FINAL chốt ở 279 request nhưng một callback request thứ 280 tới sau đó; có một lỗi checkout HTTP 500 thật, vẫn được giữ trong dữ liệu. Không cộng lượt này vào cohort hiệu năng. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T094419Z-2238057/postmortem.json">Postmortem</a> ghi rõ các nguyên nhân.</p>
+<p>Theo <a href="https://github.com/locustio/locust/blob/2.43.0/locust/main.py#L566-L603">mã nguồn Locust 2.43.0</a>, <code>quitting</code> xảy ra trước <code>runner.quit()</code>, còn <code>quit</code> xảy ra sau khi dừng runner. Wrapper mới chỉ giữ environment ở quitting và chốt S4FINAL ở quit. Verifier từ chối request xuất hiện sau S4FINAL kể cả counter bị sửa cho khớp; test mô phỏng callback đến muộn xác nhận thứ tự này.</p>
+<h2 id="5-bang-chung-va-phien-ban">5. Bằng chứng và phiên bản</h2>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-review-tests-20261123.json">Bộ test mở rộng</a> và <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-review-tests-20261123.log">log test</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-strict-review-20261123.json">Hậu kiểm cohort cũ</a>: năm pilot/control vẫn đạt; tái dựng normalized từ raw và kiểm source snapshot trong archive.</li>
+<li>Kết quả 861 request tải phụ và biểu đồ của cohort cũ không bị thay bằng các lượt regression mới.</li>
+<li>Các run cũ dùng verification contract v1. Chúng chưa ghi tuổi scrape và cleanup.json theo từng run; report giữ giới hạn đó và dùng checkpoint cleanup đã công bố cho cohort cũ.</li>
+<li>Bản chạy mới ghi verification_contract=2. Hai loại dữ liệu được phân biệt bằng manifest và source hash; không trộn smoke 12 giây với pilot 30 giây để tính hiệu năng.</li>
+</ul>
+<h3 id="hoi-quy-truc-tiep-tren-lab-bang-source-cuoi-cung">Hồi quy trực tiếp trên lab bằng source cuối cùng</h3>
+<table>
+<thead>
+<tr>
+<th>Lượt</th>
+<th>Kết quả</th>
+<th>Vai trò</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s0-s4-control-20261123T095509Z-2255902</td>
+<td>completed, validated</td>
+<td>S0 control cùng instrumentation mới</td>
+</tr>
+<tr>
+<td>s4-20261123T095629Z-2258990</td>
+<td>completed, validated; 36/36 request tải phụ khớp native</td>
+<td>S4 3 RPS, 12 giây, worker w2</td>
+</tr>
+<tr>
+<td>s4-20261123T095751Z-2262231</td>
+<td>interrupted; cleanup đạt sau 10 request thực</td>
+<td>Gửi SIGTERM khi đang có tải</td>
+</tr>
+</tbody>
+</table>
+<p>Hai lượt hoàn tất có cùng bundle mã cuối và đều qua kiểm tra input/native, freshness và cleanup. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-final-review-state-20261123.json">Snapshot sau kiểm thử</a> xác nhận source trên lab khớp hai lượt này, 3 node Ready, frontend/checkout/payment available, loadgenerator gốc=0 và không còn tài nguyên thí nghiệm. Các run, timeline, raw Locust, receipt, cleanup.json và archive được lưu dưới runs/ theo tên trong bảng.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-review-tests-20261123.json">Bộ test cuối</a>: <strong>45/45 đạt, 0 lỗi, 0 bỏ qua</strong>. Hậu kiểm cohort cũ đạt 5/5 và replay normalized từ raw trùng toàn bộ bản ghi. Các lượt hồi quy trước khi sửa thứ tự callback cũng được giữ, nhưng không dùng làm bằng chứng source cuối hoặc cộng vào kết quả hiệu năng.</p>
+<h2 id="6-chay-lai-kiem-tra">6. Chạy lại kiểm tra</h2>
+<p>Từ thư mục Testbed_Online_Boutique, nơi có experiments/:</p>
+<pre><code class="language-bash">python3 -m unittest discover -s experiments -p 'test_s4*.py' -v
+python3 experiments/s4/audit.py --output experiments/audits/my-s4-strict-review.json
+</code></pre>
+<p>Các test integrity dùng archive pilot đã đi kèm repo, giải nén vào thư mục tạm và cố ý sửa bản sao. Đọc số test skipped nếu bạn chỉ sao chép script mà chưa tải dataset. Audit cũng dùng thư mục tạm, không ghi lại nhãn lịch sử.</p>
+<p>Smoke của bản kiểm tra mới cần các pha đủ dài để có mẫu guard/resource. Lệnh mẫu:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode smoke --node w2 --s4-rate 3 --s4-duration 12 --s4-concurrency 2 --warmup 12 --pre 12 --recovery 12
+</code></pre>
+<h2 id="7-doi-chieu-de-cuong-va-gioi-han-ket-luan">7. Đối chiếu đề cương và giới hạn kết luận</h2>
+<p>Đã đọc lại đề cương gốc: S4 là Pod gửi request tần suất cao tới service, quan sát request rate, latency và CPU. Đường chạy hiện có actor nội bộ, log từng request, Locust normal, metric CPU/RAM và telemetry có nhãn theo receipt độc lập. GĐ4 yêu cầu cả S1–S5 và dữ liệu attack/normal; hoàn tất pilot S4 chưa đồng nghĩa hoàn tất GĐ4. Rate limit/deny và detector được để đúng các giai đoạn GĐ6/GĐ5 trong đề cương.</p>
+<p>Passed xác nhận tính nhất quán và điều kiện thu dữ liệu đã định nghĩa; dataset vẫn có thể chứa lỗi HTTP thật do tải, và lỗi đó phải được giữ để phân tích. Passed không có nghĩa ứng dụng chịu được mọi mức tải hay detector đã đạt recall/precision cao.</p>
+<p>Cohort hiện chưa khóa seed Locust và chưa có đủ lượt lặp độc lập để suy luận thống kê. CPU rate dùng cửa sổ một phút, còn pha pilot là 30 giây. Bộ official, detector và mitigation vẫn nghiệm thu theo kế hoạch GĐ4/GĐ5/GĐ6.</p><div class="finish"><button class="button" data-complete="22-s4-tai-noi-bo" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="19-s3-runtime-abuse.html">← S3 · Shell, công cụ mạng và token</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#1-s4-mo-phong-chuyen-gi">1. S4 mô phỏng chuyện gì?</a></li>
 <li><a href="#2-rps-concurrency-va-p95-la-gi">2. RPS, concurrency và p95 là gì?</a></li>
@@ -411,9 +516,21 @@ sudo k3s kubectl -n boutique delete pods,deployments,configmaps -l &quot;experim
 </ul>
 </li>
 <li><a href="#12-ket-qua-pilot-va-nhat-ky-trien-khai">12. Kết quả pilot và nhật ký triển khai</a></li>
+<li><a href="#ra-soat-sau-va-dieu-kien-cua-ban-chay-moi">Rà soát sâu và điều kiện của bản chạy mới</a></li>
 <li><a href="#ket-qua-pilot-s4-ngay-23-11-2026">Kết quả pilot S4 ngày 23/11/2026</a></li>
 <li><a href="#quan-sat-tu-cohort-nay">Quan sát từ cohort này</a></li>
 <li><a href="#mo-bang-chung-tung-luot">Mở bằng chứng từng lượt</a></li>
+<li><a href="#ra-soat-sau-s4-ngay-23-11-2026">Rà soát sâu S4 ngày 23/11/2026</a></li>
+<li><a href="#1-ba-truong-hop-bao-dat-sai-da-tai-hien">1. Ba trường hợp báo đạt sai đã tái hiện</a></li>
+<li><a href="#2-cac-dieu-kien-kiem-tra-da-bo-sung">2. Các điều kiện kiểm tra đã bổ sung</a></li>
+<li><a href="#3-guard-va-cleanup-cua-ban-chay-moi">3. Guard và cleanup của bản chạy mới</a></li>
+<li><a href="#4-loi-chot-log-locust-va-luot-kiem-thu-that-bai">4. Lỗi chốt log Locust và lượt kiểm thử thất bại</a></li>
+<li><a href="#5-bang-chung-va-phien-ban">5. Bằng chứng và phiên bản</a><ul>
+<li><a href="#hoi-quy-truc-tiep-tren-lab-bang-source-cuoi-cung">Hồi quy trực tiếp trên lab bằng source cuối cùng</a></li>
+</ul>
+</li>
+<li><a href="#6-chay-lai-kiem-tra">6. Chạy lại kiểm tra</a></li>
+<li><a href="#7-doi-chieu-de-cuong-va-gioi-han-ket-luan">7. Đối chiếu đề cương và giới hạn kết luận</a></li>
 </ul>
 </div>
 </aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

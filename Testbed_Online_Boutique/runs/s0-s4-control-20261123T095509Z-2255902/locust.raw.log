@@ -1,0 +1,722 @@
+S4META {"locust_version": "2.43.0", "original_locustfile_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"}
+[2026-11-23 09:55:18,259] gd4-locust-2255902-cc9fbfcb-gjbbc/INFO/locust.main: Starting Locust 2.43.0
+[2026-11-23 09:55:18,261] gd4-locust-2255902-cc9fbfcb-gjbbc/INFO/locust.main: No run time limit set, use CTRL+C to interrupt
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                         0     0(0.00%) |      0       0       0      0 |    0.00        0.00
+
+[2026-11-23 09:55:18,266] gd4-locust-2255902-cc9fbfcb-gjbbc/INFO/locust.runners: Ramping to 10 users at a rate of 1.00 per second
+S4REQ {"sequence": 1, "started": "2026-11-23T09:55:18.267942+00:00", "ended": "2026-11-23T09:55:18.399058+00:00", "method": "GET", "path": "/", "duration_ms": 131.09015591908246, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 2, "started": "2026-11-23T09:55:18.399374+00:00", "ended": "2026-11-23T09:55:18.428844+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 29.44046794436872, "status_code": 200, "response_bytes": 7988, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 3, "started": "2026-11-23T09:55:19.269245+00:00", "ended": "2026-11-23T09:55:19.301945+00:00", "method": "GET", "path": "/", "duration_ms": 32.67890901770443, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 4, "started": "2026-11-23T09:55:19.302189+00:00", "ended": "2026-11-23T09:55:19.361773+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 59.56016795244068, "status_code": 200, "response_bytes": 7913, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                  2     0(0.00%) |     81      32     131     33 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                1     0(0.00%) |     29      29      29     29 |    0.00        0.00
+GET      /product/6E92ZMYYFZ                                                                1     0(0.00%) |     59      59      59     59 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                         4     0(0.00%) |     63      29     131     33 |    0.00        0.00
+
+S4REQ {"sequence": 5, "started": "2026-11-23T09:55:20.269809+00:00", "ended": "2026-11-23T09:55:20.304238+00:00", "method": "GET", "path": "/", "duration_ms": 34.406039980240166, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 6, "started": "2026-11-23T09:55:20.304481+00:00", "ended": "2026-11-23T09:55:20.358574+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 54.074430954642594, "status_code": 200, "response_bytes": 7960, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 7, "started": "2026-11-23T09:55:21.271484+00:00", "ended": "2026-11-23T09:55:21.303716+00:00", "method": "GET", "path": "/", "duration_ms": 32.2088859975338, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 8, "started": "2026-11-23T09:55:21.303955+00:00", "ended": "2026-11-23T09:55:21.355392+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 51.4166580978781, "status_code": 200, "response_bytes": 7946, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                  4     0(0.00%) |     57      32     131     33 |    1.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                1     0(0.00%) |     29      29      29     29 |    1.00        0.00
+GET      /product/66VCHSJNUP                                                                1     0(0.00%) |     54      54      54     54 |    0.00        0.00
+GET      /product/6E92ZMYYFZ                                                                1     0(0.00%) |     59      59      59     59 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                1     0(0.00%) |     51      51      51     51 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                         8     0(0.00%) |     53      29     131     34 |    2.00        0.00
+
+S4REQ {"sequence": 9, "started": "2026-11-23T09:55:22.272248+00:00", "ended": "2026-11-23T09:55:22.304319+00:00", "method": "GET", "path": "/", "duration_ms": 32.05591009464115, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 10, "started": "2026-11-23T09:55:22.304628+00:00", "ended": "2026-11-23T09:55:22.353659+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 49.01028401218355, "status_code": 200, "response_bytes": 7984, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 11, "started": "2026-11-23T09:55:23.272941+00:00", "ended": "2026-11-23T09:55:23.304107+00:00", "method": "GET", "path": "/", "duration_ms": 31.15091100335121, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 12, "started": "2026-11-23T09:55:23.304320+00:00", "ended": "2026-11-23T09:55:23.372492+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 68.14761296845973, "status_code": 200, "response_bytes": 7940, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 13, "started": "2026-11-23T09:55:23.373153+00:00", "ended": "2026-11-23T09:55:23.466930+00:00", "method": "POST", "path": "/cart", "duration_ms": 93.74537493567914, "status_code": 200, "response_bytes": 16438, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 14, "started": "2026-11-23T09:55:23.586608+00:00", "ended": "2026-11-23T09:55:23.618748+00:00", "method": "GET", "path": "/cart", "duration_ms": 32.11613302119076, "status_code": 200, "response_bytes": 6863, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                  6     0(0.00%) |     48      31     131     32 |    1.00        0.00
+GET      /cart                                                                              1     0(0.00%) |     32      32      32     32 |    0.00        0.00
+POST     /cart                                                                              1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/1YMWWN1N4O                                                                1     0(0.00%) |     49      49      49     49 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                1     0(0.00%) |     29      29      29     29 |    0.33        0.00
+GET      /product/66VCHSJNUP                                                                1     0(0.00%) |     54      54      54     54 |    0.33        0.00
+GET      /product/6E92ZMYYFZ                                                                1     0(0.00%) |     59      59      59     59 |    0.33        0.00
+GET      /product/L9ECAV7KIM                                                                2     0(0.00%) |     59      51      68     51 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        14     0(0.00%) |     52      29     131     34 |    2.00        0.00
+
+S4REQ {"sequence": 15, "started": "2026-11-23T09:55:24.273727+00:00", "ended": "2026-11-23T09:55:24.308352+00:00", "method": "GET", "path": "/", "duration_ms": 34.60548399016261, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 16, "started": "2026-11-23T09:55:24.308595+00:00", "ended": "2026-11-23T09:55:24.356440+00:00", "method": "GET", "path": "/cart", "duration_ms": 47.82449500635266, "status_code": 200, "response_bytes": 6891, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 17, "started": "2026-11-23T09:55:25.274785+00:00", "ended": "2026-11-23T09:55:25.316308+00:00", "method": "GET", "path": "/", "duration_ms": 41.49866197258234, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 18, "started": "2026-11-23T09:55:25.316571+00:00", "ended": "2026-11-23T09:55:25.369333+00:00", "method": "GET", "path": "/cart", "duration_ms": 52.74308193475008, "status_code": 200, "response_bytes": 6861, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 19, "started": "2026-11-23T09:55:25.676018+00:00", "ended": "2026-11-23T09:55:25.698114+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 22.069221013225615, "status_code": 200, "response_bytes": 8018, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 20, "started": "2026-11-23T09:55:25.796622+00:00", "ended": "2026-11-23T09:55:25.824032+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 27.391065028496087, "status_code": 200, "response_bytes": 7964, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 21, "started": "2026-11-23T09:55:25.824258+00:00", "ended": "2026-11-23T09:55:25.853990+00:00", "method": "POST", "path": "/cart", "duration_ms": 29.709725989960134, "status_code": 200, "response_bytes": 16475, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                  8     0(0.00%) |     46      31     131     33 |    1.00        0.00
+GET      /cart                                                                              3     0(0.00%) |     44      32      52     48 |    0.00        0.00
+POST     /cart                                                                              2     0(0.00%) |     61      29      93     30 |    0.00        0.00
+GET      /product/1YMWWN1N4O                                                                1     0(0.00%) |     49      49      49     49 |    0.20        0.00
+GET      /product/2ZYFJ3GM2N                                                                1     0(0.00%) |     29      29      29     29 |    0.20        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                1     0(0.00%) |     59      59      59     59 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                3     0(0.00%) |     47      22      68     51 |    0.20        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        21     0(0.00%) |     46      22     131     35 |    2.00        0.00
+
+S4REQ {"sequence": 22, "started": "2026-11-23T09:55:26.277175+00:00", "ended": "2026-11-23T09:55:26.310597+00:00", "method": "GET", "path": "/", "duration_ms": 33.403391018509865, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 23, "started": "2026-11-23T09:55:26.311109+00:00", "ended": "2026-11-23T09:55:26.408455+00:00", "method": "POST", "path": "/setCurrency", "duration_ms": 97.32803807128221, "status_code": 200, "response_bytes": 10518, "error": null, "workload_class": "normal_shopping"}
+[2026-11-23 09:55:27,277] gd4-locust-2255902-cc9fbfcb-gjbbc/INFO/locust.runners: All users spawned: {"WebsiteUser": 10} (10 total users)
+S4REQ {"sequence": 24, "started": "2026-11-23T09:55:27.278059+00:00", "ended": "2026-11-23T09:55:27.314982+00:00", "method": "GET", "path": "/", "duration_ms": 36.897505982778966, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 25, "started": "2026-11-23T09:55:27.315330+00:00", "ended": "2026-11-23T09:55:27.363829+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 48.47993399016559, "status_code": 200, "response_bytes": 7974, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 26, "started": "2026-11-23T09:55:27.864920+00:00", "ended": "2026-11-23T09:55:27.886987+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 22.039906005375087, "status_code": 200, "response_bytes": 7996, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 10     0(0.00%) |     43      31     131     33 |    1.00        0.00
+GET      /cart                                                                              3     0(0.00%) |     44      32      52     48 |    0.29        0.00
+POST     /cart                                                                              2     0(0.00%) |     61      29      93     30 |    0.14        0.00
+GET      /product/0PUK6V6EV0                                                                1     0(0.00%) |     48      48      48     48 |    0.00        0.00
+GET      /product/1YMWWN1N4O                                                                2     0(0.00%) |     35      22      49     22 |    0.14        0.00
+GET      /product/2ZYFJ3GM2N                                                                1     0(0.00%) |     29      29      29     29 |    0.14        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.14        0.00
+GET      /product/6E92ZMYYFZ                                                                1     0(0.00%) |     59      59      59     59 |    0.14        0.00
+GET      /product/L9ECAV7KIM                                                                3     0(0.00%) |     47      22      68     51 |    0.29        0.00
+POST     /setCurrency                                                                       1     0(0.00%) |     97      97      97     97 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        26     0(0.00%) |     47      22     131     35 |    2.29        0.00
+
+S4REQ {"sequence": 27, "started": "2026-11-23T09:55:29.404824+00:00", "ended": "2026-11-23T09:55:29.429884+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 25.03947599325329, "status_code": 200, "response_bytes": 7976, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 28, "started": "2026-11-23T09:55:29.513426+00:00", "ended": "2026-11-23T09:55:29.539488+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 26.037918985821307, "status_code": 200, "response_bytes": 7924, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 29, "started": "2026-11-23T09:55:29.528286+00:00", "ended": "2026-11-23T09:55:29.559613+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 31.298278947360814, "status_code": 200, "response_bytes": 7981, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 30, "started": "2026-11-23T09:55:29.540587+00:00", "ended": "2026-11-23T09:55:29.606936+00:00", "method": "POST", "path": "/cart", "duration_ms": 66.31496991030872, "status_code": 200, "response_bytes": 16455, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 10     0(0.00%) |     43      31     131     33 |    1.00        0.00
+GET      /cart                                                                              3     0(0.00%) |     44      32      52     48 |    0.33        0.00
+POST     /cart                                                                              3     0(0.00%) |     63      29      93     66 |    0.22        0.00
+GET      /product/0PUK6V6EV0                                                                2     0(0.00%) |     37      26      48     26 |    0.00        0.00
+GET      /product/1YMWWN1N4O                                                                2     0(0.00%) |     35      22      49     22 |    0.11        0.00
+GET      /product/2ZYFJ3GM2N                                                                2     0(0.00%) |     27      25      29     25 |    0.11        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.22        0.00
+GET      /product/6E92ZMYYFZ                                                                1     0(0.00%) |     59      59      59     59 |    0.11        0.00
+GET      /product/L9ECAV7KIM                                                                3     0(0.00%) |     47      22      68     51 |    0.33        0.00
+GET      /product/OLJCESPC7Z                                                                1     0(0.00%) |     31      31      31     31 |    0.00        0.00
+POST     /setCurrency                                                                       1     0(0.00%) |     97      97      97     97 |    0.11        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        30     0(0.00%) |     45      22     131     34 |    2.56        0.00
+
+S4REQ {"sequence": 31, "started": "2026-11-23T09:55:30.281852+00:00", "ended": "2026-11-23T09:55:30.304947+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 23.07617396581918, "status_code": 200, "response_bytes": 7944, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 32, "started": "2026-11-23T09:55:30.665842+00:00", "ended": "2026-11-23T09:55:30.700139+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 34.277967060916126, "status_code": 200, "response_bytes": 8020, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 10     0(0.00%) |     43      31     131     33 |    1.00        0.00
+GET      /cart                                                                              3     0(0.00%) |     44      32      52     48 |    0.30        0.00
+POST     /cart                                                                              3     0(0.00%) |     63      29      93     66 |    0.20        0.00
+GET      /product/0PUK6V6EV0                                                                2     0(0.00%) |     37      26      48     26 |    0.10        0.00
+GET      /product/1YMWWN1N4O                                                                2     0(0.00%) |     35      22      49     22 |    0.20        0.00
+GET      /product/2ZYFJ3GM2N                                                                2     0(0.00%) |     27      25      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.10        0.00
+GET      /product/L9ECAV7KIM                                                                4     0(0.00%) |     41      22      68     23 |    0.30        0.00
+GET      /product/OLJCESPC7Z                                                                1     0(0.00%) |     31      31      31     31 |    0.00        0.00
+POST     /setCurrency                                                                       1     0(0.00%) |     97      97      97     97 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        32     0(0.00%) |     44      22     131     34 |    2.60        0.00
+
+S4REQ {"sequence": 33, "started": "2026-11-23T09:55:32.332243+00:00", "ended": "2026-11-23T09:55:32.359692+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 27.421889011748135, "status_code": 200, "response_bytes": 7972, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 34, "started": "2026-11-23T09:55:32.348015+00:00", "ended": "2026-11-23T09:55:32.372910+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 24.87298392225057, "status_code": 200, "response_bytes": 8079, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 35, "started": "2026-11-23T09:55:32.555663+00:00", "ended": "2026-11-23T09:55:32.580299+00:00", "method": "GET", "path": "/cart", "duration_ms": 24.608185049146414, "status_code": 200, "response_bytes": 6871, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 36, "started": "2026-11-23T09:55:32.816110+00:00", "ended": "2026-11-23T09:55:32.843027+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 26.862788014113903, "status_code": 200, "response_bytes": 8063, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 37, "started": "2026-11-23T09:55:33.107982+00:00", "ended": "2026-11-23T09:55:33.133176+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 25.165022001601756, "status_code": 200, "response_bytes": 8038, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 38, "started": "2026-11-23T09:55:33.133505+00:00", "ended": "2026-11-23T09:55:33.180942+00:00", "method": "POST", "path": "/cart", "duration_ms": 47.40093997679651, "status_code": 200, "response_bytes": 17879, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 39, "started": "2026-11-23T09:55:33.982007+00:00", "ended": "2026-11-23T09:55:34.003856+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 21.82930998969823, "status_code": 200, "response_bytes": 8089, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 40, "started": "2026-11-23T09:55:34.230593+00:00", "ended": "2026-11-23T09:55:34.255366+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 24.752533994615078, "status_code": 200, "response_bytes": 8015, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 10     0(0.00%) |     43      31     131     33 |    0.60        0.00
+GET      /cart                                                                              4     0(0.00%) |     39      24      52     32 |    0.30        0.00
+POST     /cart                                                                              4     0(0.00%) |     59      29      93     47 |    0.30        0.00
+GET      /product/0PUK6V6EV0                                                                3     0(0.00%) |     33      26      48     27 |    0.20        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.20        0.00
+GET      /product/2ZYFJ3GM2N                                                                2     0(0.00%) |     27      25      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.10        0.00
+GET      /product/9SIQT8TOJO                                                                1     0(0.00%) |     25      25      25     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                4     0(0.00%) |     41      22      68     23 |    0.30        0.00
+GET      /product/OLJCESPC7Z                                                                1     0(0.00%) |     31      31      31     31 |    0.10        0.00
+POST     /setCurrency                                                                       1     0(0.00%) |     97      97      97     97 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        40     0(0.00%) |     41      21     131     32 |    2.40        0.00
+
+S4REQ {"sequence": 41, "started": "2026-11-23T09:55:34.312186+00:00", "ended": "2026-11-23T09:55:34.336943+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 24.73321498837322, "status_code": 200, "response_bytes": 7984, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 42, "started": "2026-11-23T09:55:34.337201+00:00", "ended": "2026-11-23T09:55:34.370803+00:00", "method": "POST", "path": "/cart", "duration_ms": 33.57629897072911, "status_code": 200, "response_bytes": 16461, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 43, "started": "2026-11-23T09:55:34.369820+00:00", "ended": "2026-11-23T09:55:34.459033+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 89.17618298437446, "status_code": 200, "response_bytes": 7960, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 44, "started": "2026-11-23T09:55:34.373606+00:00", "ended": "2026-11-23T09:55:34.467165+00:00", "method": "POST", "path": "/cart/checkout", "duration_ms": 93.5297521064058, "status_code": 200, "response_bytes": 6820, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 45, "started": "2026-11-23T09:55:34.376790+00:00", "ended": "2026-11-23T09:55:34.547330+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 170.5098249949515, "status_code": 200, "response_bytes": 7976, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 46, "started": "2026-11-23T09:55:36.049375+00:00", "ended": "2026-11-23T09:55:36.078098+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 28.692587977275252, "status_code": 200, "response_bytes": 7978, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 10     0(0.00%) |     43      31     131     33 |    0.40        0.00
+GET      /cart                                                                              4     0(0.00%) |     39      24      52     32 |    0.30        0.00
+POST     /cart                                                                              5     0(0.00%) |     54      29      93     47 |    0.30        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.30        0.00
+GET      /product/2ZYFJ3GM2N                                                                2     0(0.00%) |     27      25      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.10        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.10        0.00
+GET      /product/L9ECAV7KIM                                                                5     0(0.00%) |     50      22      89     51 |    0.20        0.00
+GET      /product/OLJCESPC7Z                                                                1     0(0.00%) |     31      31      31     31 |    0.10        0.00
+POST     /setCurrency                                                                       1     0(0.00%) |     97      97      97     97 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        46     0(0.00%) |     45      21     170     33 |    2.40        0.00
+
+S4REQ {"sequence": 47, "started": "2026-11-23T09:55:36.721853+00:00", "ended": "2026-11-23T09:55:36.743681+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 21.808575955219567, "status_code": 200, "response_bytes": 7941, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 48, "started": "2026-11-23T09:55:36.743910+00:00", "ended": "2026-11-23T09:55:36.785903+00:00", "method": "POST", "path": "/cart", "duration_ms": 41.973365005105734, "status_code": 200, "response_bytes": 16482, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 49, "started": "2026-11-23T09:55:36.787808+00:00", "ended": "2026-11-23T09:55:36.854371+00:00", "method": "GET", "path": "/cart", "duration_ms": 66.5350400377065, "status_code": 200, "response_bytes": 6869, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 50, "started": "2026-11-23T09:55:37.843441+00:00", "ended": "2026-11-23T09:55:37.866258+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 22.78666093479842, "status_code": 200, "response_bytes": 8079, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 51, "started": "2026-11-23T09:55:37.866666+00:00", "ended": "2026-11-23T09:55:37.948893+00:00", "method": "POST", "path": "/cart", "duration_ms": 82.20557903405279, "status_code": 200, "response_bytes": 17871, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 10     0(0.00%) |     43      31     131     33 |    0.30        0.00
+GET      /cart                                                                              5     0(0.00%) |     44      24      66     48 |    0.20        0.00
+POST     /cart                                                                              7     0(0.00%) |     56      29      93     47 |    0.40        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.40        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.50        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                2     0(0.00%) |     40      27      54     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.10        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                5     0(0.00%) |     50      22      89     51 |    0.30        0.00
+GET      /product/LS4PSXUNUM                                                                1     0(0.00%) |     21      21      21     21 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                1     0(0.00%) |     31      31      31     31 |    0.10        0.00
+POST     /setCurrency                                                                       1     0(0.00%) |     97      97      97     97 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        51     0(0.00%) |     45      21     170     33 |    2.90        0.00
+
+S4REQ {"sequence": 52, "started": "2026-11-23T09:55:38.355610+00:00", "ended": "2026-11-23T09:55:38.385623+00:00", "method": "POST", "path": "/setCurrency", "duration_ms": 29.988949070684612, "status_code": 200, "response_bytes": 10527, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 53, "started": "2026-11-23T09:55:38.630398+00:00", "ended": "2026-11-23T09:55:38.653058+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 22.63952698558569, "status_code": 200, "response_bytes": 7902, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 54, "started": "2026-11-23T09:55:38.653371+00:00", "ended": "2026-11-23T09:55:38.683163+00:00", "method": "POST", "path": "/cart", "duration_ms": 29.772685025818646, "status_code": 200, "response_bytes": 16424, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 55, "started": "2026-11-23T09:55:39.007863+00:00", "ended": "2026-11-23T09:55:39.034252+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 26.37012698687613, "status_code": 200, "response_bytes": 7961, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 56, "started": "2026-11-23T09:55:39.297220+00:00", "ended": "2026-11-23T09:55:39.327721+00:00", "method": "GET", "path": "/", "duration_ms": 30.47600295394659, "status_code": 200, "response_bytes": 10589, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 11     0(0.00%) |     42      30     131     33 |    0.10        0.00
+GET      /cart                                                                              5     0(0.00%) |     44      24      66     48 |    0.20        0.00
+POST     /cart                                                                              8     0(0.00%) |     53      29      93     42 |    0.40        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.50        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.50        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                3     0(0.00%) |     34      22      54     27 |    0.00        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.10        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                5     0(0.00%) |     50      22      89     51 |    0.20        0.00
+GET      /product/LS4PSXUNUM                                                                1     0(0.00%) |     21      21      21     21 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                2     0(0.00%) |     28      26      31     26 |    0.10        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        56     0(0.00%) |     44      21     170     32 |    2.60        0.00
+
+S4REQ {"sequence": 57, "started": "2026-11-23T09:55:40.545732+00:00", "ended": "2026-11-23T09:55:40.594714+00:00", "method": "GET", "path": "/cart", "duration_ms": 48.955562990158796, "status_code": 200, "response_bytes": 17895, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 58, "started": "2026-11-23T09:55:40.876653+00:00", "ended": "2026-11-23T09:55:40.897902+00:00", "method": "GET", "path": "/cart", "duration_ms": 21.143927006050944, "status_code": 200, "response_bytes": 6875, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 59, "started": "2026-11-23T09:55:41.231742+00:00", "ended": "2026-11-23T09:55:41.253815+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 22.053761058486998, "status_code": 200, "response_bytes": 8046, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 60, "started": "2026-11-23T09:55:41.553237+00:00", "ended": "2026-11-23T09:55:41.582669+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 29.403808992356062, "status_code": 200, "response_bytes": 7997, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 61, "started": "2026-11-23T09:55:41.583057+00:00", "ended": "2026-11-23T09:55:41.648803+00:00", "method": "POST", "path": "/cart", "duration_ms": 65.72323990985751, "status_code": 200, "response_bytes": 16443, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 11     0(0.00%) |     42      30     131     33 |    0.00        0.00
+GET      /cart                                                                              7     0(0.00%) |     41      21      66     48 |    0.20        0.00
+POST     /cart                                                                              9     0(0.00%) |     54      29      93     47 |    0.60        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.40        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.40        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.20        0.00
+GET      /product/66VCHSJNUP                                                                3     0(0.00%) |     34      22      54     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.10        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                5     0(0.00%) |     50      22      89     51 |    0.20        0.00
+GET      /product/LS4PSXUNUM                                                                2     0(0.00%) |     21      21      22     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                3     0(0.00%) |     29      26      31     29 |    0.10        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        61     0(0.00%) |     43      21     170     32 |    2.80        0.00
+
+S4REQ {"sequence": 62, "started": "2026-11-23T09:55:43.361675+00:00", "ended": "2026-11-23T09:55:43.383396+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 21.698651020415127, "status_code": 200, "response_bytes": 8035, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 63, "started": "2026-11-23T09:55:43.783368+00:00", "ended": "2026-11-23T09:55:43.810770+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 27.36930502578616, "status_code": 200, "response_bytes": 7954, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 64, "started": "2026-11-23T09:55:43.811201+00:00", "ended": "2026-11-23T09:55:43.860178+00:00", "method": "POST", "path": "/cart", "duration_ms": 48.95386099815369, "status_code": 200, "response_bytes": 16441, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 65, "started": "2026-11-23T09:55:43.877950+00:00", "ended": "2026-11-23T09:55:43.950275+00:00", "method": "GET", "path": "/cart", "duration_ms": 72.29034404736012, "status_code": 200, "response_bytes": 16488, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 11     0(0.00%) |     42      30     131     33 |    0.10        0.00
+GET      /cart                                                                              8     0(0.00%) |     45      21      72     48 |    0.40        0.00
+POST     /cart                                                                             10     0(0.00%) |     53      29      93     47 |    0.50        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.40        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                3     0(0.00%) |     34      22      54     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.00        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                6     0(0.00%) |     46      22      89     27 |    0.10        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                3     0(0.00%) |     29      26      31     29 |    0.10        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        65     0(0.00%) |     43      21     170     32 |    2.60        0.00
+
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 11     0(0.00%) |     42      30     131     33 |    0.10        0.00
+GET      /cart                                                                              8     0(0.00%) |     45      21      72     48 |    0.40        0.00
+POST     /cart                                                                             10     0(0.00%) |     53      29      93     47 |    0.50        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.40        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                3     0(0.00%) |     34      22      54     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.00        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                6     0(0.00%) |     46      22      89     27 |    0.10        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                3     0(0.00%) |     29      26      31     29 |    0.10        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        65     0(0.00%) |     43      21     170     32 |    2.60        0.00
+
+S4REQ {"sequence": 66, "started": "2026-11-23T09:55:46.753443+00:00", "ended": "2026-11-23T09:55:46.782426+00:00", "method": "GET", "path": "/cart", "duration_ms": 28.962012962438166, "status_code": 200, "response_bytes": 6887, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 67, "started": "2026-11-23T09:55:46.964650+00:00", "ended": "2026-11-23T09:55:46.991377+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 26.701866067014635, "status_code": 200, "response_bytes": 7968, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 68, "started": "2026-11-23T09:55:47.214135+00:00", "ended": "2026-11-23T09:55:47.282240+00:00", "method": "GET", "path": "/", "duration_ms": 68.08686896692961, "status_code": 200, "response_bytes": 10588, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 69, "started": "2026-11-23T09:55:47.214765+00:00", "ended": "2026-11-23T09:55:47.294482+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 79.6992260729894, "status_code": 200, "response_bytes": 8062, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 70, "started": "2026-11-23T09:55:47.314085+00:00", "ended": "2026-11-23T09:55:47.344922+00:00", "method": "GET", "path": "/", "duration_ms": 30.80870700068772, "status_code": 200, "response_bytes": 10499, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.10        0.00
+GET      /cart                                                                              9     0(0.00%) |     43      21      72     48 |    0.40        0.00
+POST     /cart                                                                             10     0(0.00%) |     53      29      93     47 |    0.50        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                5     0(0.00%) |     60      26     170     29 |    0.10        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                4     0(0.00%) |     45      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.00        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                6     0(0.00%) |     46      22      89     27 |    0.10        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.30        0.00
+GET      /product/OLJCESPC7Z                                                                4     0(0.00%) |     28      26      31     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        70     0(0.00%) |     43      21     170     32 |    2.00        0.00
+
+S4REQ {"sequence": 71, "started": "2026-11-23T09:55:48.550165+00:00", "ended": "2026-11-23T09:55:48.577543+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 27.35372493043542, "status_code": 200, "response_bytes": 8071, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 72, "started": "2026-11-23T09:55:49.287879+00:00", "ended": "2026-11-23T09:55:49.316849+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 28.94406591076404, "status_code": 200, "response_bytes": 8047, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 73, "started": "2026-11-23T09:55:49.807076+00:00", "ended": "2026-11-23T09:55:49.852055+00:00", "method": "GET", "path": "/cart", "duration_ms": 44.9147520121187, "status_code": 200, "response_bytes": 17899, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 74, "started": "2026-11-23T09:55:49.909646+00:00", "ended": "2026-11-23T09:55:49.936255+00:00", "method": "GET", "path": "/cart", "duration_ms": 26.581987971439958, "status_code": 200, "response_bytes": 6889, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.10        0.00
+GET      /cart                                                                             11     0(0.00%) |     42      21      72     45 |    0.40        0.00
+POST     /cart                                                                             10     0(0.00%) |     53      29      93     47 |    0.40        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                6     0(0.00%) |     54      26     170     29 |    0.00        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                3     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                4     0(0.00%) |     45      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                2     0(0.00%) |     46      34      59     34 |    0.00        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                6     0(0.00%) |     46      22      89     27 |    0.10        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.20        0.00
+GET      /product/OLJCESPC7Z                                                                5     0(0.00%) |     28      26      31     27 |    0.30        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        74     0(0.00%) |     43      21     170     31 |    1.80        0.00
+
+S4REQ {"sequence": 75, "started": "2026-11-23T09:55:50.582235+00:00", "ended": "2026-11-23T09:55:50.608011+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 25.74984892271459, "status_code": 200, "response_bytes": 8067, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 76, "started": "2026-11-23T09:55:51.281328+00:00", "ended": "2026-11-23T09:55:51.307817+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 26.465818053111434, "status_code": 200, "response_bytes": 8027, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 77, "started": "2026-11-23T09:55:51.693156+00:00", "ended": "2026-11-23T09:55:51.719478+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 26.29817300476134, "status_code": 200, "response_bytes": 8040, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.30        0.00
+GET      /cart                                                                             11     0(0.00%) |     42      21      72     45 |    0.40        0.00
+POST     /cart                                                                             10     0(0.00%) |     53      29      93     47 |    0.20        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                7     0(0.00%) |     50      26     170     29 |    0.00        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                4     0(0.00%) |     25      22      29     25 |    0.00        0.00
+GET      /product/66VCHSJNUP                                                                4     0(0.00%) |     45      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                3     0(0.00%) |     40      26      59     34 |    0.00        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                6     0(0.00%) |     46      22      89     27 |    0.10        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.20        0.00
+GET      /product/OLJCESPC7Z                                                                5     0(0.00%) |     28      26      31     27 |    0.40        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        77     0(0.00%) |     42      21     170     31 |    1.70        0.00
+
+S4REQ {"sequence": 78, "started": "2026-11-23T09:55:52.379204+00:00", "ended": "2026-11-23T09:55:52.405420+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 26.192073011770844, "status_code": 200, "response_bytes": 7946, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 79, "started": "2026-11-23T09:55:53.437306+00:00", "ended": "2026-11-23T09:55:53.462069+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 24.73838592413813, "status_code": 200, "response_bytes": 7915, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 80, "started": "2026-11-23T09:55:53.547632+00:00", "ended": "2026-11-23T09:55:53.574226+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 26.57315693795681, "status_code": 200, "response_bytes": 8030, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 81, "started": "2026-11-23T09:55:53.574632+00:00", "ended": "2026-11-23T09:55:53.661169+00:00", "method": "POST", "path": "/cart", "duration_ms": 86.51719498448074, "status_code": 200, "response_bytes": 17869, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.20        0.00
+GET      /cart                                                                             11     0(0.00%) |     42      21      72     45 |    0.40        0.00
+POST     /cart                                                                             11     0(0.00%) |     56      29      93     49 |    0.20        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                7     0(0.00%) |     50      26     170     29 |    0.10        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                4     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                5     0(0.00%) |     42      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                4     0(0.00%) |     36      24      59     26 |    0.00        0.00
+GET      /product/9SIQT8TOJO                                                                2     0(0.00%) |     24      24      25     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                7     0(0.00%) |     43      22      89     27 |    0.10        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.20        0.00
+GET      /product/OLJCESPC7Z                                                                5     0(0.00%) |     28      26      31     27 |    0.30        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        81     0(0.00%) |     42      21     170     31 |    1.70        0.00
+
+S4REQ {"sequence": 82, "started": "2026-11-23T09:55:54.368976+00:00", "ended": "2026-11-23T09:55:54.393357+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 24.35709908604622, "status_code": 200, "response_bytes": 8053, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 83, "started": "2026-11-23T09:55:54.471951+00:00", "ended": "2026-11-23T09:55:54.499232+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 27.258107089437544, "status_code": 200, "response_bytes": 8041, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 84, "started": "2026-11-23T09:55:54.499473+00:00", "ended": "2026-11-23T09:55:54.556421+00:00", "method": "POST", "path": "/cart", "duration_ms": 56.92356696818024, "status_code": 200, "response_bytes": 17885, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 85, "started": "2026-11-23T09:55:54.620955+00:00", "ended": "2026-11-23T09:55:54.668379+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 47.39226307719946, "status_code": 200, "response_bytes": 8086, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 86, "started": "2026-11-23T09:55:55.057232+00:00", "ended": "2026-11-23T09:55:55.095753+00:00", "method": "GET", "path": "/cart", "duration_ms": 38.4889260167256, "status_code": 200, "response_bytes": 17861, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 87, "started": "2026-11-23T09:55:55.137368+00:00", "ended": "2026-11-23T09:55:55.233851+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 96.45973599981517, "status_code": 200, "response_bytes": 7958, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.20        0.00
+GET      /cart                                                                             12     0(0.00%) |     42      21      72     38 |    0.40        0.00
+POST     /cart                                                                             12     0(0.00%) |     56      29      93     49 |    0.10        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                8     0(0.00%) |     47      24     170     27 |    0.20        0.00
+GET      /product/1YMWWN1N4O                                                                6     0(0.00%) |     28      21      49     25 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                4     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                5     0(0.00%) |     42      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                4     0(0.00%) |     36      24      59     26 |    0.10        0.00
+GET      /product/9SIQT8TOJO                                                                4     0(0.00%) |     48      24      96     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                                8     0(0.00%) |     41      22      89     27 |    0.20        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                5     0(0.00%) |     28      26      31     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        87     0(0.00%) |     42      21     170     31 |    1.70        0.00
+
+S4REQ {"sequence": 88, "started": "2026-11-23T09:55:56.359206+00:00", "ended": "2026-11-23T09:55:56.388141+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 28.899092925712466, "status_code": 200, "response_bytes": 8104, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 89, "started": "2026-11-23T09:55:57.245524+00:00", "ended": "2026-11-23T09:55:57.278589+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 32.97184209804982, "status_code": 200, "response_bytes": 7932, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 90, "started": "2026-11-23T09:55:57.930568+00:00", "ended": "2026-11-23T09:55:57.957345+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 26.748850010335445, "status_code": 200, "response_bytes": 8023, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 91, "started": "2026-11-23T09:55:57.957752+00:00", "ended": "2026-11-23T09:55:58.056815+00:00", "method": "POST", "path": "/cart", "duration_ms": 99.03838904574513, "status_code": 200, "response_bytes": 19308, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.20        0.00
+GET      /cart                                                                             12     0(0.00%) |     42      21      72     38 |    0.40        0.00
+POST     /cart                                                                             13     0(0.00%) |     60      29      99     57 |    0.20        0.00
+POST     /cart/checkout                                                                     1     0(0.00%) |     93      93      93     93 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                8     0(0.00%) |     47      24     170     27 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                7     0(0.00%) |     28      21      49     25 |    0.00        0.00
+GET      /product/2ZYFJ3GM2N                                                                4     0(0.00%) |     25      22      29     25 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                6     0(0.00%) |     40      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                5     0(0.00%) |     34      24      59     27 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                4     0(0.00%) |     48      24      96     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                                8     0(0.00%) |     41      22      89     27 |    0.20        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                5     0(0.00%) |     28      26      31     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                        91     0(0.00%) |     42      21     170     31 |    2.20        0.00
+
+S4REQ {"sequence": 92, "started": "2026-11-23T09:55:58.477672+00:00", "ended": "2026-11-23T09:55:58.502187+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 24.494229000993073, "status_code": 200, "response_bytes": 8046, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 93, "started": "2026-11-23T09:55:58.502447+00:00", "ended": "2026-11-23T09:55:58.568393+00:00", "method": "POST", "path": "/cart", "duration_ms": 65.9011680399999, "status_code": 200, "response_bytes": 19269, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 94, "started": "2026-11-23T09:55:58.571559+00:00", "ended": "2026-11-23T09:55:58.659481+00:00", "method": "POST", "path": "/cart/checkout", "duration_ms": 87.89657591842115, "status_code": 200, "response_bytes": 6827, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 95, "started": "2026-11-23T09:55:58.647555+00:00", "ended": "2026-11-23T09:55:58.679584+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 31.99757297988981, "status_code": 200, "response_bytes": 8037, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 96, "started": "2026-11-23T09:55:58.717647+00:00", "ended": "2026-11-23T09:55:58.854604+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 136.9285819819197, "status_code": 200, "response_bytes": 8042, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 97, "started": "2026-11-23T09:55:58.734681+00:00", "ended": "2026-11-23T09:55:58.859087+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 124.36662102118134, "status_code": 200, "response_bytes": 8014, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 98, "started": "2026-11-23T09:55:58.679894+00:00", "ended": "2026-11-23T09:55:58.863754+00:00", "method": "POST", "path": "/cart", "duration_ms": 183.83164901752025, "status_code": 200, "response_bytes": 17868, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 99, "started": "2026-11-23T09:55:58.854893+00:00", "ended": "2026-11-23T09:55:58.966974+00:00", "method": "POST", "path": "/cart", "duration_ms": 112.05110105220228, "status_code": 200, "response_bytes": 17854, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 100, "started": "2026-11-23T09:55:59.053668+00:00", "ended": "2026-11-23T09:55:59.082150+00:00", "method": "GET", "path": "/product/L9ECAV7KIM", "duration_ms": 28.449976001866162, "status_code": 200, "response_bytes": 8056, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 101, "started": "2026-11-23T09:55:59.294162+00:00", "ended": "2026-11-23T09:55:59.322568+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 28.37926405481994, "status_code": 200, "response_bytes": 7937, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 102, "started": "2026-11-23T09:55:59.793532+00:00", "ended": "2026-11-23T09:55:59.838087+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 44.52894302085042, "status_code": 200, "response_bytes": 7967, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 103, "started": "2026-11-23T09:55:59.838422+00:00", "ended": "2026-11-23T09:55:59.880172+00:00", "method": "POST", "path": "/cart", "duration_ms": 41.70010797679424, "status_code": 200, "response_bytes": 16472, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.20        0.00
+GET      /cart                                                                             12     0(0.00%) |     42      21      72     38 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.20        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                                9     0(0.00%) |     44      24     170     27 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                7     0(0.00%) |     28      21      49     25 |    0.10        0.00
+GET      /product/2ZYFJ3GM2N                                                                5     0(0.00%) |     29      22      44     26 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                6     0(0.00%) |     40      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                6     0(0.00%) |     33      24      59     27 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                4     0(0.00%) |     48      24      96     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.20        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                6     0(0.00%) |     46      26     136     27 |    0.10        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       103     0(0.00%) |     46      21     183     32 |    2.10        0.00
+
+S4REQ {"sequence": 104, "started": "2026-11-23T09:56:00.448041+00:00", "ended": "2026-11-23T09:56:00.483707+00:00", "method": "GET", "path": "/cart", "duration_ms": 35.63056094571948, "status_code": 200, "response_bytes": 17889, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 105, "started": "2026-11-23T09:56:00.601315+00:00", "ended": "2026-11-23T09:56:00.626382+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 25.042966939508915, "status_code": 200, "response_bytes": 8081, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 106, "started": "2026-11-23T09:56:00.702951+00:00", "ended": "2026-11-23T09:56:00.728928+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 25.94819397199899, "status_code": 200, "response_bytes": 8024, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 107, "started": "2026-11-23T09:56:00.971032+00:00", "ended": "2026-11-23T09:56:01.046009+00:00", "method": "GET", "path": "/cart", "duration_ms": 74.93483205325902, "status_code": 200, "response_bytes": 17873, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.00        0.00
+GET      /cart                                                                             14     0(0.00%) |     43      21      74     38 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.60        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                               10     0(0.00%) |     43      24     170     26 |    0.40        0.00
+GET      /product/1YMWWN1N4O                                                                7     0(0.00%) |     28      21      49     25 |    0.10        0.00
+GET      /product/2ZYFJ3GM2N                                                                5     0(0.00%) |     29      22      44     26 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                6     0(0.00%) |     40      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                6     0(0.00%) |     33      24      59     27 |    0.30        0.00
+GET      /product/9SIQT8TOJO                                                                4     0(0.00%) |     48      24      96     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.40        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.10        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       107     0(0.00%) |     46      21     183     32 |    2.80        0.00
+
+S4REQ {"sequence": 108, "started": "2026-11-23T09:56:02.621610+00:00", "ended": "2026-11-23T09:56:02.643663+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 22.032571025192738, "status_code": 200, "response_bytes": 8038, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 109, "started": "2026-11-23T09:56:03.933877+00:00", "ended": "2026-11-23T09:56:03.958565+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 24.666244047693908, "status_code": 200, "response_bytes": 7944, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 110, "started": "2026-11-23T09:56:04.182227+00:00", "ended": "2026-11-23T09:56:04.245981+00:00", "method": "GET", "path": "/cart", "duration_ms": 63.72612889390439, "status_code": 200, "response_bytes": 17860, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.00        0.00
+GET      /cart                                                                             15     0(0.00%) |     45      21      74     45 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.70        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                               10     0(0.00%) |     43      24     170     26 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                7     0(0.00%) |     28      21      49     25 |    0.10        0.00
+GET      /product/2ZYFJ3GM2N                                                                5     0(0.00%) |     29      22      44     26 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                7     0(0.00%) |     38      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                6     0(0.00%) |     33      24      59     27 |    0.30        0.00
+GET      /product/9SIQT8TOJO                                                                5     0(0.00%) |     43      22      96     25 |    0.20        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.50        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       110     0(0.00%) |     46      21     183     32 |    3.00        0.00
+
+S4REQ {"sequence": 111, "started": "2026-11-23T09:56:04.807442+00:00", "ended": "2026-11-23T09:56:04.852500+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 45.02937395591289, "status_code": 200, "response_bytes": 7988, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 112, "started": "2026-11-23T09:56:05.573817+00:00", "ended": "2026-11-23T09:56:05.599267+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 25.427298969589174, "status_code": 200, "response_bytes": 8066, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 113, "started": "2026-11-23T09:56:05.755012+00:00", "ended": "2026-11-23T09:56:05.780079+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 25.0441589159891, "status_code": 200, "response_bytes": 8064, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 114, "started": "2026-11-23T09:56:06.108838+00:00", "ended": "2026-11-23T09:56:06.134436+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 25.576499057933688, "status_code": 200, "response_bytes": 7962, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.00        0.00
+GET      /cart                                                                             15     0(0.00%) |     45      21      74     45 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.60        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                               10     0(0.00%) |     43      24     170     26 |    0.30        0.00
+GET      /product/1YMWWN1N4O                                                                8     0(0.00%) |     27      21      49     25 |    0.10        0.00
+GET      /product/2ZYFJ3GM2N                                                                7     0(0.00%) |     31      22      45     26 |    0.10        0.00
+GET      /product/66VCHSJNUP                                                                8     0(0.00%) |     36      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                6     0(0.00%) |     33      24      59     27 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                5     0(0.00%) |     43      22      96     25 |    0.30        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.40        0.00
+GET      /product/LS4PSXUNUM                                                                3     0(0.00%) |     21      21      22     22 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       114     0(0.00%) |     45      21     183     31 |    2.80        0.00
+
+S4REQ {"sequence": 115, "started": "2026-11-23T09:56:06.889014+00:00", "ended": "2026-11-23T09:56:06.916671+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 27.631097938865423, "status_code": 200, "response_bytes": 8055, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 116, "started": "2026-11-23T09:56:06.947415+00:00", "ended": "2026-11-23T09:56:06.975301+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 27.863655006513, "status_code": 200, "response_bytes": 7909, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 117, "started": "2026-11-23T09:56:07.157008+00:00", "ended": "2026-11-23T09:56:07.192997+00:00", "method": "GET", "path": "/product/2ZYFJ3GM2N", "duration_ms": 35.964883980341256, "status_code": 200, "response_bytes": 8062, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 118, "started": "2026-11-23T09:56:08.095391+00:00", "ended": "2026-11-23T09:56:08.136468+00:00", "method": "GET", "path": "/cart", "duration_ms": 41.04990803170949, "status_code": 200, "response_bytes": 19308, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.00        0.00
+GET      /cart                                                                             16     0(0.00%) |     45      21      74     41 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.50        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                               10     0(0.00%) |     43      24     170     26 |    0.20        0.00
+GET      /product/1YMWWN1N4O                                                                8     0(0.00%) |     27      21      49     25 |    0.20        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.30        0.00
+GET      /product/66VCHSJNUP                                                                8     0(0.00%) |     36      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                7     0(0.00%) |     32      24      59     28 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                5     0(0.00%) |     43      22      96     25 |    0.10        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.30        0.00
+GET      /product/LS4PSXUNUM                                                                4     0(0.00%) |     23      21      27     22 |    0.00        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       118     0(0.00%) |     45      21     183     31 |    2.60        0.00
+
+S4REQ {"sequence": 119, "started": "2026-11-23T09:56:08.627659+00:00", "ended": "2026-11-23T09:56:08.657188+00:00", "method": "GET", "path": "/cart", "duration_ms": 29.50325806159526, "status_code": 200, "response_bytes": 16470, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 120, "started": "2026-11-23T09:56:09.211158+00:00", "ended": "2026-11-23T09:56:09.240880+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 29.66962696518749, "status_code": 200, "response_bytes": 8070, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 121, "started": "2026-11-23T09:56:09.935443+00:00", "ended": "2026-11-23T09:56:09.961570+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 26.104993070475757, "status_code": 200, "response_bytes": 8070, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 122, "started": "2026-11-23T09:56:10.158328+00:00", "ended": "2026-11-23T09:56:10.184379+00:00", "method": "GET", "path": "/product/0PUK6V6EV0", "duration_ms": 26.018604054115713, "status_code": 200, "response_bytes": 8025, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 123, "started": "2026-11-23T09:56:10.174526+00:00", "ended": "2026-11-23T09:56:10.246166+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 71.61796605214477, "status_code": 200, "response_bytes": 7909, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.00        0.00
+GET      /cart                                                                             17     0(0.00%) |     44      21      74     41 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.50        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                               11     0(0.00%) |     41      24     170     26 |    0.20        0.00
+GET      /product/1YMWWN1N4O                                                               10     0(0.00%) |     27      21      49     25 |    0.10        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.40        0.00
+GET      /product/66VCHSJNUP                                                                8     0(0.00%) |     36      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                8     0(0.00%) |     37      24      71     28 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                5     0(0.00%) |     43      22      96     25 |    0.10        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.30        0.00
+GET      /product/LS4PSXUNUM                                                                4     0(0.00%) |     23      21      27     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       123     0(0.00%) |     44      21     183     31 |    2.70        0.00
+
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 13     0(0.00%) |     43      30     131     33 |    0.00        0.00
+GET      /cart                                                                             17     0(0.00%) |     44      21      74     41 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.50        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.10        0.00
+GET      /product/0PUK6V6EV0                                                               11     0(0.00%) |     41      24     170     26 |    0.20        0.00
+GET      /product/1YMWWN1N4O                                                               10     0(0.00%) |     27      21      49     25 |    0.10        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.40        0.00
+GET      /product/66VCHSJNUP                                                                8     0(0.00%) |     36      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                8     0(0.00%) |     37      24      71     28 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                5     0(0.00%) |     43      22      96     25 |    0.10        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.30        0.00
+GET      /product/LS4PSXUNUM                                                                4     0(0.00%) |     23      21      27     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.20        0.00
+POST     /setCurrency                                                                       2     0(0.00%) |     63      29      97     30 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       123     0(0.00%) |     44      21     183     31 |    2.70        0.00
+
+S4REQ {"sequence": 124, "started": "2026-11-23T09:56:12.577187+00:00", "ended": "2026-11-23T09:56:12.617973+00:00", "method": "POST", "path": "/setCurrency", "duration_ms": 40.76174192596227, "status_code": 200, "response_bytes": 10529, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 125, "started": "2026-11-23T09:56:12.846653+00:00", "ended": "2026-11-23T09:56:12.882399+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 35.71831004228443, "status_code": 200, "response_bytes": 8037, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 126, "started": "2026-11-23T09:56:13.621124+00:00", "ended": "2026-11-23T09:56:13.696616+00:00", "method": "GET", "path": "/", "duration_ms": 75.46241697855294, "status_code": 200, "response_bytes": 10589, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 127, "started": "2026-11-23T09:56:14.007437+00:00", "ended": "2026-11-23T09:56:14.034230+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 26.771198958158493, "status_code": 200, "response_bytes": 8053, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 14     0(0.00%) |     46      30     131     33 |    0.00        0.00
+GET      /cart                                                                             17     0(0.00%) |     44      21      74     41 |    0.30        0.00
+POST     /cart                                                                             17     0(0.00%) |     69      29     183     66 |    0.00        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                               11     0(0.00%) |     41      24     170     26 |    0.10        0.00
+GET      /product/1YMWWN1N4O                                                               10     0(0.00%) |     27      21      49     25 |    0.30        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.30        0.00
+GET      /product/66VCHSJNUP                                                                8     0(0.00%) |     36      22      79     27 |    0.20        0.00
+GET      /product/6E92ZMYYFZ                                                                8     0(0.00%) |     37      24      71     28 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                5     0(0.00%) |     43      22      96     25 |    0.10        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.00        0.00
+GET      /product/LS4PSXUNUM                                                                6     0(0.00%) |     25      21      35     22 |    0.10        0.00
+GET      /product/OLJCESPC7Z                                                                7     0(0.00%) |     43      25     136     27 |    0.00        0.00
+POST     /setCurrency                                                                       3     0(0.00%) |     56      29      97     41 |    0.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       127     0(0.00%) |     44      21     183     31 |    1.60        0.00
+
+S4REQ {"sequence": 128, "started": "2026-11-23T09:56:14.346965+00:00", "ended": "2026-11-23T09:56:14.447521+00:00", "method": "GET", "path": "/cart", "duration_ms": 100.53422197233886, "status_code": 200, "response_bytes": 17870, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 129, "started": "2026-11-23T09:56:15.032615+00:00", "ended": "2026-11-23T09:56:15.057544+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 24.90540302824229, "status_code": 200, "response_bytes": 8080, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 130, "started": "2026-11-23T09:56:15.481301+00:00", "ended": "2026-11-23T09:56:15.519717+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 38.39300794061273, "status_code": 200, "response_bytes": 8002, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 131, "started": "2026-11-23T09:56:15.805548+00:00", "ended": "2026-11-23T09:56:15.832661+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 27.088464936241508, "status_code": 200, "response_bytes": 7941, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 132, "started": "2026-11-23T09:56:16.237284+00:00", "ended": "2026-11-23T09:56:16.272318+00:00", "method": "GET", "path": "/product/1YMWWN1N4O", "duration_ms": 35.00228899065405, "status_code": 200, "response_bytes": 8034, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 133, "started": "2026-11-23T09:56:16.272655+00:00", "ended": "2026-11-23T09:56:16.364525+00:00", "method": "POST", "path": "/cart", "duration_ms": 91.84997901320457, "status_code": 200, "response_bytes": 19298, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 14     0(0.00%) |     46      30     131     33 |    0.10        0.00
+GET      /cart                                                                             18     0(0.00%) |     47      21     100     41 |    0.30        0.00
+POST     /cart                                                                             18     0(0.00%) |     70      29     183     66 |    0.00        0.00
+POST     /cart/checkout                                                                     2     0(0.00%) |     90      87      93     88 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                               11     0(0.00%) |     41      24     170     26 |    0.10        0.00
+GET      /product/1YMWWN1N4O                                                               11     0(0.00%) |     28      21      49     26 |    0.30        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.30        0.00
+GET      /product/66VCHSJNUP                                                                8     0(0.00%) |     36      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                                8     0(0.00%) |     37      24      71     28 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                6     0(0.00%) |     42      22      96     25 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.00        0.00
+GET      /product/LS4PSXUNUM                                                                7     0(0.00%) |     26      21      35     27 |    0.20        0.00
+GET      /product/OLJCESPC7Z                                                                8     0(0.00%) |     41      24     136     27 |    0.00        0.00
+POST     /setCurrency                                                                       3     0(0.00%) |     56      29      97     41 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       133     0(0.00%) |     45      21     183     32 |    1.70        0.00
+
+S4REQ {"sequence": 134, "started": "2026-11-23T09:56:16.465485+00:00", "ended": "2026-11-23T09:56:16.491185+00:00", "method": "GET", "path": "/product/OLJCESPC7Z", "duration_ms": 25.677583063952625, "status_code": 200, "response_bytes": 8075, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 135, "started": "2026-11-23T09:56:16.569804+00:00", "ended": "2026-11-23T09:56:16.595827+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 25.99994803313166, "status_code": 200, "response_bytes": 8037, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 136, "started": "2026-11-23T09:56:16.711472+00:00", "ended": "2026-11-23T09:56:16.741273+00:00", "method": "GET", "path": "/product/9SIQT8TOJO", "duration_ms": 29.76899698842317, "status_code": 200, "response_bytes": 8057, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 137, "started": "2026-11-23T09:56:16.725295+00:00", "ended": "2026-11-23T09:56:16.761520+00:00", "method": "GET", "path": "/product/6E92ZMYYFZ", "duration_ms": 36.18678206112236, "status_code": 200, "response_bytes": 8011, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 138, "started": "2026-11-23T09:56:16.761888+00:00", "ended": "2026-11-23T09:56:16.945917+00:00", "method": "POST", "path": "/cart", "duration_ms": 183.91686701215804, "status_code": 200, "response_bytes": 17883, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 139, "started": "2026-11-23T09:56:16.744645+00:00", "ended": "2026-11-23T09:56:16.946359+00:00", "method": "POST", "path": "/cart", "duration_ms": 201.68937207199633, "status_code": 200, "response_bytes": 19290, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 140, "started": "2026-11-23T09:56:16.947670+00:00", "ended": "2026-11-23T09:56:16.999156+00:00", "method": "POST", "path": "/cart/checkout", "duration_ms": 51.465037977322936, "status_code": 200, "response_bytes": 6775, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 141, "started": "2026-11-23T09:56:17.665346+00:00", "ended": "2026-11-23T09:56:17.700969+00:00", "method": "GET", "path": "/product/66VCHSJNUP", "duration_ms": 35.590270068496466, "status_code": 200, "response_bytes": 8026, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 142, "started": "2026-11-23T09:56:17.701414+00:00", "ended": "2026-11-23T09:56:17.777303+00:00", "method": "POST", "path": "/cart", "duration_ms": 75.8512340253219, "status_code": 200, "response_bytes": 19314, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 143, "started": "2026-11-23T09:56:17.779621+00:00", "ended": "2026-11-23T09:56:17.876075+00:00", "method": "POST", "path": "/cart/checkout", "duration_ms": 96.42109100241214, "status_code": 200, "response_bytes": 6821, "error": null, "workload_class": "normal_shopping"}
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 14     0(0.00%) |     46      30     131     33 |    0.10        0.00
+GET      /cart                                                                             18     0(0.00%) |     47      21     100     41 |    0.30        0.00
+POST     /cart                                                                             21     0(0.00%) |     82      29     201     66 |    0.00        0.00
+POST     /cart/checkout                                                                     4     0(0.00%) |     82      51      96     88 |    0.00        0.00
+GET      /product/0PUK6V6EV0                                                               11     0(0.00%) |     41      24     170     26 |    0.10        0.00
+GET      /product/1YMWWN1N4O                                                               11     0(0.00%) |     28      21      49     26 |    0.30        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.20        0.00
+GET      /product/66VCHSJNUP                                                                9     0(0.00%) |     36      22      79     27 |    0.10        0.00
+GET      /product/6E92ZMYYFZ                                                               10     0(0.00%) |     36      24      71     28 |    0.20        0.00
+GET      /product/9SIQT8TOJO                                                                7     0(0.00%) |     40      22      96     30 |    0.00        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.00        0.00
+GET      /product/LS4PSXUNUM                                                                7     0(0.00%) |     26      21      35     27 |    0.30        0.00
+GET      /product/OLJCESPC7Z                                                                9     0(0.00%) |     39      24     136     27 |    0.00        0.00
+POST     /setCurrency                                                                       3     0(0.00%) |     56      29      97     41 |    0.10        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       143     0(0.00%) |     47      21     201     32 |    1.70        0.00
+
+S4REQ {"sequence": 144, "started": "2026-11-23T09:56:18.321017+00:00", "ended": "2026-11-23T09:56:18.431306+00:00", "method": "POST", "path": "/setCurrency", "duration_ms": 110.258998000063, "status_code": 200, "response_bytes": 10508, "error": null, "workload_class": "normal_shopping"}
+S4REQ {"sequence": 145, "started": "2026-11-23T09:56:19.055545+00:00", "ended": "2026-11-23T09:56:19.088312+00:00", "method": "GET", "path": "/product/LS4PSXUNUM", "duration_ms": 32.73595799691975, "status_code": 200, "response_bytes": 8029, "error": null, "workload_class": "normal_shopping"}
+[2026-11-23 09:56:20,071] gd4-locust-2255902-cc9fbfcb-gjbbc/INFO/locust.main: Got SIGTERM signal
+[2026-11-23 09:56:20,072] gd4-locust-2255902-cc9fbfcb-gjbbc/INFO/locust.main: Shutting down (exit code 0)
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+GET      /                                                                                 14     0(0.00%) |     46      30     131     33 |    0.23        0.00
+GET      /cart                                                                             18     0(0.00%) |     47      21     100     41 |    0.30        0.00
+POST     /cart                                                                             21     0(0.00%) |     82      29     201     66 |    0.35        0.00
+POST     /cart/checkout                                                                     4     0(0.00%) |     82      51      96     88 |    0.07        0.00
+GET      /product/0PUK6V6EV0                                                               11     0(0.00%) |     41      24     170     26 |    0.18        0.00
+GET      /product/1YMWWN1N4O                                                               11     0(0.00%) |     28      21      49     26 |    0.18        0.00
+GET      /product/2ZYFJ3GM2N                                                                8     0(0.00%) |     31      22      45     26 |    0.13        0.00
+GET      /product/66VCHSJNUP                                                                9     0(0.00%) |     36      22      79     27 |    0.15        0.00
+GET      /product/6E92ZMYYFZ                                                               10     0(0.00%) |     36      24      71     28 |    0.16        0.00
+GET      /product/9SIQT8TOJO                                                                7     0(0.00%) |     40      22      96     30 |    0.12        0.00
+GET      /product/L9ECAV7KIM                                                               11     0(0.00%) |     47      22     124     28 |    0.18        0.00
+GET      /product/LS4PSXUNUM                                                                8     0(0.00%) |     26      21      35     27 |    0.13        0.00
+GET      /product/OLJCESPC7Z                                                                9     0(0.00%) |     39      24     136     27 |    0.15        0.00
+POST     /setCurrency                                                                       4     0(0.00%) |     69      29     110     41 |    0.07        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       145     0(0.00%) |     47      21     201     32 |    2.38        0.00
+
+Response time percentiles (approximated)
+Type     Name                                                                                  50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+GET      /                                                                                      34     37     41     68     75    130    130    130    130    130    130     14
+GET      /cart                                                                                  45     49     64     67     75    100    100    100    100    100    100     18
+POST     /cart                                                                                  66     87     94     99    180    180    200    200    200    200    200     21
+POST     /cart/checkout                                                                         94     94     96     96     96     96     96     96     96     96     96      4
+GET      /product/0PUK6V6EV0                                                                    26     29     29     29     48    170    170    170    170    170    170     11
+GET      /product/1YMWWN1N4O                                                                    26     29     30     30     35     49     49     49     49     49     49     11
+GET      /product/2ZYFJ3GM2N                                                                    29     36     45     45     45     45     45     45     45     45     45      8
+GET      /product/66VCHSJNUP                                                                    27     33     36     54     80     80     80     80     80     80     80      9
+GET      /product/6E92ZMYYFZ                                                                    28     34     36     60     72     72     72     72     72     72     72     10
+GET      /product/9SIQT8TOJO                                                                    30     38     47     47     96     96     96     96     96     96     96      7
+GET      /product/L9ECAV7KIM                                                                    28     51     68     68     89    120    120    120    120    120    120     11
+GET      /product/LS4PSXUNUM                                                                    27     28     33     33     36     36     36     36     36     36     36      8
+GET      /product/OLJCESPC7Z                                                                    27     27     29     31    140    140    140    140    140    140    140      9
+POST     /setCurrency                                                                           97     97    110    110    110    110    110    110    110    110    110      4
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+         Aggregated                                                                             32     45     54     68     94    110    180    180    200    200    200    145
+
+S4FINAL {"recorded_requests": 145, "locust_num_requests": 145, "locust_num_failures": 0}

@@ -5,11 +5,13 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import contextlib
+import io
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from audit_scenarios import unpack_copy
 from s4_verify import verify_s4
-from label import write_json
+from label import write_json,normalize
 
 
 def main():
@@ -30,18 +32,28 @@ def main():
             with tempfile.TemporaryDirectory(prefix="s4-audit-") as directory:
                 directory = Path(directory); unpack_copy(run, directory)
                 for name, digest in manifest["script_sha256"].items():
-                    assert hashlib.sha256((directory / "source" / name).read_bytes()).hexdigest() == digest, name
+                    if hashlib.sha256((directory / "source" / name).read_bytes()).hexdigest()!=digest:
+                        raise ValueError("Source snapshot hash mismatch: "+name)
+                archived=[json.loads(line) for line in (directory/"normalized.ndjson").read_text(encoding="utf-8").splitlines()]
+                old_quality=json.loads((directory/"quality.json").read_text(encoding="utf-8"))
+                with contextlib.redirect_stdout(io.StringIO()): rebuilt_quality=normalize(directory)
+                rebuilt=[json.loads(line) for line in (directory/"normalized.ndjson").read_text(encoding="utf-8").splitlines()]
+                if archived!=rebuilt: raise ValueError("Archived normalized records differ from raw replay")
+                for field in ("events_by_type","events_by_label","events_by_node","operations","operations_with_matched_event","unmatched_operations"):
+                    if old_quality[field]!=rebuilt_quality[field]: raise ValueError("Derived quality mismatch: "+field)
                 proof = verify_s4(directory)
                 before = json.loads((directory / "boutique-before.json").read_text())
                 after = json.loads((directory / "boutique-after.json").read_text())
                 original_before = next(i for i in before["items"] if i["kind"] == "Deployment" and i["metadata"]["name"] == "loadgenerator")
                 original_after = next(i for i in after["items"] if i["kind"] == "Deployment" and i["metadata"]["name"] == "loadgenerator")
-                assert original_before["spec"] == original_after["spec"]
-                assert original_after["spec"]["replicas"] == 0
+                if original_before["spec"]!=original_after["spec"] or original_after["spec"]["replicas"]!=0:
+                    raise ValueError("Original loadgenerator changed")
                 item.update(passed=proof["passed"], source_hashes_verified=len(manifest["script_sha256"]),
                             native_records_verified=proof["native_records_verified"],
                             operations_verified=proof["operations_with_native_event"],
                             original_loadgenerator_spec_unchanged=True, code_bundle_sha256=manifest["code_bundle_sha256"],
+                            normalized_replayed_from_raw=True, strict_verifier_sha256=proof["verifier_sha256"],
+                            legacy_evidence_limits=proof.get("legacy_evidence_limits",[]),
                             actor_image_id=manifest["actor"]["image_id"], locust_image_id=manifest["locust"]["image_id"],
                             locust_original_sha256=json.loads((directory / "locust-runtime.json").read_text())["metadata"][0]["original_locustfile_sha256"])
         except Exception as error:

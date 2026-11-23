@@ -31,3 +31,6 @@ Cờ verifier passed xác nhận đường chạy, đối chiếu và chất lư
 [Audit source/native và tính đồng nhất release](audits/s4-pilots-audit-20261123.json).
 
 [Trạng thái lab sau đo và hash source đang triển khai](audits/lab-state-s4-20261123.json): loadgenerator gốc=0, không còn Pod/Deployment/ConfigMap/SA thí nghiệm; ba node Ready và frontend/checkout/payment available.
+
+
+Xem [rà soát sâu S4 ngày 23/11/2026](S4-REVIEW.md): sửa verifier, guard, thứ tự chốt log Locust và kiểm tra cleanup; kết quả hồi quy và giới hạn của dữ liệu lịch sử được ghi riêng.

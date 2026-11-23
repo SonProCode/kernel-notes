@@ -47,6 +47,7 @@ class Guard:
         self.baseline = pod_state(get("-n", "boutique", "get", "pods")["items"])
         self.stop, self.triggered = threading.Event(), threading.Event()
         self.reason, self.failed_probes = None, 0
+        self.started_monotonic, self.last_sample_monotonic = None, None
         self.thread = threading.Thread(target=self.loop, daemon=True)
 
     def sample(self):
@@ -80,21 +81,36 @@ class Guard:
                 "consecutive_probe_failures": self.failed_probes, "pods": state, "reasons": reasons}
 
     def loop(self):
-        with (self.output / "guard.ndjson").open("w") as stream:
-            while not self.stop.is_set():
-                try:
-                    record = self.sample()
-                except Exception as error:
-                    record = {"timestamp": now(), "phase": self.phase(), "reasons": ["guard_error:" + type(error).__name__]}
-                stream.write(json.dumps(record) + "\n"); stream.flush()
-                if record["reasons"]:
-                    self.reason = record["reasons"]
-                    self.triggered.set()
-                    return
-                self.stop.wait(5)
+        try:
+            with (self.output / "guard.ndjson").open("w") as stream:
+                while not self.stop.is_set():
+                    try:
+                        record = self.sample()
+                    except Exception as error:
+                        record = {"timestamp": now(), "phase": self.phase(), "reasons": ["guard_error:" + type(error).__name__]}
+                    if self.stop.is_set(): return
+                    stream.write(json.dumps(record) + "\n"); stream.flush()
+                    self.last_sample_monotonic = time.monotonic()
+                    if record["reasons"]:
+                        self.reason = record["reasons"]
+                        self.triggered.set()
+                        return
+                    self.stop.wait(5)
+        except BaseException as error:
+            self.reason = ["guard_thread_error:" + type(error).__name__]
+            self.triggered.set()
 
     def start(self):
+        self.started_monotonic = time.monotonic()
         self.thread.start()
+
+    def failure_reason(self):
+        if self.triggered.is_set(): return self.reason or ["guard_triggered"]
+        if self.stop.is_set(): return None
+        if not self.thread.is_alive(): return ["guard_thread_not_alive"]
+        heartbeat = self.last_sample_monotonic if self.last_sample_monotonic is not None else self.started_monotonic
+        if heartbeat is None or time.monotonic()-heartbeat>35: return ["guard_heartbeat_stale"]
+        return None
 
     def close(self):
         self.stop.set()

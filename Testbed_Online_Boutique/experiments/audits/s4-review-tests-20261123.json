@@ -1,0 +1,16 @@
+{
+  "tests_run": 45,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "source_sha256": {
+    "test_s4.py": "61da1cfdb10652b5321c85dcbac0cb8f43c90ecdb9666e4362001b52bf625eea",
+    "test_s4_integrity.py": "8db62e478470c7e6b1b647f8c828c9f9ea52f9813289ab2b60fdea9a00194ad1",
+    "s4_verify.py": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "check_cleanup.py": "9617f027df74ab8ecd354e6d42fd5e8c94a168847ca727b8876db1ad72335215",
+    "s4/locust_wrapper.py": "b6ea6f97281b9ffce0fd03894172df5070c9857010084fcb9fa21624ab81af10"
+  },
+  "scope": "Adversarial copies of real pilot data, guard and cleanup selector tests, and Locust shutdown callback ordering."
+}

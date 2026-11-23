@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "input_integrity_passed": false,
+  "input_integrity_errors": [
+    "Locust final request counter mismatch",
+    "No guard sample in phase: recovery"
+  ],
+  "http_operations": 270,
+  "operations_with_native_event": 0,
+  "native_records_verified": 0,
+  "profile": "bounded_http",
+  "verifier_sha256": "76626644f60fced49efae009aae5c8990e7315bbfb2b32f146a05183750a157d"
+}

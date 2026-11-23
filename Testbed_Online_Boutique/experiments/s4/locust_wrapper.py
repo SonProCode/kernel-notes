@@ -8,6 +8,7 @@ import time as _s4_time
 import locust
 from locust import events
 _s4_count = 0
+_s4_environment = None
 
 
 @events.request.add_listener
@@ -27,7 +28,16 @@ def record_request(request_type, name, response_time, response_length, response=
 
 
 @events.quitting.add_listener
-def record_final(environment, **kwargs):
+def remember_environment(environment, **kwargs):
+    global _s4_environment
+    _s4_environment = environment
+
+
+@events.quit.add_listener
+def record_final(exit_code, **kwargs):
+    # Locust 2.43 calls quitting before runner.quit(); request callbacks can
+    # still arrive while users stop. The quit event follows runner cleanup.
+    environment = _s4_environment
     print("S4FINAL " + _s4_json.dumps({"recorded_requests": _s4_count,
           "locust_num_requests": environment.stats.total.num_requests,
           "locust_num_failures": environment.stats.total.num_failures}), flush=True)

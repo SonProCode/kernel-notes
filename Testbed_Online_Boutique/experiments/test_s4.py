@@ -7,9 +7,11 @@ import itertools
 import json
 from pathlib import Path
 import signal
+import sys
 import tempfile
 import time
 from types import SimpleNamespace
+from types import ModuleType
 import unittest
 from unittest.mock import patch
 
@@ -21,6 +23,29 @@ client = importlib.util.module_from_spec(spec); spec.loader.exec_module(client)
 
 
 class S4Tests(unittest.TestCase):
+    def test_locust_final_waits_for_late_shutdown_request(self):
+        class Hook:
+            def __init__(self): self.listeners=[]
+            def add_listener(self,callback): self.listeners.append(callback); return callback
+            def fire(self,**kwargs):
+                for callback in self.listeners: callback(**kwargs)
+        events=SimpleNamespace(request=Hook(),quitting=Hook(),quit=Hook())
+        module=ModuleType("locust");module.events=events;module.__version__="2.43.0"
+        source=(Path(__file__).parent/"s4/locust_wrapper.py").read_text()
+        stats=SimpleNamespace(num_requests=1,num_failures=0)
+        with patch.dict(sys.modules,{"locust":module}), patch.object(Path,"read_bytes",return_value=b"# original workload"), contextlib.redirect_stdout(io.StringIO()) as output:
+            exec(compile(source,"locust_wrapper.py","exec"),{})
+            request=dict(request_type="GET",name="/",response_time=1,response_length=1)
+            events.request.fire(**request)
+            events.quitting.fire(environment=SimpleNamespace(stats=SimpleNamespace(total=stats)))
+            self.assertNotIn("S4FINAL ",output.getvalue())
+            stats.num_requests=2
+            events.request.fire(**request)
+            events.quit.fire(exit_code=0)
+        records=output.getvalue().splitlines()
+        self.assertTrue(records[-1].startswith("S4FINAL "))
+        self.assertEqual(json.loads(records[-1][8:]),{"recorded_requests":2,"locust_num_requests":2,"locust_num_failures":0})
+
     def run_fake(self, rate, concurrency, delay):
         ports = itertools.count(40000)
 

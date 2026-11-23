@@ -51,6 +51,7 @@ def run_s4(args):
                        "connection_mode": "new_tcp_each_request", "guard_poll_target_seconds": 5},
                 "temporary_resources": {"actor": actor, "locust_deployment": loadname, "configmap": config},
                 "source_snapshot": "source", "script_sha256": {}}
+    manifest["s4"]["verification_contract"] = 2
     for name in ("runner.py", "label.py", "s4_runner.py", "s4_support.py", "s4_verify.py", "s4/client.py", "s4/locust_wrapper.py"):
         content = (ROOT / name).read_bytes()
         manifest["script_sha256"][name] = hashlib.sha256(content).hexdigest()
@@ -73,9 +74,10 @@ def run_s4(args):
         print(value, flush=True)
 
     def healthy():
-        if guard and guard.triggered.is_set():
-            manifest["stop_reason"] = guard.reason
-            raise KeyboardInterrupt("S4 guard stopped the run: " + str(guard.reason))
+        reason = guard.failure_reason() if guard else None
+        if reason:
+            manifest["stop_reason"] = reason
+            raise KeyboardInterrupt("S4 guard stopped the run: " + str(reason))
         if any(p.poll() is not None for p in collectors):
             raise RuntimeError("A capture stream stopped early")
 
@@ -100,7 +102,8 @@ def run_s4(args):
             write_json(output / f"{name}-{stage}.json", get(*arguments))
         (output / f"top-{stage}.txt").write_text(k("top", "nodes"))
         metrics = {}
-        for name, expression in {"agent_up": 'up{service="tetragon"}', "loss_and_export": LOSS_QUERY}.items():
+        for name, expression in {"agent_up": 'up{service="tetragon"}', "loss_and_export": LOSS_QUERY,
+                                 "agent_scrape_age_seconds": 'time()-timestamp(up{service="tetragon"})'}.items():
             try:
                 metrics[name] = query("query", query=expression)
             except Exception as error:
@@ -196,6 +199,7 @@ def run_s4(args):
         mark("recovery"); pause(args.recovery)
         manifest["measurement_end"] = now(); mark("finalize")
         guard.close()
+        healthy()
         snapshot("after")
         resources = {}
         for name, expression in RESOURCE_QUERIES.items():
@@ -213,10 +217,7 @@ def run_s4(args):
     finally:
         cleanup_errors = []
         if guard:
-            try:
-                guard.close()
-            except Exception as error:
-                cleanup_errors.append(str(error))
+            guard.stop.set()
         # Delete the actor first: all its request threads stop even after a broken exec/SSH stream.
         for kind, name in sorted(created, key=lambda item: {"pod": 0, "deployment": 1, "configmap": 2}[item[0]]):
             try:
@@ -224,6 +225,11 @@ def run_s4(args):
                 k("-n", "boutique", "delete", kind, name, "--ignore-not-found", "--wait=false", *extra)
             except Exception as error:
                 cleanup_errors.append(kind + ":" + str(error))
+        if guard:
+            try:
+                guard.close()
+            except Exception as error:
+                cleanup_errors.append(str(error))
         try:
             k("-n", "boutique", "wait", "--for=delete", "pod", "-l", "experiment-run=" + run_id, "--timeout=25s", timeout=30)
         except Exception as error:
@@ -244,6 +250,16 @@ def run_s4(args):
                 process.kill(); process.wait()
         for handle in handles:
             handle.close()
+        try:
+            remaining = {kind:len(get("-n","boutique","get",kind,"-l","experiment-run="+run_id)["items"])
+                         for kind in ("pods","deployments","configmaps")}
+            original_now=get("-n","boutique","get","deploy","loadgenerator")["spec"]
+            cleanup={"checked_at":now(),"remaining":remaining,"original_loadgenerator_unchanged":original_now==original["spec"]}
+            cleanup["passed"]=not any(remaining.values()) and cleanup["original_loadgenerator_unchanged"]
+            write_json(output/"cleanup.json",cleanup)
+            if not cleanup["passed"]: cleanup_errors.append("Resources remain or original deployment changed")
+        except Exception as error:
+            cleanup_errors.append("cleanup_verification:"+type(error).__name__)
         manifest["finished"] = now(); manifest["cleanup_errors"] = cleanup_errors
         manifest["guard_triggered"] = bool(guard and guard.triggered.is_set())
         write_json(output / "manifest.json", manifest)

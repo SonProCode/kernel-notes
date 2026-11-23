@@ -1,0 +1,150 @@
+{
+  "runs": [
+    {
+      "run_id": "s0-s4-control-20261123T045647Z-1848096",
+      "mode": "pilot",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "source_hashes_verified": 8,
+      "native_records_verified": 0,
+      "operations_verified": 0,
+      "original_loadgenerator_spec_unchanged": true,
+      "code_bundle_sha256": "e844ec303c19d7735a03fbc118d6069596e9cc644c1d68d2f3a3406d7666d0d9",
+      "normalized_replayed_from_raw": true,
+      "strict_verifier_sha256": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+      "legacy_evidence_limits": [
+        "No per-run cleanup.json or scrape-age snapshot in historical v1; use the dated cohort checkpoint for cleanup evidence"
+      ],
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "locust_original_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"
+    },
+    {
+      "run_id": "s0-s4-control-20261123T094133Z-2231752",
+      "mode": "smoke",
+      "status": "completed",
+      "included": false
+    },
+    {
+      "run_id": "s4-20261123T045354Z-1842075",
+      "mode": "smoke",
+      "status": "completed",
+      "included": false
+    },
+    {
+      "run_id": "s4-20261123T045500Z-1844734",
+      "mode": "smoke",
+      "status": "interrupted",
+      "included": false
+    },
+    {
+      "run_id": "s4-20261123T045922Z-1853277",
+      "mode": "pilot",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "source_hashes_verified": 8,
+      "native_records_verified": 180,
+      "operations_verified": 90,
+      "original_loadgenerator_spec_unchanged": true,
+      "code_bundle_sha256": "e844ec303c19d7735a03fbc118d6069596e9cc644c1d68d2f3a3406d7666d0d9",
+      "normalized_replayed_from_raw": true,
+      "strict_verifier_sha256": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+      "legacy_evidence_limits": [
+        "No per-run cleanup.json or scrape-age snapshot in historical v1; use the dated cohort checkpoint for cleanup evidence"
+      ],
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "locust_original_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"
+    },
+    {
+      "run_id": "s4-20261123T050200Z-1858668",
+      "mode": "pilot",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "source_hashes_verified": 8,
+      "native_records_verified": 358,
+      "operations_verified": 179,
+      "original_loadgenerator_spec_unchanged": true,
+      "code_bundle_sha256": "e844ec303c19d7735a03fbc118d6069596e9cc644c1d68d2f3a3406d7666d0d9",
+      "normalized_replayed_from_raw": true,
+      "strict_verifier_sha256": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+      "legacy_evidence_limits": [
+        "No per-run cleanup.json or scrape-age snapshot in historical v1; use the dated cohort checkpoint for cleanup evidence"
+      ],
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "locust_original_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"
+    },
+    {
+      "run_id": "s4-20261123T050441Z-1864262",
+      "mode": "pilot",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "source_hashes_verified": 8,
+      "native_records_verified": 590,
+      "operations_verified": 295,
+      "original_loadgenerator_spec_unchanged": true,
+      "code_bundle_sha256": "e844ec303c19d7735a03fbc118d6069596e9cc644c1d68d2f3a3406d7666d0d9",
+      "normalized_replayed_from_raw": true,
+      "strict_verifier_sha256": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+      "legacy_evidence_limits": [
+        "No per-run cleanup.json or scrape-age snapshot in historical v1; use the dated cohort checkpoint for cleanup evidence"
+      ],
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "locust_original_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"
+    },
+    {
+      "run_id": "s4-20261123T050725Z-1869684",
+      "mode": "pilot",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "source_hashes_verified": 8,
+      "native_records_verified": 594,
+      "operations_verified": 297,
+      "original_loadgenerator_spec_unchanged": true,
+      "code_bundle_sha256": "e844ec303c19d7735a03fbc118d6069596e9cc644c1d68d2f3a3406d7666d0d9",
+      "normalized_replayed_from_raw": true,
+      "strict_verifier_sha256": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+      "legacy_evidence_limits": [
+        "No per-run cleanup.json or scrape-age snapshot in historical v1; use the dated cohort checkpoint for cleanup evidence"
+      ],
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "locust_original_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"
+    },
+    {
+      "run_id": "s4-20261123T094256Z-2234873",
+      "mode": "smoke",
+      "status": "completed",
+      "included": false
+    },
+    {
+      "run_id": "s4-20261123T094419Z-2238057",
+      "mode": "smoke",
+      "status": "completed",
+      "included": false
+    },
+    {
+      "run_id": "s4-20261123T094808Z-2245157",
+      "mode": "smoke",
+      "status": "interrupted",
+      "included": false
+    },
+    {
+      "run_id": "s4-s4-20261123T045120Z-1837437",
+      "mode": "smoke",
+      "status": "completed",
+      "included": false
+    }
+  ],
+  "pilots_reviewed": 5,
+  "same_sources_and_images": true,
+  "analysis_sha256": "61d03b3e7254a11cf49562def1894fb8470d409c4be2c888a9199ff9d4343e99",
+  "passed": true
+}
