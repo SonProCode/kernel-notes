@@ -1,0 +1,8 @@
+{
+  "tests_run": 9,
+  "failures": 0,
+  "result": "OK",
+  "test_source_sha256": "c88dfd50365b6c2bc7e3833945e873862be5e9aa9c8a50fcd8700d9aebaf0e81",
+  "command": "python -m unittest discover -s Testbed_Online_Boutique/experiments -p test_s4.py -v",
+  "scope": "Mock HTTP scheduling, external-target rejection, healthy guard, MemoryPressure, restart, OOM without restart, three failed probes, and source-port metadata regression. No cluster resource failure was induced."
+}

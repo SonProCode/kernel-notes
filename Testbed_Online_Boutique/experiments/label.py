@@ -18,6 +18,11 @@ def write_json(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def text_lines(path):
+    with path.open(encoding="utf-8") as source:
+        yield from source
+
+
 def match_s3(kind, pod, process, socket, file_path, receipts, when):
     container_pid = (pod.get("container") or {}).get("pid")
     for receipt in receipts:
@@ -46,11 +51,15 @@ def normalize(run):
     counts, labels, quality, nodes, coverage = Counter(), Counter(), Counter(), Counter(), Counter()
     event_types_by_operation = {}
     s3_runtime = manifest.get("s3", {}).get("profile") == "runtime"
+    s4_family = "s4" in manifest
     windows = {}
     index = {}
     for receipt in receipts:
         if receipt["kind"] == "grpc_call":
             keys = [(ip(address), receipt["port"]) for address in receipt["target_ips"]]
+        elif receipt["kind"] == "http_request":
+            keys = [(ip(address), port, receipt["source_port"]) for address in receipt["target_ips"]
+                    for port in receipt["target_ports"]] if receipt.get("source_port") else []
         elif receipt["kind"] == "tcp_connect":
             keys = [(ip(receipt["ip"]), receipt["port"])]
         elif receipt["kind"] == "file_read":
@@ -62,7 +71,7 @@ def normalize(run):
     with (run / "normalized.ndjson").open("w", encoding="utf-8") as out:
         for node in ("lab-w1", "lab-w2"):
             path = run / "raw" / f"{node}.ndjson"
-            for number, line in enumerate(path.open(encoding="utf-8"), 1):
+            for number, line in enumerate(text_lines(path), 1):
                 try:
                     raw = json.loads(line)
                     if not isinstance(raw, dict):
@@ -92,7 +101,8 @@ def normalize(run):
                 sock = next((a["sock_arg"] for a in payload.get("args", []) if "sock_arg" in a), None)
                 file_arg = next((a["file_arg"] for a in payload.get("args", []) if "file_arg" in a), {})
                 file_path = file_arg.get("path")
-                lookup = (ip(sock["daddr"]), sock["dport"]) if sock else file_path
+                lookup = ((ip(sock["daddr"]), sock["dport"], sock.get("sport")) if s4_family else
+                          (ip(sock["daddr"]), sock["dport"])) if sock else file_path
                 operation = next((r for r in index.get(lookup, [])
                                   if timestamp(r["started"]) <= when <= timestamp(r["ended"])), None)
                 is_actor = pod.get("uid") == actor.get("uid")
@@ -108,6 +118,7 @@ def normalize(run):
                     (kind == "tcp_connect_attempt" and operation["kind"] == "tcp_connect")
                     or (kind == "file_read_permission" and operation["kind"] == "file_read")
                     or (kind in ("tcp_connect_attempt", "tcp_send") and operation["kind"] == "grpc_call")
+                    or (kind in ("tcp_connect_attempt", "tcp_send") and operation["kind"] == "http_request")
                     or s3_runtime
                 ):
                     label = "attack" if manifest["mode"] != "smoke" else "unknown"
@@ -121,7 +132,7 @@ def normalize(run):
                 counts[kind] += 1
                 nodes[node] += 1
                 record = {
-                    "schema_version": 4, "run_id": manifest["run_id"],
+                    "schema_version": 5 if s4_family else 4, "run_id": manifest["run_id"],
                     "scenario_id": manifest["scenario_id"], "phase": phase,
                     "timestamp": raw["time"], "event_type": kind, "node": node,
                     "namespace": pod.get("namespace"), "pod": pod.get("name"),
@@ -134,11 +145,13 @@ def normalize(run):
                     "parent_exec_id": (payload.get("parent") or {}).get("exec_id"),
                     "socket": sock, "file_path": file_path,
                     "kernel_return": payload.get("return"),
-                    "label": label, "evidence": evidence, "label_version": "v4",
+                    "label": label, "evidence": evidence, "label_version": "v5" if s4_family else "v4",
                     "operation_id": operation["operation_id"] if is_actor and operation else None,
                     "raw_file": path.relative_to(run).as_posix(), "raw_line": number,
                     "api_method_from_receipt": operation.get("method") if is_actor and operation else None,
                     "grpc_code_from_receipt": operation.get("grpc_code") if is_actor and operation else None,
+                    **({"http_status_from_receipt": operation.get("status_code") if is_actor and operation else None}
+                       if s4_family else {}),
                 }
                 out.write(json.dumps(record, ensure_ascii=False) + "\n")
                 offset = int((when - timestamp(manifest["capture_start"])).total_seconds() // 10)

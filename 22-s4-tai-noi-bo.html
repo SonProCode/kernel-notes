@@ -1,0 +1,419 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S4 · Tải nội bộ và đo tác động · Kernel Notes</title><meta name="description" content="Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 21 · LAB THỰC TẾ · GĐ4 · S4 · 17 PHÚT ĐỌC</div>
+<h1>S4 · Tải nội bộ và đo tác động</h1><p>Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.</p></header>
+<div class="shell reading"><article class="prose"><p>Cập nhật 23/11/2026. Bài này triển khai <strong>pilot S4 của GĐ4</strong>: tạo tải phụ, đo tác động, thu telemetry và kiểm tra hồi phục. Đọc <a href="20-huong-dan-s1-s2-s3.html">hướng dẫn chung</a> trước nếu bạn chưa quen SSH, sudo, thư mục làm việc và file kết quả.</p>
+<h2 id="1-s4-mo-phong-chuyen-gi">1. S4 mô phỏng chuyện gì?</h2>
+<p>Trong đề cương, S4 là “Internal DoS nhẹ”: một Pod gửi request tần suất cao tới một service, quan sát request rate, latency và CPU. Hãy hình dung cửa hàng vẫn có người mua bình thường, đồng thời một nguồn khác liên tục tải trang chủ. Ta đo xem cửa hàng xử lý thêm bao nhiêu việc và người mua có chậm đi không.</p>
+<p>Ở đây đích là <strong>frontend</strong>, phương thức GET, URL <code>/</code>. Đây là trang chủ có xử lý ứng dụng, khác với việc chỉ ping <code>/_healthz</code>. Không sửa dữ liệu nghiệp vụ qua client tải phụ và không gọi địa chỉ ngoài lab. Rate limit/deny thuộc bước mitigation GĐ6, chưa áp dụng trong GĐ4.</p>
+<p>Tạo được tải phụ không đồng nghĩa đã gây mất dịch vụ. Nếu mức 10 request/giây vẫn chạy tốt, phải báo đúng là tải nhẹ chưa gây suy giảm rõ; không tự gọi kết quả đó là đã làm sập ứng dụng.</p>
+<h2 id="2-rps-concurrency-va-p95-la-gi">2. RPS, concurrency và p95 là gì?</h2>
+<p><strong>Request</strong> là một yêu cầu HTTP, ví dụ GET <code>/</code> để lấy trang chủ. <strong>RPS</strong> là số request mỗi giây. Mục tiêu 3 RPS trong 30 giây tương ứng 90 vị trí gửi đã lập lịch. Client ghi lại số thực sự gửi được; tốc độ thực có thể thấp hơn mục tiêu.</p>
+<p><strong>Concurrency</strong> là số request được phép đang xử lý đồng thời. Ví dụ concurrency=2: nếu hai request trước đều chưa xong, client bỏ qua vị trí gửi tiếp theo thay vì xếp một hàng đợi rồi gửi dồn. Giới hạn này giữ phép thử nhẹ và làm rõ mức tải thật đạt được.</p>
+<p><strong>Latency</strong> là thời gian client chờ hoàn tất request. p95=100 ms nghĩa là ít nhất khoảng 95% mẫu trong tập đang xét không vượt quá 100 ms, theo phép tính nearest-rank của script. Không có nghĩa mọi request đều mất 100 ms. p95 cần đọc cùng số mẫu, lỗi và loại URL; một pha chỉ có vài checkout chưa đủ cho kết luận thống kê chắc chắn.</p>
+<p><strong>Users=10</strong> của Locust là 10 người dùng ảo, mỗi người có hành trình và thời gian nghỉ. Nó không bằng 10 RPS. Tải mua hàng Locust và tải phụ S4 được đo riêng.</p>
+<h2 id="3-kien-truc-cua-mot-luot">3. Kiến trúc của một lượt</h2>
+<pre><code class="language-text">lab-cp: runner + guard + bộ thu Tetragon/Prometheus
+  │
+  ├─ Locust tạm, trên worker theo template cũ
+  │     10 users, spawn-rate 1
+  │     giữ nguyên task/think time từ image Online Boutique
+  │     thêm event hook ghi metadata từng request
+  │                       │
+  └─ actor S4, đặt trên w1 hoặc w2
+        GET /, mục tiêu 3 / 6 / 10 RPS
+        concurrency tối đa 2 / 2 / 4
+                          │
+                          ▼
+                 frontend → các service ứng dụng
+
+Tetragon hai worker → raw → normalized v5 → đối chiếu từng request actor
+Locust event hook   → từng request → p50/p95/lỗi theo pha và URL
+Prometheus         → CPU/RAM frontend và namespace boutique
+</code></pre>
+<p>S4 dùng <strong>Deployment Locust tạm</strong> được sao từ template loadgenerator, cùng image và hành trình thực tế trong image. Wrapper đọc file gốc <code>/loadgen/locustfile.py</code>, đăng ký event hook rồi thực thi file gốc. Không chỉnh file trong image hoặc Deployment gốc.</p>
+<p>Loadgenerator gốc ở <strong>0 replica cả trước, trong và sau S4</strong>. Đây là chủ ý để tránh hai bộ Locust chạy trùng. Khi quan sát, tìm Pod tên <code>gd4-locust-...</code>; actor có tên <code>gd4-s4-...</code>. Các tài nguyên tạm có label experiment-run để dọn theo đúng lượt.</p>
+<p>Hook ghi method, URL không có query, timestamp, HTTP status, response time và loại lỗi; không ghi form checkout, body, cookie hay nội dung credential. Khi Locust thoát, hook ghi tổng số request. Verifier yêu cầu số dòng liên tục và bằng bộ đếm Locust để phát hiện export thiếu.</p>
+<p>Nguồn cơ chế hook: <a href="https://docs.locust.io/en/stable/extending-locust.html#event-hooks">Locust event hooks</a>. Phiên bản thực tế và hash locustfile trong image được lưu ở <code>locust-runtime.json</code>; không suy ra chỉ từ tài liệu upstream hiện tại.</p>
+<h2 id="4-s0-doi-chung-moi-de-so-voi-s4">4. S0 đối chứng mới để so với S4</h2>
+<p>S0 cũ 15 phút vẫn giữ làm baseline lịch sử. Để so S4, runner bổ sung <strong>S0 control dùng cùng bộ Locust có instrumentation, guard và quy trình</strong>, chỉ không bật client tải phụ.</p>
+<p>Control có <code>scenario_id=S0</code>, <code>s4.profile=control</code>, rate=0. Thư mục mang tên <code>s0-s4-control-...</code>. Pha đo tên measurement. S4 có <code>scenario_id=S4</code>, profile bounded_http; pha tăng tải tên attack.</p>
+<p>Hai loại đều có warm-up, pre_attack và recovery để so cùng cách ghi nhận. Control này mới là đối chứng của cohort pilot S4; không ghép trực tiếp latency mới với log Locust tích lũy cũ rồi kết luận hiệu năng tăng/giảm.</p>
+<h2 id="5-chay-tren-may-nao-va-chuan-bi-gi">5. Chạy trên máy nào và chuẩn bị gì?</h2>
+<p>SSH vào <strong>lab-cp, 192.168.141.142</strong>, rồi vào thư mục có experiments/:</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+sudo k3s kubectl get nodes
+sudo k3s kubectl -n boutique get deployments
+sudo k3s kubectl -n telemetry get pods -o wide
+sudo k3s kubectl -n boutique get pods -l experiment-run
+df -h .
+</code></pre>
+<p>Dấu nhắc SSH có thể hiện manager; trong hướng dẫn, lab-cp là tên node control-plane của Kubernetes tại địa chỉ trên.</p>
+<p>Cần các ứng dụng available, worker/agent Ready, loadgenerator gốc=0, không còn Pod thí nghiệm trước và đĩa còn chỗ cho raw. Runner dùng khóa chung với S0–S3; chạy tuần tự từng lượt. Không cần port-forward frontend cho client trong cluster.</p>
+<h2 id="6-cac-lenh-de-chep-chay">6. Các lệnh dễ chép chạy</h2>
+<h3 id="thu-duong-chay-rat-ngan">Thử đường chạy rất ngắn</h3>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode smoke --node w1 --s4-rate 3 --s4-duration 5 --s4-concurrency 2 --warmup 10 --pre 10 --recovery 10
+</code></pre>
+<p>Mong đợi 15 request nếu không có slot bị bỏ qua; tất cả request đã gửi cần có native event khớp. Smoke giữ sự kiện thử ở nhãn unknown. Đây là kiểm tra thiết bị đo, không thay thế pilot so sánh.</p>
+<h3 id="control-va-ba-muc-tai-pilot">Control và ba mức tải pilot</h3>
+<p>Đợi mỗi lệnh hoàn tất và đọc verifier trước khi chạy lệnh tiếp theo:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S0 --s4-control --mode pilot --node w1 --s4-duration 30 --warmup 30 --pre 30 --recovery 30
+</code></pre>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode pilot --node w1 --s4-rate 3 --s4-duration 30 --s4-concurrency 2 --warmup 30 --pre 30 --recovery 30
+</code></pre>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode pilot --node w1 --s4-rate 6 --s4-duration 30 --s4-concurrency 2 --warmup 30 --pre 30 --recovery 30
+</code></pre>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode pilot --node w1 --s4-rate 10 --s4-duration 30 --s4-concurrency 4 --warmup 30 --pre 30 --recovery 30
+</code></pre>
+<p>Sau khi các mức thấp đạt, có thể thử lại mức 10 với <code>--node w2</code>. Tham số này đổi vị trí actor; frontend và template Locust giữ placement đã cấu hình. Đây là biến thể placement, cần ghi riêng khi phân tích.</p>
+<h3 id="profile-chinh-thuc-du-kien">Profile chính thức dự kiến</h3>
+<p>Sau khi chốt profile/số lượt lặp, lệnh mẫu dùng warm-up 400, pre 120, tải phụ 90 và recovery 120 giây:</p>
+<pre><code class="language-bash">sudo python3 experiments/runner.py --scenario S4 --mode official --node w1 --s4-rate 10 --s4-duration 90 --s4-concurrency 4 --warmup 400 --pre 120 --recovery 120
+</code></pre>
+<p>Control dùng cùng thời lượng và <code>--scenario S0 --s4-control</code>. Chỉ đặt mode official chưa chứng minh đã hoàn tất bộ dữ liệu chính thức; cần đủ lượt lặp và điều kiện chung theo kế hoạch GĐ4.</p>
+<h2 id="7-co-che-gioi-han-va-dung">7. Cơ chế giới hạn và dừng</h2>
+<p>Client chỉ hỗ trợ rate 3/6/10, thời lượng 1–90 giây, concurrency 1–4, IP Service của lab và GET <code>/</code>. Mỗi request có timeout socket 3 giây, giới hạn đọc response 1 MiB, không retry và dùng <strong>một TCP connection mới</strong>. Loại kết nối là một phần profile; nó khác việc dùng keep-alive và được ghi trong manifest.</p>
+<p>Vị trí gửi bị bỏ qua do hết concurrency hoặc scheduler trễ được đếm, không gửi bù thành burst. Tốc độ thực, request lỗi và slot bỏ qua nằm trong client summary. Không coi vị trí chưa gửi là một request đã xảy ra.</p>
+<p>Guard theo dõi:</p>
+<ul>
+<li>Node không Ready hoặc MemoryPressure.</li>
+<li>Pod ban đầu bị thay thế/mất, container restart tăng hoặc OOMKilled.</li>
+<li>Frontend <code>/_healthz</code> thất bại ba lần liên tiếp.</li>
+<li>Lỗi đọc trạng thái của chính guard; khi mất khả năng theo dõi sẽ dừng lượt.</li>
+</ul>
+<p>Chu kỳ mục tiêu 5 giây <strong>cộng thời gian gọi API/probe</strong>. Đây không phải bảo đảm phản ứng tức thời. Guard ghi từng mốc thực vào guard.ndjson. Khi dừng, manifest giữ interrupted và lý do; actor/Locust tạm được xóa, dữ liệu đã thu được giữ.</p>
+<p>Thử dừng chủ động ngay lúc actor đang tạo tải:</p>
+<pre><code class="language-bash">sudo python3 experiments/check_cleanup.py --scenario S4 --at-phase attack
+</code></pre>
+<p>Script này tạo một lượt riêng, chờ pha attack rồi gửi SIGTERM. Đọc dòng cleanup verified và kiểm tra Pod/Deployment/ConfigMap theo experiment-run đã hết. Không đưa lượt interrupted vào tập pilot hoàn tất.</p>
+<h2 id="8-chon-run-va-kiem-tra-ket-qua">8. Chọn run và kiểm tra kết quả</h2>
+<p>Runner in dòng Run khi bắt đầu. Với lượt S4 gần nhất, từ cùng thư mục làm việc:</p>
+<pre><code class="language-bash">RUN=$(sudo find runs -mindepth 1 -maxdepth 1 -type d -name 's4-20*' | sort | tail -n 1)
+printf '%s\n' &quot;$RUN&quot;
+sudo cat &quot;$RUN/manifest.json&quot;
+sudo cat &quot;$RUN/s4-verification.json&quot;
+</code></pre>
+<p>Hãy so tên với dòng Run. Mẫu s4-20* chọn các tên theo thời gian hiện tại và bỏ qua prefix s4-s4 cũ của lượt phát triển lỗi. Khi đọc một run cụ thể trong danh mục, gán RUN bằng đúng tên đó. Control dùng prefix s0-s4-control-.</p>
+<p>Trên bản clone có archive, giải nén trước verifier:</p>
+<pre><code class="language-bash">if sudo test -f &quot;$RUN/dataset.tar.gz&quot;; then
+  sudo tar -xzf &quot;$RUN/dataset.tar.gz&quot; -C &quot;$RUN&quot;
+fi
+sudo python3 experiments/s4_verify.py &quot;$RUN&quot;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Trường</th>
+<th>Cần đọc như thế nào?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>passed</td>
+<td>true khi các kiểm tra chức năng/capture/guard/export đạt</td>
+</tr>
+<tr>
+<td>http_operations, operations_with_native_event</td>
+<td>Bằng nhau với S4; control đều 0</td>
+</tr>
+<tr>
+<td>client.submitted / skipped_busy / skipped_late</td>
+<td>Số thật gửi và các slot bị bỏ qua</td>
+</tr>
+<tr>
+<td>client.achieved_rps_over_configured_window</td>
+<td>Số request đã gửi chia thời lượng cấu hình</td>
+</tr>
+<tr>
+<td>client.observed_peak_concurrency</td>
+<td>Không vượt concurrency đã đặt</td>
+</tr>
+<tr>
+<td>locust_log_complete</td>
+<td>Dãy sequence liên tục, số dòng bằng bộ đếm cuối Locust</td>
+</tr>
+<tr>
+<td>locust_by_phase</td>
+<td>Số mẫu, lỗi, p50/p95 và RPS mua hàng theo pha</td>
+</tr>
+<tr>
+<td>locust_by_route</td>
+<td>Tách theo method/URL để thấy ảnh hưởng của route mix</td>
+</tr>
+<tr>
+<td>guard_checks_passed</td>
+<td>Có sample và không có lý do dừng</td>
+</tr>
+<tr>
+<td>metric_checks_passed</td>
+<td>Hai agent up ở hai snapshot, tám chuỗi loss/export delta 0</td>
+</tr>
+<tr>
+<td>resource_series_present</td>
+<td>Có bốn series CPU/RAM truy vấn từ Prometheus</td>
+</tr>
+</tbody>
+</table>
+<p>Verifier cập nhật báo cáo dẫn xuất; raw và receipt giữ nguyên. Trong quá trình phát triển, lỗi có thể xảy ra sau khi phần thực thi completed. Vì vậy đọc cả <code>dataset_status</code>, <code>postprocess_error</code> và verifier, không dùng riêng status completed làm kết luận đạt.</p>
+<h2 id="9-cach-dien-giai-latency-va-cpu">9. Cách diễn giải latency và CPU</h2>
+<p><code>locust-requests.ndjson</code> ghi mỗi request mua hàng. Script xếp mẫu vào pha khi cả thời điểm bắt đầu và kết thúc cùng pha. Request vắt qua biên giữ nhóm boundary, không bị ép vào một pha. Các request sau measurement_end thuộc finalize.</p>
+<p>p50/p95 được tính trên request HTTP 200 và không có client exception; lỗi vẫn được đếm riêng. Không chỉ nhìn p95 thấp nếu failure ratio tăng. Số liệu theo route giúp tránh nhầm khi pha này có nhiều checkout hơn pha kia.</p>
+<p>CPU frontend là <strong>CPU cores</strong>, ví dụ 0,1 core tương đương khoảng 100m; RAM là bytes. Query CPU dùng <code>rate(...[1m])</code>, nên pha 30 giây chịu ảnh hưởng cửa sổ làm mượt một phút. Step 5 giây của truy vấn không làm scrape thực nhanh hơn. Không diễn giải mỗi điểm thành phép đo tức thời độc lập.</p>
+<p>Đọc cùng bốn nhóm bằng chứng: tốc độ tải thực, latency/lỗi người mua, CPU/RAM và trạng thái hồi phục. Locust hiện dùng lựa chọn task ngẫu nhiên của workload gốc, chưa khóa seed cho cohort pilot. Một lượt mỗi mức chỉ là quan sát pilot; chưa đủ kết luận nhân quả, statistical significance hoặc ngưỡng chịu tải tối đa.</p>
+<h2 id="10-telemetry-va-nhan-s4">10. Telemetry và nhãn S4</h2>
+<p>Client có nhiều thread cùng một PID. Chỉ dùng PID và cửa sổ thời gian sẽ nhầm khi request chồng nhau. S4 ghép theo <strong>Pod UID + source port + đích IP/cổng + khoảng request</strong>. Mỗi kết nối mới ghi source port trong receipt; verifier mở lại đúng dòng raw để kiểm tra.</p>
+<p>Guard gọi healthz bằng kubectl exec nên có thể tạo thêm process Python trong actor. Những event này là instrumentation; chúng không tự được gán attack chỉ vì cùng Pod. Ghép source port và khoảng request giúp tách chúng khỏi tải phụ.</p>
+<p>Event không có source port vẫn được giữ và không ép ghép với request. Native event chứng minh hoạt động TCP của đúng actor; method/status HTTP trong bản chuẩn hóa lấy từ receipt, không phải Tetragon đã giải mã HTTP.</p>
+<p>S4 và S0 control dùng normalized schema 5/label v5, manifest schema 4. Các kịch bản S1–S3 tiếp tục định dạng v4 của code hiện tại; dữ liệu lịch sử không được gán lại hàng loạt.</p>
+<h2 id="11-ma-nguon-nam-o-dau">11. Mã nguồn nằm ở đâu?</h2>
+<p>Khi thực hành, chạy entry point runner.py như các lệnh ở trên; không cần chạy lần lượt mọi module trong bảng.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Vai trò</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/runner.py">runner.py</a></td>
+<td>Nhận tham số, chuyển S4/control sang bộ điều phối riêng</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4_runner.py">s4_runner.py</a></td>
+<td>Tạo tài nguyên, điều phối pha, capture và cleanup</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4_support.py">s4_support.py</a></td>
+<td>Guard, truy vấn Prometheus và đọc trạng thái Kubernetes</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4/client.py">s4/client.py</a></td>
+<td>Client GET có pacing, giới hạn concurrency và receipt</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4/locust_wrapper.py">s4/locust_wrapper.py</a></td>
+<td>Gắn hook lên workload gốc trong image</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/label.py">label.py</a></td>
+<td>Tương quan native và tạo nhãn v5 cho family S4</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4_verify.py">s4_verify.py</a></td>
+<td>Kiểm chứng dữ liệu, latency và resource summary</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4/audit.py">s4/audit.py</a></td>
+<td>Rà soát archive trong thư mục tạm</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/s4/report.py">s4/report.py</a></td>
+<td>Tạo bảng tổng hợp, JSON và biểu đồ tùy chọn</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/test_s4.py">test_s4.py</a></td>
+<td>Unit tests dùng dữ liệu mô phỏng</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cac-file-ket-qua-can-giu">Các file kết quả cần giữ</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>manifest.json, timeline.ndjson</td>
+<td>Profile, placement, nguồn/đích, source hash, mốc pha và trạng thái</td>
+</tr>
+<tr>
+<td>source/</td>
+<td>Snapshot tám file code/normalizer được liệt kê trong manifest; dùng để đối chiếu, không chạy trực tiếp thư mục này</td>
+</tr>
+<tr>
+<td>actor-receipts.ndjson</td>
+<td>Từng GET của actor, source port, status, latency và lỗi</td>
+</tr>
+<tr>
+<td>s4-client-summary.json</td>
+<td>Lập lịch, slot bỏ qua, gửi thực và thời lượng client</td>
+</tr>
+<tr>
+<td>locust.raw.log, locust.stderr</td>
+<td>Đầu ra Locust nguyên gốc và stderr bộ thu</td>
+</tr>
+<tr>
+<td>locust-requests.ndjson, locust-runtime.json</td>
+<td>Metadata từng request, phiên bản/hash workload và số đếm cuối</td>
+</tr>
+<tr>
+<td>guard.ndjson</td>
+<td>Mỗi lần kiểm tra trạng thái/probe và lý do dừng</td>
+</tr>
+<tr>
+<td>prometheus-resources.json</td>
+<td>Bốn query_range CPU/RAM nguyên gốc</td>
+</tr>
+<tr>
+<td>metrics-before/after.json</td>
+<td>Agent up và bộ đếm mất/lỗi export</td>
+</tr>
+<tr>
+<td>raw/, normalized.ndjson, labeled-windows.ndjson</td>
+<td>Telemetry gốc, chuẩn hóa và cửa sổ nhãn</td>
+</tr>
+<tr>
+<td>s4-verification.json</td>
+<td>Bằng chứng chức năng và số liệu theo pha/route</td>
+</tr>
+<tr>
+<td>instrumented-locust-deployment.json</td>
+<td>Cấu hình Locust tạm thực sự đã tạo</td>
+</tr>
+</tbody>
+</table>
+<p>Có thể kiểm tra lại các archive trong thư mục tạm, giữ nguyên dữ liệu lịch sử:</p>
+<pre><code class="language-bash">python3 experiments/s4/audit.py --output experiments/audits/my-s4-review.json
+</code></pre>
+<p>Tool kiểm hash tám source file, chạy lại verifier, kiểm bản loadgenerator gốc không đổi và so code/image/workload hash giữa các pilot. Trên VM có run root sở hữu thì thêm sudo.</p>
+<p>Runner tự dọn Pod actor, Deployment Locust và ConfigMap tạm. Kiểm tra khi hoàn tất:</p>
+<pre><code class="language-bash">sudo k3s kubectl -n boutique get deployment loadgenerator frontend
+sudo k3s kubectl -n boutique get pods,deployments,configmaps -l experiment-run
+</code></pre>
+<p>Loadgenerator gốc cần 0, frontend sẵn sàng và không còn tài nguyên experiment-run. Trong lúc chạy thì các tài nguyên tạm xuất hiện là bình thường.</p>
+<h3 id="khi-terminal-bi-tat-cuong-buc">Khi terminal bị tắt cưỡng bức</h3>
+<p>Nhấn Ctrl+C một lần rồi chờ cleanup khi cần dừng bình thường. Nếu runner bị SIGKILL hoặc mất máy điều phối, kiểm tra trạng thái thực tế. Sau khi xác nhận lượt đó đã dừng, dọn đúng label của lượt. Ví dụ sau dùng một run kiểm thử interrupted đã có; đổi RUNID theo manifest của lượt cần dọn:</p>
+<pre><code class="language-bash">RUNID='s4-20261123T045500Z-1844734'
+sudo k3s kubectl -n boutique get pods,deployments,configmaps -l &quot;experiment-run=$RUNID&quot;
+sudo k3s kubectl -n boutique delete pods,deployments,configmaps -l &quot;experiment-run=$RUNID&quot; --ignore-not-found
+</code></pre>
+<p>Giữ label cụ thể để chỉ tác động tới tài nguyên của run. Manifest và log trên đĩa vẫn giữ để truy vết.</p>
+<h2 id="12-ket-qua-pilot-va-nhat-ky-trien-khai">12. Kết quả pilot và nhật ký triển khai</h2>
+<p>Xem <a href="22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026">bảng số liệu và liên kết bằng chứng</a> ở phần kết quả. Cohort có 861 request tải phụ và 861 request đều có native event khớp; 9 slot bị bỏ qua do concurrency, không có request tải phụ lỗi HTTP. Trong mẫu 10 RPS/w1, p95 Locust trước/trong/hồi phục là 91,10 / 299,89 / 74,76 ms; đây là quan sát pilot, cần đọc với số mẫu và control trước khi suy luận tác động. Biểu đồ minh họa cùng bộ pilot:</p>
+<p><img alt="Tốc độ tải phụ thực, p95 người mua và CPU frontend của cohort pilot" src="https://sonprocode.github.io/kernel-notes/assets/s4-pilot.svg" /></p>
+<p><a href="https://sonprocode.github.io/kernel-notes/assets/s4-pilot.png">Tải ảnh PNG</a>. Các cột là quan sát pilot theo từng profile, không phải đường cong xác định ngưỡng DoS.</p>
+<p>Nhật ký triển khai:</p>
+<ol>
+<li>Tạo client GET có pacing/concurrency và receipt; tách khỏi Locust mua hàng.</li>
+<li>Thêm wrapper request hook, số sequence và bộ đếm cuối để kiểm tra export đầy đủ.</li>
+<li>Thêm S0 control, guard, CPU/RAM query_range và source snapshot.</li>
+<li>Lượt <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-s4-20261123T045120Z-1837437/postmortem.json">s4-s4-20261123T045120Z-1837437</a> gửi đủ 15 request nhưng chuẩn hóa gặp socket background thiếu sport. Giữ raw/receipt/manifest và normalized dở dang; không tính là pilot đạt.</li>
+<li>Sửa logic giữ event thiếu source port ở unknown; thêm regression test. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-first-recheck-20261123.json">Recheck độc lập</a> trên bản sao raw đạt 15/15 và không đổi run gốc.</li>
+<li>Lượt <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T045354Z-1842075/s4-verification.json">s4-20261123T045354Z-1842075</a> smoke mới đạt 15/15, export Locust đầy đủ. Locust thực tế là 2.43.0; original locustfile SHA-256 bắt đầu 476beb8b4e8a, đầy đủ trong runtime JSON.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T045500Z-1844734/manifest.json">s4-20261123T045500Z-1844734</a> kiểm thử SIGTERM trong pha attack, status interrupted và cleanup đạt. Đây là lượt thử dừng, không tính vào cohort hoàn tất.</li>
+<li>Khóa code cho cohort control/3/6/10 RPS và placement w2; kiểm tra lại archive/source/native trước khi xuất bản.</li>
+</ol>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-export-and-recovery-20261123.json">Kiểm tra export và hồi phục</a> xác nhận 1.441 request Locust được ghi đầy đủ, không có HTTP failure trong cohort. Mỗi run có checkout HTTP 200 trong recovery. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/lab-state-s4-20261123.json">Snapshot lab cuối</a> xác nhận không còn tài nguyên tạm và source đang triển khai khớp cohort.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-unit-tests-20261123.json">Chín unit tests</a> mô phỏng pacing, thiếu slot, giới hạn IP, các tình huống guard và lỗi thiếu source port. Các tình huống MemoryPressure/OOM trong unit test dùng dữ liệu giả. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-clock-check-20261123.json">NTP status</a> được kiểm tra trên ba VM; đây không phải phép đo clock offset chính xác. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s1-s2-s3-after-s4-20261123.json">Audit S1–S3 sau thay đổi shared code</a> tiếp tục đạt 10/10 pilot lịch sử.</p>
+<p>Có thể chạy lại unit tests từ thư mục Testbed_Online_Boutique (nơi có experiments/) trên máy có Python:</p>
+<pre><code class="language-bash">python3 -m unittest discover -s experiments -p test_s4.py -v
+</code></pre>
+<p>Bước tiếp theo của GĐ4 là S5 và cohort official theo kế hoạch. Module detector và mitigation được đánh giá ở các giai đoạn sau; S4 hiện cung cấp hành vi và dữ liệu để dùng cho các bước đó.</p>
+<h2 id="ket-qua-pilot-s4-ngay-23-11-2026">Kết quả pilot S4 ngày 23/11/2026</h2>
+<p>Các số dưới đây lấy từ verifier từng run. Rate là tải phụ; Locust vẫn có 10 người dùng bình thường.</p>
+<table>
+<thead>
+<tr>
+<th>Rate / worker</th>
+<th>Request tải phụ khớp</th>
+<th>Lỗi tải phụ</th>
+<th>Locust: số mẫu / lỗi trong pha đo</th>
+<th>Locust p95 trước / trong / hồi phục (ms)</th>
+<th>CPU frontend trung bình trong pha (core)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 RPS / w1</td>
+<td>0/0</td>
+<td>0</td>
+<td>64 / 0</td>
+<td>81.26 / 178.65 / 93.72</td>
+<td>0.027</td>
+</tr>
+<tr>
+<td>3 RPS / w1</td>
+<td>90/90</td>
+<td>0</td>
+<td>62 / 0</td>
+<td>111.19 / 114.42 / 88.64</td>
+<td>0.037</td>
+</tr>
+<tr>
+<td>6 RPS / w1</td>
+<td>179/179</td>
+<td>0</td>
+<td>66 / 0</td>
+<td>90.65 / 175.85 / 74.09</td>
+<td>0.046</td>
+</tr>
+<tr>
+<td>10 RPS / w1</td>
+<td>295/295</td>
+<td>0</td>
+<td>66 / 0</td>
+<td>91.10 / 299.89 / 74.76</td>
+<td>0.058</td>
+</tr>
+<tr>
+<td>10 RPS / w2</td>
+<td>297/297</td>
+<td>0</td>
+<td>63 / 0</td>
+<td>63.10 / 258.61 / 91.95</td>
+<td>0.057</td>
+</tr>
+</tbody>
+</table>
+<p>Control 0/0 nghĩa là không bật client tải phụ; các request mua hàng Locust vẫn được đo. P95 tính trên HTTP 200 không có exception; request vắt qua biên pha giữ riêng. CPU dùng rate cửa sổ một phút, có làm mượt. Các profile chạy tuần tự, route mix và số mẫu có thể khác; chưa dùng những số này làm kết luận nhân quả hoặc ngưỡng DoS.</p>
+<h2 id="quan-sat-tu-cohort-nay">Quan sát từ cohort này</h2>
+<p>Có 861 request tải phụ thực sự được gửi, tất cả có native event đối chiếu. Có 9 slot được bỏ qua do giới hạn concurrency hoặc scheduler; đó không phải request đã gửi rồi thất bại. Lỗi HTTP của tải phụ trong cohort: 0.</p>
+<p>Đọc p95 trước/trong/hồi phục và CPU của từng profile cùng control. Cohort ngắn, control tự có dao động p95 và chưa khóa seed; cần lặp thêm cùng profile để ước lượng tác động ổn định.</p>
+<p>Cờ verifier passed xác nhận đường chạy, đối chiếu và chất lượng xuất theo các kiểm tra đã nêu. Hãy đọc failure ratio, số mẫu và recovery cùng cờ này. Không dùng passed làm kết luận đã phát hiện/chặn DoS.</p>
+<h2 id="mo-bang-chung-tung-luot">Mở bằng chứng từng lượt</h2>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s4-control-20261123T045647Z-1848096/s4-verification.json">s0-s4-control-20261123T045647Z-1848096</a>: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s4-control-20261123T045647Z-1848096/manifest.json">manifest</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s4-control-20261123T045647Z-1848096/timeline.ndjson">timeline</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s4-control-20261123T045647Z-1848096/dataset.tar.gz">archive</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T045922Z-1853277/s4-verification.json">s4-20261123T045922Z-1853277</a>: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T045922Z-1853277/manifest.json">manifest</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T045922Z-1853277/timeline.ndjson">timeline</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T045922Z-1853277/dataset.tar.gz">archive</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050200Z-1858668/s4-verification.json">s4-20261123T050200Z-1858668</a>: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050200Z-1858668/manifest.json">manifest</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050200Z-1858668/timeline.ndjson">timeline</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050200Z-1858668/dataset.tar.gz">archive</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050441Z-1864262/s4-verification.json">s4-20261123T050441Z-1864262</a>: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050441Z-1864262/manifest.json">manifest</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050441Z-1864262/timeline.ndjson">timeline</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050441Z-1864262/dataset.tar.gz">archive</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/s4-verification.json">s4-20261123T050725Z-1869684</a>: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/manifest.json">manifest</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/timeline.ndjson">timeline</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261123T050725Z-1869684/dataset.tar.gz">archive</a>.</li>
+</ul>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-pilots-audit-20261123.json">Audit source/native và tính đồng nhất release</a>.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/lab-state-s4-20261123.json">Trạng thái lab sau đo và hash source đang triển khai</a>: loadgenerator gốc=0, không còn Pod/Deployment/ConfigMap/SA thí nghiệm; ba node Ready và frontend/checkout/payment available.</p><div class="finish"><button class="button" data-complete="22-s4-tai-noi-bo" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="19-s3-runtime-abuse.html">← S3 · Shell, công cụ mạng và token</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-s4-mo-phong-chuyen-gi">1. S4 mô phỏng chuyện gì?</a></li>
+<li><a href="#2-rps-concurrency-va-p95-la-gi">2. RPS, concurrency và p95 là gì?</a></li>
+<li><a href="#3-kien-truc-cua-mot-luot">3. Kiến trúc của một lượt</a></li>
+<li><a href="#4-s0-doi-chung-moi-de-so-voi-s4">4. S0 đối chứng mới để so với S4</a></li>
+<li><a href="#5-chay-tren-may-nao-va-chuan-bi-gi">5. Chạy trên máy nào và chuẩn bị gì?</a></li>
+<li><a href="#6-cac-lenh-de-chep-chay">6. Các lệnh dễ chép chạy</a><ul>
+<li><a href="#thu-duong-chay-rat-ngan">Thử đường chạy rất ngắn</a></li>
+<li><a href="#control-va-ba-muc-tai-pilot">Control và ba mức tải pilot</a></li>
+<li><a href="#profile-chinh-thuc-du-kien">Profile chính thức dự kiến</a></li>
+</ul>
+</li>
+<li><a href="#7-co-che-gioi-han-va-dung">7. Cơ chế giới hạn và dừng</a></li>
+<li><a href="#8-chon-run-va-kiem-tra-ket-qua">8. Chọn run và kiểm tra kết quả</a></li>
+<li><a href="#9-cach-dien-giai-latency-va-cpu">9. Cách diễn giải latency và CPU</a></li>
+<li><a href="#10-telemetry-va-nhan-s4">10. Telemetry và nhãn S4</a></li>
+<li><a href="#11-ma-nguon-nam-o-dau">11. Mã nguồn nằm ở đâu?</a></li>
+<li><a href="#cac-file-ket-qua-can-giu">Các file kết quả cần giữ</a><ul>
+<li><a href="#khi-terminal-bi-tat-cuong-buc">Khi terminal bị tắt cưỡng bức</a></li>
+</ul>
+</li>
+<li><a href="#12-ket-qua-pilot-va-nhat-ky-trien-khai">12. Kết quả pilot và nhật ký triển khai</a></li>
+<li><a href="#ket-qua-pilot-s4-ngay-23-11-2026">Kết quả pilot S4 ngày 23/11/2026</a></li>
+<li><a href="#quan-sat-tu-cohort-nay">Quan sát từ cohort này</a></li>
+<li><a href="#mo-bang-chung-tung-luot">Mở bằng chứng từng lượt</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

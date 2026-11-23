@@ -1,10 +1,10 @@
 # Chạy bộ công cụ GĐ4 hiện tại
 
-Ngày cập nhật 22/11/2026, giờ Việt Nam.
+Ngày cập nhật 23/11/2026, giờ Việt Nam.
 
 Người mới bắt đầu đọc [USAGE.md](USAGE.md). Chi tiết từng kịch bản: [S1.md](S1.md), [S2.md](S2.md), [S3.md](S3.md).
 
-Bộ công cụ hỗ trợ S0, S1, S2 và S3 runtime. Hướng dẫn double check nằm trong [S2.md](S2.md) và [S3.md](S3.md). S3 có shell thật, curl/wget/nc/nmap và đọc projected token của actor. S4/S5 cùng các lượt official còn ở bước tiếp theo theo [kế hoạch](README.md).
+Bộ công cụ hỗ trợ S0, S1, S2, S3 runtime và [S4 tải HTTP nội bộ](S4.md). S4 có S0 control riêng, Locust tạm ghi từng request, guard và metric CPU/RAM. Hướng dẫn double check nằm trong [S2.md](S2.md) và [S3.md](S3.md). S3 có shell thật, curl/wget/nc/nmap và đọc projected token của actor. S5 cùng các lượt official còn ở bước tiếp theo theo [kế hoạch](README.md).
 
 ## Thành phần đã triển khai
 
@@ -100,3 +100,8 @@ Nếu xảy ra lỗi, xem manifest.error, actor.stderr và raw/*.stderr. Các l�
 ## Công việc tiếp theo
 
 Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape và các bộ đếm lỗi export/mất sự kiện tại hai mốc trước/sau. Cần đối chiếu các response gốc và khoảng scrape khi diễn giải mức mất dữ liệu. Sau pilot S3, bổ sung receiver S5 và client đo request latency cho S4. Các lượt chính thức có nhãn được chạy sau khi từng pilot đã được kiểm chứng.
+
+
+## S4 và S0 control có instrumentation
+
+Đọc [S4.md](S4.md) để dùng các tham số --s4-rate, --s4-duration, --s4-concurrency và --s4-control. Family này dùng manifest schema 4 và normalized/label v5; các run S1–S3 tiếp tục v4. Loadgenerator gốc giữ 0 replica vì có một Deployment Locust tạm cùng workload. Latency HTTP theo pha lấy từ event hook, CPU/RAM lấy từ Prometheus. Việc đóng gói archive là bước xuất GitHub, không tự diễn ra sau mọi lệnh runner.

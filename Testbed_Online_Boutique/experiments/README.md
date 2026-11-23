@@ -359,3 +359,8 @@ Ngày 20/11/2026 đã triển khai S2 gọi Charge bằng gRPC. Các bước ch�
 ## Tiến độ S3 ngày 22/11/2026
 
 Đã triển khai profile runtime với shell, đủ bốn công cụ curl/wget/nc/nmap và đọc projected ServiceAccount token thật của Pod actor tạm. Chỉ xuất metadata đọc token. Hướng dẫn, bằng chứng hai worker, lịch sử lỗi và cách double check nằm trong [S3.md](S3.md). Fixture giả cũ vẫn dùng cho smoke. S4/S5 và bộ official cùng S0 đối chứng là công việc tiếp theo.
+
+
+## S4 ngày 23/11/2026
+
+Đã bổ sung runner S4 và S0 control, client HTTP có pacing/concurrency, Locust event hook ghi từng request, guard tài nguyên và xác minh native theo source port. [S4.md](S4.md) hướng dẫn chạy/đọc kết quả; [S4-RESULTS.md](S4-RESULTS.md) lưu số liệu pilot. S5 và cohort official theo kế hoạch là các bước tiếp theo.

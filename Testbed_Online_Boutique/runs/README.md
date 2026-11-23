@@ -50,3 +50,8 @@ Hai lượt `s3-20261122T102500Z-378143` (w1) và `s3-20261122T102750Z-382892` (
 [Hướng dẫn bắt đầu](../experiments/USAGE.md) giải thích cách chạy và đọc kết quả. [Báo cáo rà soát 22/11](../experiments/REVIEW-S1-S2-S3.md) kiểm tra lại 10 pilot, gồm hai S1 mới đủ 22/22 trên mỗi worker, cùng smoke S2/S3 hồi quy. Các report giữ riêng trong experiments/audits; dữ liệu lịch sử không bị ghi lại bằng source hoặc nhãn mới.
 
 SHA256SUMS.txt trong repo mô tả bản xuất đã đóng gói. Thư mục làm việc trực tiếp trên VM có thể chứa raw thay cho archive và đã có lượt mới, nên cần đối chiếu manifest/source hash của từng run; không áp danh mục checksum của bản xuất lên mọi file sống trên VM.
+
+
+## S4 và S0 control ngày 23/11/2026
+
+Các run s0-s4-control-* và s4-* lưu cohort đo có request-level Locust, guard và CPU/RAM. [S4.md](../experiments/S4.md) hướng dẫn mở; [S4-RESULTS.md](../experiments/S4-RESULTS.md) so sánh control và 3/6/10 RPS. Bốn S4 pilot có 861 HTTP request được gửi, tất cả có native event khớp. Lượt s4-s4-20261123T045120Z-1837437 là smoke phát triển lỗi normalize, được giữ cùng postmortem; lượt interrupted kiểm tra cleanup giữ riêng.

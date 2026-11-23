@@ -59,6 +59,8 @@ wc -l telemetry.ndjson
 <h2 id="ra-soat-s1s3-va-cach-dung-cho-nguoi-moi">Rà soát S1–S3 và cách dùng cho người mới</h2>
 <p><a href="20-huong-dan-s1-s2-s3.html">Hướng dẫn bắt đầu</a> giải thích cách chạy và đọc kết quả. <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">Báo cáo rà soát 22/11</a> kiểm tra lại 10 pilot, gồm hai S1 mới đủ 22/22 trên mỗi worker, cùng smoke S2/S3 hồi quy. Các report giữ riêng trong experiments/audits; dữ liệu lịch sử không bị ghi lại bằng source hoặc nhãn mới.</p>
 <p>SHA256SUMS.txt trong repo mô tả bản xuất đã đóng gói. Thư mục làm việc trực tiếp trên VM có thể chứa raw thay cho archive và đã có lượt mới, nên cần đối chiếu manifest/source hash của từng run; không áp danh mục checksum của bản xuất lên mọi file sống trên VM.</p>
+<h2 id="s4-va-s0-control-ngay-23-11-2026">S4 và S0 control ngày 23/11/2026</h2>
+<p>Các run s0-s4-control-<em> và s4-</em> lưu cohort đo có request-level Locust, guard và CPU/RAM. <a href="22-s4-tai-noi-bo.html">S4.md</a> hướng dẫn mở; <a href="22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026">S4-RESULTS.md</a> so sánh control và 3/6/10 RPS. Bốn S4 pilot có 861 HTTP request được gửi, tất cả có native event khớp. Lượt s4-s4-20261123T045120Z-1837437 là smoke phát triển lỗi normalize, được giữ cùng postmortem; lượt interrupted kiểm tra cleanup giữ riêng.</p>
 <h2 id="phan-tich-baseline-15-phut">Phân tích baseline 15 phút</h2>
 <p>Phân tích sự kiện tcp_send trong cửa sổ đo của lượt này. Đích được đối chiếu với Service ClusterIP, EndpointSlice của hai snapshot và IP nguồn có danh tính workload trong log. Việc suy ra phía server dựa trên cổng lắng nghe trong Service và EndpointSlice.</p>
 <p>Tổng cộng <strong>141,639</strong> sự kiện gửi TCP. Ánh xạ được <strong>132,163</strong> sự kiện tới một workload đích duy nhất. Có <strong>16</strong> luồng nguồn–đích–cổng gửi về phía server.</p>
@@ -250,6 +252,7 @@ wc -l telemetry.ndjson
 <li><a href="#kiem-tra-file-tai-ve">Kiểm tra file tải về</a></li>
 <li><a href="#pilot-s3-runtime-ngay-22-11-2026">Pilot S3 runtime ngày 22/11/2026</a></li>
 <li><a href="#ra-soat-s1s3-va-cach-dung-cho-nguoi-moi">Rà soát S1–S3 và cách dùng cho người mới</a></li>
+<li><a href="#s4-va-s0-control-ngay-23-11-2026">S4 và S0 control ngày 23/11/2026</a></li>
 <li><a href="#phan-tich-baseline-15-phut">Phân tích baseline 15 phút</a></li>
 <li><a href="#theo-tung-phut">Theo từng phút</a></li>
 <li><a href="#buoc-tiep-theo">Bước tiếp theo</a></li>

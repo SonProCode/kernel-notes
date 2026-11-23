@@ -1,0 +1,91 @@
+{
+  "events_by_type": {
+    "tcp_send": 9184,
+    "process_exec": 22,
+    "process_exit": 23,
+    "tcp_connect_attempt": 31
+  },
+  "events_by_label": {
+    "unknown": 5645,
+    "normal": 3615
+  },
+  "events_by_node": {
+    "lab-w1": 5039,
+    "lab-w2": 4221
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 15,
+  "operations_with_matched_event": 15,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "http-00000": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00001": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00002": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00003": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00004": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00005": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00006": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00007": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00008": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00009": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00010": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00011": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00012": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00013": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "http-00014": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ]
+  },
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}

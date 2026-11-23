@@ -1,0 +1,1163 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "checksum/configmap": "e05122f9bc5154c25a9c7d22709c994620c6741308b42acf64f3fecddc2e865c"
+        },
+        "creationTimestamp": "2026-11-16T15:57:07Z",
+        "generateName": "tetragon-",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "agent",
+          "app.kubernetes.io/instance": "tetragon",
+          "app.kubernetes.io/managed-by": "Helm",
+          "app.kubernetes.io/name": "tetragon",
+          "app.kubernetes.io/part-of": "tetragon",
+          "app.kubernetes.io/version": "1.8.0",
+          "controller-revision-hash": "fd55b97d7",
+          "helm.sh/chart": "tetragon-1.8.0",
+          "pod-template-generation": "1"
+        },
+        "name": "tetragon-68mlr",
+        "namespace": "telemetry",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "DaemonSet",
+            "name": "tetragon",
+            "uid": "7bdc563d-b04f-4e5e-a5bd-e34b2ecf287b"
+          }
+        ],
+        "resourceVersion": "50395",
+        "uid": "e3c20e23-f2d7-498e-ad64-fbfef881005b"
+      },
+      "spec": {
+        "affinity": {
+          "nodeAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "nodeSelectorTerms": [
+                {
+                  "matchFields": [
+                    {
+                      "key": "metadata.name",
+                      "operator": "In",
+                      "values": [
+                        "lab-w1"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "containers": [
+          {
+            "args": [
+              "/var/log/tetragon/tetragon.log"
+            ],
+            "command": [
+              "hubble-export-stdout"
+            ],
+            "image": "quay.io/cilium/hubble-export-stdout:v1.1.1",
+            "imagePullPolicy": "IfNotPresent",
+            "name": "export-stdout",
+            "resources": {},
+            "securityContext": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "FallbackToLogsOnError",
+            "volumeMounts": [
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fnjcv",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "args": [
+              "--config-dir=/etc/tetragon/tetragon.conf.d/"
+            ],
+            "env": [
+              {
+                "name": "NODE_NAME",
+                "valueFrom": {
+                  "fieldRef": {
+                    "apiVersion": "v1",
+                    "fieldPath": "spec.nodeName"
+                  }
+                }
+              }
+            ],
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "failureThreshold": 3,
+              "grpc": {
+                "port": 6789,
+                "service": "liveness"
+              },
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 60
+            },
+            "name": "tetragon",
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              }
+            },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "appArmorProfile": {
+                "type": "Unconfined"
+              },
+              "capabilities": {
+                "add": [
+                  "SYS_ADMIN",
+                  "SYS_PTRACE",
+                  "SYS_RESOURCE",
+                  "DAC_OVERRIDE",
+                  "SYSLOG"
+                ],
+                "drop": [
+                  "ALL"
+                ]
+              },
+              "privileged": false
+            },
+            "startupProbe": {
+              "failureThreshold": 3,
+              "grpc": {
+                "port": 6789,
+                "service": "startup"
+              },
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 60
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "FallbackToLogsOnError",
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/tetragon/tetragon.conf.d/",
+                "name": "tetragon-config",
+                "readOnly": true
+              },
+              {
+                "mountPath": "/sys/fs/bpf",
+                "mountPropagation": "HostToContainer",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/cilium",
+                "name": "cilium-run"
+              },
+              {
+                "mountPath": "/var/run/tetragon",
+                "name": "tetragon-run"
+              },
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/procRoot",
+                "name": "host-proc"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fnjcv",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "Default",
+        "enableServiceLinks": true,
+        "hostNetwork": true,
+        "hostUsers": true,
+        "initContainers": [
+          {
+            "args": [
+              "grep -q \" /sys/fs/bpf bpf \" /proc/mounts || mount -t bpf bpf /sys/fs/bpf"
+            ],
+            "command": [
+              "/bin/sh",
+              "-c"
+            ],
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imagePullPolicy": "IfNotPresent",
+            "name": "mount-bpf-fs",
+            "resources": {},
+            "securityContext": {
+              "privileged": true
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "FallbackToLogsOnError",
+            "volumeMounts": [
+              {
+                "mountPath": "/sys/fs/bpf",
+                "mountPropagation": "Bidirectional",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fnjcv",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "nodeName": "lab-w1",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {},
+        "serviceAccount": "tetragon",
+        "serviceAccountName": "tetragon",
+        "terminationGracePeriodSeconds": 1,
+        "tolerations": [
+          {
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/disk-pressure",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/memory-pressure",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/pid-pressure",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/unschedulable",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/network-unavailable",
+            "operator": "Exists"
+          }
+        ],
+        "volumes": [
+          {
+            "hostPath": {
+              "path": "/var/run/cilium",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "cilium-run"
+          },
+          {
+            "hostPath": {
+              "path": "/var/run/tetragon",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "tetragon-run"
+          },
+          {
+            "hostPath": {
+              "path": "/var/log/tetragon",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "export-logs"
+          },
+          {
+            "configMap": {
+              "defaultMode": 420,
+              "name": "tetragon-config"
+            },
+            "name": "tetragon-config"
+          },
+          {
+            "hostPath": {
+              "path": "/sys/fs/bpf",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "bpf-maps"
+          },
+          {
+            "hostPath": {
+              "path": "/proc",
+              "type": "Directory"
+            },
+            "name": "host-proc"
+          },
+          {
+            "name": "kube-api-access-fnjcv",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:28Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:28Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:57Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:57Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:07Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "containerID": "containerd://0f2716bce8fe7128c9b8fcff2e9b63cfe42d16f148c779417ce6e4d0c59b032f",
+            "image": "quay.io/cilium/hubble-export-stdout:v1.1.1",
+            "imageID": "quay.io/cilium/hubble-export-stdout@sha256:cf701f96d1c8de30231792e35733e1ab07451e11751ef4f676f482836759da06",
+            "lastState": {},
+            "name": "export-stdout",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-11-16T15:57:32Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 0,
+                "supplementalGroups": [
+                  0
+                ],
+                "uid": 0
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fnjcv",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          },
+          {
+            "allocatedResources": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            },
+            "containerID": "containerd://da6d88d65e107966f9f9c9aac033f5cd4e662803ae1ea446e69966c644b848ff",
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imageID": "quay.io/cilium/tetragon@sha256:5ed9088a1582131d71b06c98e0d549a37a71ae63ab13aabefc7a47553c822a9d",
+            "lastState": {},
+            "name": "tetragon",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-11-16T15:57:32Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 0,
+                "supplementalGroups": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  6,
+                  10,
+                  11,
+                  20,
+                  26,
+                  27
+                ],
+                "uid": 0
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/tetragon/tetragon.conf.d/",
+                "name": "tetragon-config",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/sys/fs/bpf",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/cilium",
+                "name": "cilium-run"
+              },
+              {
+                "mountPath": "/var/run/tetragon",
+                "name": "tetragon-run"
+              },
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/procRoot",
+                "name": "host-proc"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fnjcv",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "192.168.141.143",
+        "hostIPs": [
+          {
+            "ip": "192.168.141.143"
+          }
+        ],
+        "initContainerStatuses": [
+          {
+            "containerID": "containerd://9a8c73de8fbe5a3b4a13b98b75db9f357466c448241e71b8a048ccf5f582629e",
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imageID": "quay.io/cilium/tetragon@sha256:5ed9088a1582131d71b06c98e0d549a37a71ae63ab13aabefc7a47553c822a9d",
+            "lastState": {},
+            "name": "mount-bpf-fs",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://9a8c73de8fbe5a3b4a13b98b75db9f357466c448241e71b8a048ccf5f582629e",
+                "exitCode": 0,
+                "finishedAt": "2026-11-16T15:57:27Z",
+                "reason": "Completed",
+                "startedAt": "2026-11-16T15:57:27Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 0,
+                "supplementalGroups": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  6,
+                  10,
+                  11,
+                  20,
+                  26,
+                  27
+                ],
+                "uid": 0
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/sys/fs/bpf",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fnjcv",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "192.168.141.143",
+        "podIPs": [
+          {
+            "ip": "192.168.141.143"
+          }
+        ],
+        "qosClass": "Burstable",
+        "startTime": "2026-11-16T15:57:07Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "checksum/configmap": "e05122f9bc5154c25a9c7d22709c994620c6741308b42acf64f3fecddc2e865c"
+        },
+        "creationTimestamp": "2026-11-16T15:57:07Z",
+        "generateName": "tetragon-",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "agent",
+          "app.kubernetes.io/instance": "tetragon",
+          "app.kubernetes.io/managed-by": "Helm",
+          "app.kubernetes.io/name": "tetragon",
+          "app.kubernetes.io/part-of": "tetragon",
+          "app.kubernetes.io/version": "1.8.0",
+          "controller-revision-hash": "fd55b97d7",
+          "helm.sh/chart": "tetragon-1.8.0",
+          "pod-template-generation": "1"
+        },
+        "name": "tetragon-jhpf4",
+        "namespace": "telemetry",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "DaemonSet",
+            "name": "tetragon",
+            "uid": "7bdc563d-b04f-4e5e-a5bd-e34b2ecf287b"
+          }
+        ],
+        "resourceVersion": "50400",
+        "uid": "af4a12d3-dcc1-4866-b67d-84f644709bf6"
+      },
+      "spec": {
+        "affinity": {
+          "nodeAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "nodeSelectorTerms": [
+                {
+                  "matchFields": [
+                    {
+                      "key": "metadata.name",
+                      "operator": "In",
+                      "values": [
+                        "lab-w2"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "containers": [
+          {
+            "args": [
+              "/var/log/tetragon/tetragon.log"
+            ],
+            "command": [
+              "hubble-export-stdout"
+            ],
+            "image": "quay.io/cilium/hubble-export-stdout:v1.1.1",
+            "imagePullPolicy": "IfNotPresent",
+            "name": "export-stdout",
+            "resources": {},
+            "securityContext": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "FallbackToLogsOnError",
+            "volumeMounts": [
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-6wj6j",
+                "readOnly": true
+              }
+            ]
+          },
+          {
+            "args": [
+              "--config-dir=/etc/tetragon/tetragon.conf.d/"
+            ],
+            "env": [
+              {
+                "name": "NODE_NAME",
+                "valueFrom": {
+                  "fieldRef": {
+                    "apiVersion": "v1",
+                    "fieldPath": "spec.nodeName"
+                  }
+                }
+              }
+            ],
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "failureThreshold": 3,
+              "grpc": {
+                "port": 6789,
+                "service": "liveness"
+              },
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 60
+            },
+            "name": "tetragon",
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              }
+            },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "appArmorProfile": {
+                "type": "Unconfined"
+              },
+              "capabilities": {
+                "add": [
+                  "SYS_ADMIN",
+                  "SYS_PTRACE",
+                  "SYS_RESOURCE",
+                  "DAC_OVERRIDE",
+                  "SYSLOG"
+                ],
+                "drop": [
+                  "ALL"
+                ]
+              },
+              "privileged": false
+            },
+            "startupProbe": {
+              "failureThreshold": 3,
+              "grpc": {
+                "port": 6789,
+                "service": "startup"
+              },
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 60
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "FallbackToLogsOnError",
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/tetragon/tetragon.conf.d/",
+                "name": "tetragon-config",
+                "readOnly": true
+              },
+              {
+                "mountPath": "/sys/fs/bpf",
+                "mountPropagation": "HostToContainer",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/cilium",
+                "name": "cilium-run"
+              },
+              {
+                "mountPath": "/var/run/tetragon",
+                "name": "tetragon-run"
+              },
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/procRoot",
+                "name": "host-proc"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-6wj6j",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "Default",
+        "enableServiceLinks": true,
+        "hostNetwork": true,
+        "hostUsers": true,
+        "initContainers": [
+          {
+            "args": [
+              "grep -q \" /sys/fs/bpf bpf \" /proc/mounts || mount -t bpf bpf /sys/fs/bpf"
+            ],
+            "command": [
+              "/bin/sh",
+              "-c"
+            ],
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imagePullPolicy": "IfNotPresent",
+            "name": "mount-bpf-fs",
+            "resources": {},
+            "securityContext": {
+              "privileged": true
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "FallbackToLogsOnError",
+            "volumeMounts": [
+              {
+                "mountPath": "/sys/fs/bpf",
+                "mountPropagation": "Bidirectional",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-6wj6j",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "nodeName": "lab-w2",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {},
+        "serviceAccount": "tetragon",
+        "serviceAccountName": "tetragon",
+        "terminationGracePeriodSeconds": 1,
+        "tolerations": [
+          {
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/disk-pressure",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/memory-pressure",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/pid-pressure",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/unschedulable",
+            "operator": "Exists"
+          },
+          {
+            "effect": "NoSchedule",
+            "key": "node.kubernetes.io/network-unavailable",
+            "operator": "Exists"
+          }
+        ],
+        "volumes": [
+          {
+            "hostPath": {
+              "path": "/var/run/cilium",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "cilium-run"
+          },
+          {
+            "hostPath": {
+              "path": "/var/run/tetragon",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "tetragon-run"
+          },
+          {
+            "hostPath": {
+              "path": "/var/log/tetragon",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "export-logs"
+          },
+          {
+            "configMap": {
+              "defaultMode": 420,
+              "name": "tetragon-config"
+            },
+            "name": "tetragon-config"
+          },
+          {
+            "hostPath": {
+              "path": "/sys/fs/bpf",
+              "type": "DirectoryOrCreate"
+            },
+            "name": "bpf-maps"
+          },
+          {
+            "hostPath": {
+              "path": "/proc",
+              "type": "Directory"
+            },
+            "name": "host-proc"
+          },
+          {
+            "name": "kube-api-access-6wj6j",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:28Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:28Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:57Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:57Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-11-16T15:57:07Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "containerID": "containerd://326fe70ccdb99a635356f8e81818657bbf201cc23b7d3d582814b99926f4d08d",
+            "image": "quay.io/cilium/hubble-export-stdout:v1.1.1",
+            "imageID": "quay.io/cilium/hubble-export-stdout@sha256:cf701f96d1c8de30231792e35733e1ab07451e11751ef4f676f482836759da06",
+            "lastState": {},
+            "name": "export-stdout",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-11-16T15:57:32Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 0,
+                "supplementalGroups": [
+                  0
+                ],
+                "uid": 0
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-6wj6j",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          },
+          {
+            "allocatedResources": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            },
+            "containerID": "containerd://286089e90ad6142f626c1fede3a79b73b1e34b94a404830c2e335e6a8564412b",
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imageID": "quay.io/cilium/tetragon@sha256:5ed9088a1582131d71b06c98e0d549a37a71ae63ab13aabefc7a47553c822a9d",
+            "lastState": {},
+            "name": "tetragon",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-11-16T15:57:32Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 0,
+                "supplementalGroups": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  6,
+                  10,
+                  11,
+                  20,
+                  26,
+                  27
+                ],
+                "uid": 0
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/tetragon/tetragon.conf.d/",
+                "name": "tetragon-config",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/sys/fs/bpf",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/cilium",
+                "name": "cilium-run"
+              },
+              {
+                "mountPath": "/var/run/tetragon",
+                "name": "tetragon-run"
+              },
+              {
+                "mountPath": "/var/log/tetragon",
+                "name": "export-logs"
+              },
+              {
+                "mountPath": "/procRoot",
+                "name": "host-proc"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-6wj6j",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "192.168.141.144",
+        "hostIPs": [
+          {
+            "ip": "192.168.141.144"
+          }
+        ],
+        "initContainerStatuses": [
+          {
+            "containerID": "containerd://fa98ee615d37a1ebbf088a249ca40c0639b11d05b37e944f0593899d8a695fff",
+            "image": "quay.io/cilium/tetragon:v1.8.0",
+            "imageID": "quay.io/cilium/tetragon@sha256:5ed9088a1582131d71b06c98e0d549a37a71ae63ab13aabefc7a47553c822a9d",
+            "lastState": {},
+            "name": "mount-bpf-fs",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://fa98ee615d37a1ebbf088a249ca40c0639b11d05b37e944f0593899d8a695fff",
+                "exitCode": 0,
+                "finishedAt": "2026-11-16T15:57:27Z",
+                "reason": "Completed",
+                "startedAt": "2026-11-16T15:57:27Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 0,
+                "supplementalGroups": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  6,
+                  10,
+                  11,
+                  20,
+                  26,
+                  27
+                ],
+                "uid": 0
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/sys/fs/bpf",
+                "name": "bpf-maps"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-6wj6j",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "192.168.141.144",
+        "podIPs": [
+          {
+            "ip": "192.168.141.144"
+          }
+        ],
+        "qosClass": "Burstable",
+        "startTime": "2026-11-16T15:57:07Z"
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}

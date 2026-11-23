@@ -1,0 +1,46 @@
+{
+  "credential_pattern_scan_passed": true,
+  "current_sources_match_all_pilots": true,
+  "runs": [
+    {
+      "run_id": "s0-s4-control-20261123T045647Z-1848096",
+      "locust_total_requests": 281,
+      "locust_total_failures": 0,
+      "recovery_requests": 57,
+      "recovery_failures": 0,
+      "recovery_checkout_successes": 3
+    },
+    {
+      "run_id": "s4-20261123T045922Z-1853277",
+      "locust_total_requests": 295,
+      "locust_total_failures": 0,
+      "recovery_requests": 73,
+      "recovery_failures": 0,
+      "recovery_checkout_successes": 5
+    },
+    {
+      "run_id": "s4-20261123T050200Z-1858668",
+      "locust_total_requests": 274,
+      "locust_total_failures": 0,
+      "recovery_requests": 58,
+      "recovery_failures": 0,
+      "recovery_checkout_successes": 1
+    },
+    {
+      "run_id": "s4-20261123T050441Z-1864262",
+      "locust_total_requests": 288,
+      "locust_total_failures": 0,
+      "recovery_requests": 67,
+      "recovery_failures": 0,
+      "recovery_checkout_successes": 1
+    },
+    {
+      "run_id": "s4-20261123T050725Z-1869684",
+      "locust_total_requests": 303,
+      "locust_total_failures": 0,
+      "recovery_requests": 75,
+      "recovery_failures": 0,
+      "recovery_checkout_successes": 3
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": 4,
+  "run_id": "s4-s4-20261123T045120Z-1837437",
+  "scenario_id": "S4",
+  "mode": "smoke",
+  "status": "completed",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 10,
+  "pre_seconds": 10,
+  "recovery_seconds": 10,
+  "s4": {
+    "profile": "bounded_http",
+    "rate": 3,
+    "duration_seconds": 5,
+    "concurrency": 2,
+    "method": "GET",
+    "path": "/",
+    "request_timeout_seconds": 3,
+    "connection_mode": "new_tcp_each_request",
+    "guard_poll_target_seconds": 5
+  },
+  "temporary_resources": {
+    "actor": "gd4-s4-1837437",
+    "locust_deployment": "gd4-locust-1837437",
+    "configmap": "gd4-s4-code-1837437"
+  },
+  "source_snapshot": "source",
+  "script_sha256": {
+    "runner.py": "fe9cb99fc9fba372a00703f4fe64c9bc6224861cecb22612be5f7189eb3db42b",
+    "label.py": "a6ef0c6a0264286cc2d8aaa37510721498859e1dad4613bfdf0e98889a8edd66",
+    "s4_runner.py": "50acf2218d3fce2ab11b73c63652608aa5ac06ae388748c667ea221c8a1dfbfd",
+    "s4_support.py": "2656534009831470e74fc39569514fd5bb0c71369025b73f361b8703c5c5e0d1",
+    "s4_verify.py": "3e17ea2c2b1dc24458afa410947995078de4e8f958124c5e894ea6a6db8e058a",
+    "s4/client.py": "2ec872261889342f84114e3649cae49a421e2260ae7e24a0a3e2c544c14e6ecd",
+    "s4/locust_wrapper.py": "4bc0f7098d0d8b4eff0babd7bf4528680b972eab388c93c6db4dc960437682e5",
+    "telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "code_bundle_sha256": "1b827524375a7a62c78c17e0f40470210ededd96003c6066a8c038af975b714d",
+  "targets": [
+    {
+      "service": "frontend",
+      "ip": "10.43.221.147",
+      "port": 80,
+      "target_ips": [
+        "10.42.1.12",
+        "10.43.221.147"
+      ],
+      "target_ports": [
+        80,
+        8080
+      ]
+    }
+  ],
+  "actor": {
+    "name": "gd4-s4-1837437",
+    "uid": "bf2b01a0-0bd5-4d96-8082-c4330e28eb62",
+    "ip": "10.42.1.62",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0"
+  },
+  "capture_start": "2026-11-23T04:51:25.188350+00:00",
+  "locust": {
+    "pod": "gd4-locust-1837437-549cb4d858-ngvrv",
+    "uid": "c4db404f-8e80-4c20-8a7c-9f8a8d77ff3f",
+    "image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "original_deployment_unchanged": true
+  },
+  "measurement_end": "2026-11-23T04:52:29.173513+00:00",
+  "finished": "2026-11-23T04:52:38.221172+00:00",
+  "cleanup_errors": [],
+  "guard_triggered": false
+}

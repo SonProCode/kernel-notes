@@ -285,3 +285,8 @@ Nếu SSH mất kết nối hoặc bị tắt đột ngột, kiểm tra trạng 
 | Grafana không có alert S1–S3 | Dashboard hiện chủ yếu hiển thị metric | Đọc raw/verifier; detector/alert sẽ triển khai ở GĐ5 |
 
 Giữ tên run, câu lệnh đã chạy và error đầy đủ khi kiểm tra lỗi. Những thông tin này giúp phân biệt lỗi môi trường, hành vi và đường thu dữ liệu.
+
+
+## 12. Tiếp tục sang S4
+
+[S4.md](S4.md) có hướng dẫn riêng về request/giây, concurrency, p95, S0 đối chứng mới và guard. S4 dùng Deployment Locust tạm để ghi từng request; bản loadgenerator gốc vẫn ở 0. Dữ liệu của family này dùng normalized v5, vì vậy đọc đúng hướng dẫn kịch bản thay vì áp dụng mọi điều kiện S1–S3 nguyên xi.

@@ -1,0 +1,21 @@
+{
+  "samples": [
+    {
+      "node": "manager",
+      "unix_seconds": 1795410519.0674772,
+      "ntp_synchronized": "yes"
+    },
+    {
+      "node": "worker-1",
+      "unix_seconds": 1795410520.4777195,
+      "ntp_synchronized": "yes"
+    },
+    {
+      "node": "worker-2",
+      "unix_seconds": 1795410520.6143785,
+      "ntp_synchronized": "yes"
+    }
+  ],
+  "all_ntp_report_synchronized": true,
+  "scope": "Independent SSH command samples; this is NTP status evidence, not a measured inter-node clock offset."
+}

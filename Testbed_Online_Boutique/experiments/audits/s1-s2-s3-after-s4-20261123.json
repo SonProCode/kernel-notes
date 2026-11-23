@@ -1,0 +1,1653 @@
+{
+  "scope": "GĐ4 functional pilot audit; historical datasets are not modified",
+  "checked_at": "2026-11-23T05:00:06.555125+00:00",
+  "clock_source": "analysis host UTC; per-run event timestamps retain the original lab clocks",
+  "audit_source_sha256": {
+    "audit_scenarios.py": "fb7212032f96dc0075b5a025feb08cc04aa18c10e0e11025b704039aacc2261c",
+    "s1_verify.py": "fddb3ae89f8f897ec9599e696da0128ff467ff115f1c41409271fb5c01618801",
+    "s2_verify.py": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+    "s2_audit.py": "8b6c1d1e6ef4759ab2b0fd7026dc3201a8b13e38c2858eea3cd32b338dd8baf2",
+    "s3_verify.py": "58c21d9af809a55b679ea14610d9d6bd8ff51999da20f2135c17e656a46d3c84",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90"
+  },
+  "runs": [
+    {
+      "run_id": "s1-20261118T165249Z-1698505",
+      "scenario": "S1",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": null,
+      "included": true,
+      "source_snapshot_available": false,
+      "source_hashes_verified": 0,
+      "limitations": [
+        "Historical source snapshot absent; recorded source hashes cannot be independently reconstructed from this archive.",
+        "Prometheus before/after loss-counter evidence is unavailable for this historical run."
+      ],
+      "metrics": {
+        "available": false,
+        "passed": null,
+        "reason": "No complete before/after Prometheus snapshot pair"
+      },
+      "events": 10461,
+      "label_versions": {
+        "v2": 10461
+      },
+      "verification": {
+        "expected_operations": 22,
+        "receipts": 22,
+        "operations_with_native_event": 22,
+        "native_records_verified": 22,
+        "receipt_targets_valid": true,
+        "native_records_valid": true,
+        "unmatched_operations": [],
+        "outcomes": {
+          "connected": 11,
+          "timeout": 11
+        },
+        "capture_checks_passed": true,
+        "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s1-20261118T165440Z-1701809",
+      "scenario": "S1",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": null,
+      "included": true,
+      "source_snapshot_available": false,
+      "source_hashes_verified": 0,
+      "limitations": [
+        "Historical source snapshot absent; recorded source hashes cannot be independently reconstructed from this archive.",
+        "Prometheus before/after loss-counter evidence is unavailable for this historical run."
+      ],
+      "metrics": {
+        "available": false,
+        "passed": null,
+        "reason": "No complete before/after Prometheus snapshot pair"
+      },
+      "events": 11130,
+      "label_versions": {
+        "v2": 11130
+      },
+      "verification": {
+        "expected_operations": 22,
+        "receipts": 22,
+        "operations_with_native_event": 22,
+        "native_records_verified": 22,
+        "receipt_targets_valid": true,
+        "native_records_valid": true,
+        "unmatched_operations": [],
+        "outcomes": {
+          "connected": 11,
+          "timeout": 11
+        },
+        "capture_checks_passed": true,
+        "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s1-20261118T165755Z-1708256",
+      "scenario": "S1",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": false,
+      "source_hashes_verified": 0,
+      "limitations": [
+        "Historical source snapshot absent; recorded source hashes cannot be independently reconstructed from this archive."
+      ],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 12135,
+      "label_versions": {
+        "v2": 12135
+      },
+      "verification": {
+        "expected_operations": 22,
+        "receipts": 22,
+        "operations_with_native_event": 22,
+        "native_records_verified": 22,
+        "receipt_targets_valid": true,
+        "native_records_valid": true,
+        "unmatched_operations": [],
+        "outcomes": {
+          "connected": 11,
+          "timeout": 11
+        },
+        "capture_checks_passed": true,
+        "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s1-20261122T131843Z-611505",
+      "scenario": "S1",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": true,
+      "source_hashes_verified": 4,
+      "limitations": [],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 7719,
+      "label_versions": {
+        "v4": 7719
+      },
+      "verification": {
+        "expected_operations": 22,
+        "receipts": 22,
+        "operations_with_native_event": 22,
+        "native_records_verified": 22,
+        "receipt_targets_valid": true,
+        "native_records_valid": true,
+        "unmatched_operations": [],
+        "outcomes": {
+          "connected": 11,
+          "timeout": 11
+        },
+        "capture_checks_passed": true,
+        "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s1-20261122T131941Z-613505",
+      "scenario": "S1",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": true,
+      "source_hashes_verified": 4,
+      "limitations": [],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 8378,
+      "label_versions": {
+        "v4": 8378
+      },
+      "verification": {
+        "expected_operations": 22,
+        "receipts": 22,
+        "operations_with_native_event": 22,
+        "native_records_verified": 22,
+        "receipt_targets_valid": true,
+        "native_records_valid": true,
+        "unmatched_operations": [],
+        "outcomes": {
+          "connected": 11,
+          "timeout": 11
+        },
+        "capture_checks_passed": true,
+        "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s2-20261120T160759Z-1238499",
+      "scenario": "S2",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": false,
+      "source_hashes_verified": 0,
+      "limitations": [
+        "Historical source snapshot absent; recorded source hashes cannot be independently reconstructed from this archive."
+      ],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 6469,
+      "label_versions": {
+        "v3": 6469
+      },
+      "native_rpc_evidence": {
+        "operations": 5,
+        "native_records": 8
+      },
+      "verification": {
+        "expected_calls": 5,
+        "receipts": 5,
+        "api_successes": 5,
+        "unique_transaction_ids": 5,
+        "rpc_operations_with_network_event": 5,
+        "uniquely_correlated_server_calls": 5,
+        "uncorrelated_operations": [],
+        "ambiguous_operations": [],
+        "clock_tolerance_seconds": 2,
+        "verifier_sha256": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s2-20261120T161015Z-1242543",
+      "scenario": "S2",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": true,
+      "source_hashes_verified": 9,
+      "limitations": [],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 19918,
+      "label_versions": {
+        "v3": 19918
+      },
+      "native_rpc_evidence": {
+        "operations": 30,
+        "native_records": 34
+      },
+      "identity_and_matrix_audit": {
+        "run_id": "s2-20261120T161015Z-1242543",
+        "mode": "pilot",
+        "actor_service_account": "gd4-1242543",
+        "legitimate_service_account": "checkoutservice",
+        "expected_callers_in_captured_matrix": [
+          "checkoutservice"
+        ],
+        "source_hashes_verified": 9,
+        "raw_network_events_verified": 34,
+        "rpc_operations_verified": 30,
+        "warmup_seconds": 30,
+        "pre_seconds": 10,
+        "recovery_seconds": 10,
+        "functional_pilot_checks_passed": true,
+        "research_scope": "S2 GĐ4 pilot; detector and mitigation effectiveness are assessed in later phases"
+      },
+      "verification": {
+        "expected_calls": 30,
+        "receipts": 30,
+        "api_successes": 30,
+        "unique_transaction_ids": 30,
+        "rpc_operations_with_network_event": 30,
+        "uniquely_correlated_server_calls": 30,
+        "uncorrelated_operations": [],
+        "ambiguous_operations": [],
+        "clock_tolerance_seconds": 2,
+        "verifier_sha256": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s2-20261120T161240Z-1246649",
+      "scenario": "S2",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": true,
+      "source_hashes_verified": 10,
+      "limitations": [],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 19995,
+      "label_versions": {
+        "v3": 19995
+      },
+      "native_rpc_evidence": {
+        "operations": 30,
+        "native_records": 35
+      },
+      "identity_and_matrix_audit": {
+        "run_id": "s2-20261120T161240Z-1246649",
+        "mode": "pilot",
+        "actor_service_account": "gd4-1246649",
+        "legitimate_service_account": "checkoutservice",
+        "expected_callers_in_captured_matrix": [
+          "checkoutservice"
+        ],
+        "source_hashes_verified": 10,
+        "raw_network_events_verified": 35,
+        "rpc_operations_verified": 30,
+        "warmup_seconds": 30,
+        "pre_seconds": 10,
+        "recovery_seconds": 10,
+        "functional_pilot_checks_passed": true,
+        "research_scope": "S2 GĐ4 pilot; detector and mitigation effectiveness are assessed in later phases"
+      },
+      "verification": {
+        "expected_calls": 30,
+        "receipts": 30,
+        "api_successes": 30,
+        "unique_transaction_ids": 30,
+        "rpc_operations_with_network_event": 30,
+        "uniquely_correlated_server_calls": 30,
+        "uncorrelated_operations": [],
+        "ambiguous_operations": [],
+        "clock_tolerance_seconds": 2,
+        "verifier_sha256": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s2-20261120T161630Z-1252808",
+      "scenario": "S2",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": "validated",
+      "disposition": "excluded_non_pilot",
+      "included": false
+    },
+    {
+      "run_id": "s2-20261120T161720Z-1254700",
+      "scenario": "S2",
+      "mode": "smoke",
+      "status": "interrupted",
+      "dataset_status": null,
+      "disposition": "excluded_incomplete_or_failed",
+      "included": false
+    },
+    {
+      "run_id": "s2-20261122T103155Z-391001",
+      "scenario": "S2",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": "validated",
+      "disposition": "excluded_non_pilot",
+      "included": false
+    },
+    {
+      "run_id": "s2-20261122T132039Z-615550",
+      "scenario": "S2",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": "validated",
+      "disposition": "excluded_non_pilot",
+      "included": false
+    },
+    {
+      "run_id": "s3-20261118T164938Z-1692635",
+      "scenario": "S3",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": null,
+      "disposition": "excluded_non_pilot",
+      "included": false
+    },
+    {
+      "run_id": "s3-20261118T165143Z-1696393",
+      "scenario": "S3",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": null,
+      "disposition": "excluded_non_pilot",
+      "included": false
+    },
+    {
+      "run_id": "s3-20261122T101757Z-366636",
+      "scenario": "S3",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": "failed_validation",
+      "disposition": "excluded_incomplete_or_failed",
+      "included": false
+    },
+    {
+      "run_id": "s3-20261122T102133Z-372614",
+      "scenario": "S3",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": "validated",
+      "disposition": "excluded_non_pilot",
+      "included": false
+    },
+    {
+      "run_id": "s3-20261122T102500Z-378143",
+      "scenario": "S3",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": true,
+      "source_hashes_verified": 8,
+      "limitations": [],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 23704,
+      "label_versions": {
+        "v4": 23704
+      },
+      "verification": {
+        "expected_operations": 18,
+        "receipts": 18,
+        "operations_passed": 18,
+        "shell_operations": 3,
+        "network_tool_operations": 12,
+        "token_reads": 3,
+        "projected_token_configuration_valid": true,
+        "credential_export_scan_passed": true,
+        "native_records_verified": 39,
+        "agent_and_loss_metric_checks_passed": true,
+        "loss_counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "operations": [
+          {
+            "operation_id": "r0-curl",
+            "kind": "runtime_tool",
+            "tool": "curl",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4527
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4528
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4529
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-wget",
+            "kind": "runtime_tool",
+            "tool": "wget",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4532
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4533
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4534
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-nc",
+            "kind": "runtime_tool",
+            "tool": "nc",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4542
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4543
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-nmap",
+            "kind": "runtime_tool",
+            "tool": "nmap",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4545
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4546
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-token",
+            "kind": "file_read",
+            "tool": null,
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "projected_token_claims": true,
+              "file_read_observed": true,
+              "helper_lineage": true,
+              "bytes_read_positive": true
+            },
+            "event_types": {
+              "file_read_permission": 2
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4548
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4549
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-shell",
+            "kind": "process_exec",
+            "tool": "shell",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true
+            },
+            "event_types": {
+              "process_exec": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 4493
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-curl",
+            "kind": "runtime_tool",
+            "tool": "curl",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7138
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7139
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7140
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-wget",
+            "kind": "runtime_tool",
+            "tool": "wget",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7143
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7144
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7145
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-nc",
+            "kind": "runtime_tool",
+            "tool": "nc",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7216
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7217
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-nmap",
+            "kind": "runtime_tool",
+            "tool": "nmap",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7278
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7279
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-token",
+            "kind": "file_read",
+            "tool": null,
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "projected_token_claims": true,
+              "file_read_observed": true,
+              "helper_lineage": true,
+              "bytes_read_positive": true
+            },
+            "event_types": {
+              "file_read_permission": 2
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7281
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 7282
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-shell",
+            "kind": "process_exec",
+            "tool": "shell",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true
+            },
+            "event_types": {
+              "process_exec": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 6972
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-curl",
+            "kind": "runtime_tool",
+            "tool": "curl",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9488
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9489
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9490
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-wget",
+            "kind": "runtime_tool",
+            "tool": "wget",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9522
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9523
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9524
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-nc",
+            "kind": "runtime_tool",
+            "tool": "nc",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9569
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9570
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-nmap",
+            "kind": "runtime_tool",
+            "tool": "nmap",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9604
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9605
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-token",
+            "kind": "file_read",
+            "tool": null,
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "projected_token_claims": true,
+              "file_read_observed": true,
+              "helper_lineage": true,
+              "bytes_read_positive": true
+            },
+            "event_types": {
+              "file_read_permission": 2
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9607
+              },
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9608
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-shell",
+            "kind": "process_exec",
+            "tool": "shell",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true
+            },
+            "event_types": {
+              "process_exec": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w1.ndjson",
+                "line": 9486
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s3-20261122T102750Z-382892",
+      "scenario": "S3",
+      "mode": "pilot",
+      "status": "completed",
+      "dataset_status": "validated",
+      "included": true,
+      "source_snapshot_available": true,
+      "source_hashes_verified": 8,
+      "limitations": [],
+      "metrics": {
+        "available": true,
+        "passed": true,
+        "counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+      },
+      "events": 23217,
+      "label_versions": {
+        "v4": 23217
+      },
+      "verification": {
+        "expected_operations": 18,
+        "receipts": 18,
+        "operations_passed": 18,
+        "shell_operations": 3,
+        "network_tool_operations": 12,
+        "token_reads": 3,
+        "projected_token_configuration_valid": true,
+        "credential_export_scan_passed": true,
+        "native_records_verified": 39,
+        "agent_and_loss_metric_checks_passed": true,
+        "loss_counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "operations": [
+          {
+            "operation_id": "r0-curl",
+            "kind": "runtime_tool",
+            "tool": "curl",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3916
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3917
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3918
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-wget",
+            "kind": "runtime_tool",
+            "tool": "wget",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3947
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3948
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3949
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-nc",
+            "kind": "runtime_tool",
+            "tool": "nc",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3999
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 4000
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-nmap",
+            "kind": "runtime_tool",
+            "tool": "nmap",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 4038
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 4061
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-token",
+            "kind": "file_read",
+            "tool": null,
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "projected_token_claims": true,
+              "file_read_observed": true,
+              "helper_lineage": true,
+              "bytes_read_positive": true
+            },
+            "event_types": {
+              "file_read_permission": 2
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 4063
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 4064
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r0-shell",
+            "kind": "process_exec",
+            "tool": "shell",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true
+            },
+            "event_types": {
+              "process_exec": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 3910
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-curl",
+            "kind": "runtime_tool",
+            "tool": "curl",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6037
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6038
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6039
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-wget",
+            "kind": "runtime_tool",
+            "tool": "wget",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6052
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6060
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6062
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-nc",
+            "kind": "runtime_tool",
+            "tool": "nc",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6078
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6079
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-nmap",
+            "kind": "runtime_tool",
+            "tool": "nmap",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6104
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6105
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-token",
+            "kind": "file_read",
+            "tool": null,
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "projected_token_claims": true,
+              "file_read_observed": true,
+              "helper_lineage": true,
+              "bytes_read_positive": true
+            },
+            "event_types": {
+              "file_read_permission": 2
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6132
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6133
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r1-shell",
+            "kind": "process_exec",
+            "tool": "shell",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true
+            },
+            "event_types": {
+              "process_exec": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 6031
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-curl",
+            "kind": "runtime_tool",
+            "tool": "curl",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7817
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7818
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7819
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-wget",
+            "kind": "runtime_tool",
+            "tool": "wget",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1,
+              "tcp_send": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7826
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7827
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7828
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-nc",
+            "kind": "runtime_tool",
+            "tool": "nc",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7882
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7883
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-nmap",
+            "kind": "runtime_tool",
+            "tool": "nmap",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true,
+              "helper_is_shell_child": true,
+              "tcp_connect_observed": true
+            },
+            "event_types": {
+              "process_exec": 1,
+              "tcp_connect_attempt": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7890
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7891
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-token",
+            "kind": "file_read",
+            "tool": null,
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "projected_token_claims": true,
+              "file_read_observed": true,
+              "helper_lineage": true,
+              "bytes_read_positive": true
+            },
+            "event_types": {
+              "file_read_permission": 2
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7919
+              },
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7920
+              }
+            ],
+            "passed": true
+          },
+          {
+            "operation_id": "r2-shell",
+            "kind": "process_exec",
+            "tool": "shell",
+            "checks": {
+              "operation_completed": true,
+              "has_correlated_event": true,
+              "process_exec_observed": true,
+              "parent_lineage": true
+            },
+            "event_types": {
+              "process_exec": 1
+            },
+            "raw_references": [
+              {
+                "file": "raw/lab-w2.ndjson",
+                "line": 7762
+              }
+            ],
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "passed": true,
+      "disposition": "functional_pilot_verified"
+    },
+    {
+      "run_id": "s3-20261122T103055Z-388332",
+      "scenario": "S3",
+      "mode": "smoke",
+      "status": "interrupted",
+      "dataset_status": null,
+      "disposition": "excluded_incomplete_or_failed",
+      "included": false
+    },
+    {
+      "run_id": "s3-20261122T132130Z-617543",
+      "scenario": "S3",
+      "mode": "smoke",
+      "status": "completed",
+      "dataset_status": "validated",
+      "disposition": "excluded_non_pilot",
+      "included": false
+    }
+  ],
+  "pilots_reviewed": 10,
+  "pilots_passed": 10,
+  "passed": true
+}

@@ -1,0 +1,14 @@
+{
+  "scheduled": 300,
+  "submitted": 295,
+  "skipped_busy": 5,
+  "skipped_late": 0,
+  "started": "2026-11-23T05:06:03.668754+00:00",
+  "ended": "2026-11-23T05:06:33.700283+00:00",
+  "elapsed_seconds": 30.031520801014267,
+  "configured_rate": 10,
+  "duration_seconds": 30,
+  "concurrency": 4,
+  "interrupted": false,
+  "connection_mode": "one_new_tcp_connection_per_request"
+}

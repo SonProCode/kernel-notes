@@ -52,3 +52,8 @@ Các lượt interrupted/failed có thể chỉ có raw. Đọc manifest và pos
 ## Rà soát toàn bộ S1–S3 ngày 22/11/2026
 
 Đã kiểm chứng lại 10 pilot từ archive và chạy thêm smoke hồi quy S2/S3. S1 có verifier strict cho đủ từng thao tác, source snapshot và hai pilot mới trên w1/w2. Bắt đầu thực hành từ [USAGE.md](USAGE.md); xem [S1.md](S1.md) và [báo cáo rà soát đầy đủ](REVIEW-S1-S2-S3.md) để biết kết quả, hạn chế và các lỗi hướng dẫn đã sửa.
+
+
+## S4 ngày 23/11/2026
+
+Đã triển khai và chạy 1 S0 control cùng 4 S4 pilot (3/6/10 RPS trên w1, thử lại 10 RPS trên w2). Có 861/861 HTTP operation tải phụ đối chiếu native, source và image đồng nhất giữa 5 lượt. Có thêm smoke, thử dừng SIGTERM trong attack, unit tests và report CPU/RAM/latency theo request. Xem [hướng dẫn S4](S4.md) và [kết quả S4](S4-RESULTS.md). Đây là checkpoint pilot; S5 và cohort official vẫn thuộc bước tiếp theo.

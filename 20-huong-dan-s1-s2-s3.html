@@ -417,6 +417,8 @@ sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
 </tbody>
 </table>
 <p>Giữ tên run, câu lệnh đã chạy và error đầy đủ khi kiểm tra lỗi. Những thông tin này giúp phân biệt lỗi môi trường, hành vi và đường thu dữ liệu.</p>
+<h2 id="12-tiep-tuc-sang-s4">12. Tiếp tục sang S4</h2>
+<p><a href="22-s4-tai-noi-bo.html">S4.md</a> có hướng dẫn riêng về request/giây, concurrency, p95, S0 đối chứng mới và guard. S4 dùng Deployment Locust tạm để ghi từng request; bản loadgenerator gốc vẫn ở 0. Dữ liệu của family này dùng normalized v5, vì vậy đọc đúng hướng dẫn kịch bản thay vì áp dụng mọi điều kiện S1–S3 nguyên xi.</p>
 <h2 id="ra-soat-s1-s2-s3-va-huong-dan-su-dung">Rà soát S1, S2, S3 và hướng dẫn sử dụng</h2>
 <p>Ngày rà soát: 22/11/2026. Kết luận trong trang này là <strong>checkpoint chức năng GĐ4 ở mức pilot</strong>. Detector, hiệu quả chặn và bộ dữ liệu official được nghiệm thu ở các bước tương ứng.</p>
 <h2 id="1-da-doi-soat-bang-cach-nao">1. Đã đối soát bằng cách nào?</h2>
@@ -590,6 +592,7 @@ sudo k3s kubectl -n boutique get serviceaccounts -l experiment-run
 <li><a href="#9-kiem-tra-lai-nhieu-luot-ma-giu-nguyen-du-lieu-cu">9. Kiểm tra lại nhiều lượt mà giữ nguyên dữ liệu cũ</a></li>
 <li><a href="#10-dung-va-kiem-tra-don-dep">10. Dừng và kiểm tra dọn dẹp</a></li>
 <li><a href="#11-cac-loi-nguoi-moi-thuong-gap">11. Các lỗi người mới thường gặp</a></li>
+<li><a href="#12-tiep-tuc-sang-s4">12. Tiếp tục sang S4</a></li>
 <li><a href="#ra-soat-s1-s2-s3-va-huong-dan-su-dung">Rà soát S1, S2, S3 và hướng dẫn sử dụng</a></li>
 <li><a href="#1-da-doi-soat-bang-cach-nao">1. Đã đối soát bằng cách nào?</a></li>
 <li><a href="#2-ket-qua-tong-hop">2. Kết quả tổng hợp</a><ul>

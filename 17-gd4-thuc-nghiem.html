@@ -5,7 +5,7 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 16 · LAB THỰC TẾ · GĐ4 · S1–S5 · 26 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 16 · LAB THỰC TẾ · GĐ4 · S1–S5 · 27 PHÚT ĐỌC</div>
 <h1>GĐ4 · Tạo dữ liệu attack và normal</h1><p>Kế hoạch S1–S5, quy tắc nhãn và tiến độ pilot trên hai worker.</p></header>
 <div class="shell reading"><article class="prose"><p>Ngày lập kế hoạch 18/11/2026, giờ Việt Nam.</p>
 <p><strong>Trang này là kế hoạch tổng thể.</strong> Người mới thực hành đọc <a href="20-huong-dan-s1-s2-s3.html">USAGE.md</a>, rồi <a href="21-s1-quet-service.html">S1</a>, <a href="18-s2-goi-api-trai-luong.html">S2</a>, <a href="19-s3-runtime-abuse.html">S3</a>. <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">Báo cáo rà soát 22/11</a> phân biệt phần đã chạy với phần dự kiến. Một số đoạn thiết kế bên dưới mô tả mốc ban đầu (ví dụ fixture token giả); S3 runtime hiện có projected token thật của actor tạm như bài S3 giải thích.</p>
@@ -490,6 +490,8 @@
 <p>Ngày 20/11/2026 đã triển khai S2 gọi Charge bằng gRPC. Các bước chạy lại và xác minh từng lời gọi được ghi trong <a href="18-s2-goi-api-trai-luong.html">S2.md</a>.</p>
 <h2 id="tien-do-s3-ngay-22-11-2026">Tiến độ S3 ngày 22/11/2026</h2>
 <p>Đã triển khai profile runtime với shell, đủ bốn công cụ curl/wget/nc/nmap và đọc projected ServiceAccount token thật của Pod actor tạm. Chỉ xuất metadata đọc token. Hướng dẫn, bằng chứng hai worker, lịch sử lỗi và cách double check nằm trong <a href="19-s3-runtime-abuse.html">S3.md</a>. Fixture giả cũ vẫn dùng cho smoke. S4/S5 và bộ official cùng S0 đối chứng là công việc tiếp theo.</p>
+<h2 id="s4-ngay-23-11-2026">S4 ngày 23/11/2026</h2>
+<p>Đã bổ sung runner S4 và S0 control, client HTTP có pacing/concurrency, Locust event hook ghi từng request, guard tài nguyên và xác minh native theo source port. <a href="22-s4-tai-noi-bo.html">S4.md</a> hướng dẫn chạy/đọc kết quả; <a href="22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026">S4-RESULTS.md</a> lưu số liệu pilot. S5 và cohort official theo kế hoạch là các bước tiếp theo.</p>
 <h2 id="ket-qua-khoi-dong-gd4">Kết quả khởi động GĐ4</h2>
 <p>Cập nhật ngày 19/11/2026, giờ Việt Nam.</p>
 <p>Đã triển khai phần chuẩn bị tuần 11 và pilot S1 trên lab. Đây là checkpoint đầu của GĐ4. Hướng dẫn chạy hiện tại ở <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/IMPLEMENTATION.md">IMPLEMENTATION.md</a>, kế hoạch đầy đủ ở <a href="17-gd4-thuc-nghiem.html">README.md</a>.</p>
@@ -575,7 +577,9 @@
 <p>Trong mỗi thư mục run đã hoàn tất, dataset.tar.gz chứa raw/, normalized.ndjson và labeled-windows.ndjson. Manifest, timeline, receipt, quality và processing được giữ riêng để đọc trên GitHub.</p>
 <p>Các lượt interrupted/failed có thể chỉ có raw. Đọc manifest và postmortem trước khi chọn dữ liệu cho phân tích. Liên kết raw_file/raw_line trong bản ghi chuẩn hóa dùng được sau khi giải nén tại thư mục run.</p>
 <h2 id="ra-soat-toan-bo-s1s3-ngay-22-11-2026">Rà soát toàn bộ S1–S3 ngày 22/11/2026</h2>
-<p>Đã kiểm chứng lại 10 pilot từ archive và chạy thêm smoke hồi quy S2/S3. S1 có verifier strict cho đủ từng thao tác, source snapshot và hai pilot mới trên w1/w2. Bắt đầu thực hành từ <a href="20-huong-dan-s1-s2-s3.html">USAGE.md</a>; xem <a href="21-s1-quet-service.html">S1.md</a> và <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">báo cáo rà soát đầy đủ</a> để biết kết quả, hạn chế và các lỗi hướng dẫn đã sửa.</p><div class="finish"><button class="button" data-complete="17-gd4-thuc-nghiem" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="16-ket-qua-baseline.html">← Đọc kết quả baseline thực tế</a><a href="20-huong-dan-s1-s2-s3.html">Bắt đầu sử dụng S1, S2, S3 →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<p>Đã kiểm chứng lại 10 pilot từ archive và chạy thêm smoke hồi quy S2/S3. S1 có verifier strict cho đủ từng thao tác, source snapshot và hai pilot mới trên w1/w2. Bắt đầu thực hành từ <a href="20-huong-dan-s1-s2-s3.html">USAGE.md</a>; xem <a href="21-s1-quet-service.html">S1.md</a> và <a href="20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung">báo cáo rà soát đầy đủ</a> để biết kết quả, hạn chế và các lỗi hướng dẫn đã sửa.</p>
+<h2 id="s4-ngay-23-11-2026_1">S4 ngày 23/11/2026</h2>
+<p>Đã triển khai và chạy 1 S0 control cùng 4 S4 pilot (3/6/10 RPS trên w1, thử lại 10 RPS trên w2). Có 861/861 HTTP operation tải phụ đối chiếu native, source và image đồng nhất giữa 5 lượt. Có thêm smoke, thử dừng SIGTERM trong attack, unit tests và report CPU/RAM/latency theo request. Xem <a href="22-s4-tai-noi-bo.html">hướng dẫn S4</a> và <a href="22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026">kết quả S4</a>. Đây là checkpoint pilot; S5 và cohort official vẫn thuộc bước tiếp theo.</p><div class="finish"><button class="button" data-complete="17-gd4-thuc-nghiem" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="16-ket-qua-baseline.html">← Đọc kết quả baseline thực tế</a><a href="20-huong-dan-s1-s2-s3.html">Bắt đầu sử dụng S1, S2, S3 →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#1-muc-tieu-va-diem-bat-dau">1. Mục tiêu và điểm bắt đầu</a></li>
 <li><a href="#2-nhung-gi-phai-chuan-bi-trong-tuan-11">2. Những gì phải chuẩn bị trong tuần 11</a><ul>
@@ -608,12 +612,14 @@
 <li><a href="#10-viec-lam-dau-tien-sau-ke-hoach">10. Việc làm đầu tiên sau kế hoạch</a></li>
 <li><a href="#tien-do-trien-khai-ngay-18-11-2026">Tiến độ triển khai ngày 18/11/2026</a></li>
 <li><a href="#tien-do-s3-ngay-22-11-2026">Tiến độ S3 ngày 22/11/2026</a></li>
+<li><a href="#s4-ngay-23-11-2026">S4 ngày 23/11/2026</a></li>
 <li><a href="#ket-qua-khoi-dong-gd4">Kết quả khởi động GĐ4</a></li>
 <li><a href="#ket-qua-kiem-thu">Kết quả kiểm thử</a></li>
 <li><a href="#kiem-thu-dung-runner">Kiểm thử dừng runner</a></li>
 <li><a href="#chat-luong-va-gioi-han">Chất lượng và giới hạn</a></li>
 <li><a href="#mo-du-lieu">Mở dữ liệu</a></li>
 <li><a href="#ra-soat-toan-bo-s1s3-ngay-22-11-2026">Rà soát toàn bộ S1–S3 ngày 22/11/2026</a></li>
+<li><a href="#s4-ngay-23-11-2026_1">S4 ngày 23/11/2026</a></li>
 </ul>
 </div>
 </aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

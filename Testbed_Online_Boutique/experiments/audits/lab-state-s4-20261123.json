@@ -1,0 +1,30 @@
+{
+  "checked_at_lab_utc": "2026-11-23T05:12:14.684332+00:00",
+  "nodes_ready": {
+    "lab-cp": true,
+    "lab-w1": true,
+    "lab-w2": true
+  },
+  "remaining_experiment_resources": {
+    "pods": 0,
+    "deployments": 0,
+    "configmaps": 0,
+    "serviceaccounts": 0
+  },
+  "original_loadgenerator_replicas": 0,
+  "application_available_replicas": {
+    "frontend": 1,
+    "checkoutservice": 1,
+    "paymentservice": 1
+  },
+  "pilot_runs": [
+    "s0-s4-control-20261123T045647Z-1848096",
+    "s4-20261123T045922Z-1853277",
+    "s4-20261123T050200Z-1858668",
+    "s4-20261123T050441Z-1864262",
+    "s4-20261123T050725Z-1869684"
+  ],
+  "same_code_bundle_sha256": "e844ec303c19d7735a03fbc118d6069596e9cc644c1d68d2f3a3406d7666d0d9",
+  "current_operational_sources_match": true,
+  "passed": true
+}

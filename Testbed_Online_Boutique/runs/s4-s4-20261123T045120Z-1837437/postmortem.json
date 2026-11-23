@@ -1,0 +1,12 @@
+{
+  "run_id": "s4-s4-20261123T045120Z-1837437",
+  "disposition": "excluded_development_smoke",
+  "original_execution_status": "completed",
+  "original_dataset_status": null,
+  "failure_stage": "normalize",
+  "error": "KeyError: 'sport' on an unbound/background socket missing source-port metadata",
+  "fix": "Missing source_port now yields an unmatched/unknown event; complete source-port keys are required to correlate actor HTTP requests.",
+  "original_raw_receipts_manifest_and_partial_normalized_preserved": true,
+  "separate_recheck_report": "../../experiments/audits/s4-first-recheck-20261123.json",
+  "replacement_smoke_run": "s4-20261123T045354Z-1842075"
+}

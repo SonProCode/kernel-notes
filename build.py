@@ -30,6 +30,7 @@ ARTICLES = [
     ("21-s1-quet-service", "S1 · Thăm dò Service và cổng", "Hiểu từng lần thử TCP và đối chiếu đủ danh sách đích với log kernel gốc.", "GĐ4 · S1", "network"),
     ("18-s2-goi-api-trai-luong", "S2 · Gọi API payment trái luồng", "Tái lập lời gọi gRPC và double check bằng phản hồi API, log server cùng Tetragon.", "GĐ4 · S2", "network"),
     ("19-s3-runtime-abuse", "S3 · Shell, công cụ mạng và token", "Tái lập runtime abuse và đối chiếu từng tiến trình, kết nối, lần đọc file với raw Tetragon.", "GĐ4 · S3", "terminal"),
+    ("22-s4-tai-noi-bo", "S4 · Tải nội bộ và đo tác động", "Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.", "GĐ4 · S4", "chart"),
 ]
 WEEKS = [
     (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
@@ -84,6 +85,7 @@ def layout(title, body, meta="Học bảo mật Kubernetes và eBPF từ đầu 
 </div></header><main id="main">{body}</main><footer class="shell footer"><a class="logo" href="./">{icon("layers")} Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>"""
 
 LAB_SOURCES = {
+    "22-s4-tai-noi-bo": "Testbed_Online_Boutique/experiments/S4.md",
     "20-huong-dan-s1-s2-s3": "Testbed_Online_Boutique/experiments/USAGE.md",
     "21-s1-quet-service": "Testbed_Online_Boutique/experiments/S1.md",
     "19-s3-runtime-abuse": "Testbed_Online_Boutique/experiments/S3.md",
@@ -100,6 +102,9 @@ def read(slug):
         return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
     source = LAB_SOURCES[slug]
     text = (ROOT/source).read_text(encoding="utf-8-sig")
+    if slug == "22-s4-tai-noi-bo":
+        report = ROOT / "Testbed_Online_Boutique/experiments/S4-RESULTS.md"
+        text += "\n\n" + report.read_text(encoding="utf-8").replace("# Kết quả", "## Kết quả", 1)
     if slug == "20-huong-dan-s1-s2-s3":
         report = ROOT / "Testbed_Online_Boutique/experiments/REVIEW-S1-S2-S3.md"
         text += "\n\n" + report.read_text(encoding="utf-8").replace("# Rà soát", "## Rà soát", 1)
@@ -117,6 +122,8 @@ def read(slug):
         location = posixpath.normpath(posixpath.join(posixpath.dirname(source), target))
         document, separator, anchor = location.partition("#")
         page = next((key for key, value in LAB_SOURCES.items() if value == document), None)
+        if document == "Testbed_Online_Boutique/experiments/S4-RESULTS.md":
+            return "](22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026)"
         if document == "Testbed_Online_Boutique/experiments/REVIEW-S1-S2-S3.md":
             return "](20-huong-dan-s1-s2-s3.html#ra-soat-s1-s2-s3-va-huong-dan-su-dung)"
         if page:
