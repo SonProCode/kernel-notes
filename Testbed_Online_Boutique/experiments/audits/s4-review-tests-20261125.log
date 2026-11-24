@@ -1,0 +1,54 @@
+test_background_socket_without_source_port_stays_unmatched (test_s4.S4Tests) ... ok
+test_external_target_rejected (test_s4.S4Tests) ... ok
+test_healthy_guard (test_s4.S4Tests) ... ok
+test_locust_final_waits_for_late_shutdown_request (test_s4.S4Tests) ... ok
+test_memory_pressure (test_s4.S4Tests) ... ok
+test_oom_without_restart (test_s4.S4Tests) ... ok
+test_paced_requests_have_unique_ports_and_receipts (test_s4.S4Tests) ... ok
+test_restart (test_s4.S4Tests) ... ok
+test_slow_target_skips_work_instead_of_queueing_a_burst (test_s4.S4Tests) ... ok
+test_three_failed_probes (test_s4.S4Tests) ... ok
+test_crossing_requests_count_once_in_starts_and_completions (test_s4_analysis.PhaseMetricTests) ... ok
+test_half_open_boundaries_count_exact_boundary_in_next_phase (test_s4_analysis.PhaseMetricTests) ... ok
+test_p99_small_success_population_and_failed_request_kept_separate (test_s4_analysis.PhaseMetricTests) ... ok
+test_client_configuration_mismatch (test_s4_integrity.IntegrityTests) ... ok
+test_counter_increase (test_s4_integrity.IntegrityTests) ... ok
+test_derived_locust_tampered (test_s4_integrity.IntegrityTests) ... ok
+test_duplicate_native_reference (test_s4_integrity.IntegrityTests) ... ok
+test_duplicate_worker_up (test_s4_integrity.IntegrityTests) ... ok
+test_final_before_last_request_rejected_even_if_counters_match (test_s4_integrity.IntegrityTests) ... ok
+test_guard_gap (test_s4_integrity.IntegrityTests) ... ok
+test_guard_missing_recovery (test_s4_integrity.IntegrityTests) ... ok
+test_invalid_http_status (test_s4_integrity.IntegrityTests) ... ok
+test_locust_failure_counter_mismatch (test_s4_integrity.IntegrityTests) ... ok
+test_nan_latency (test_s4_integrity.IntegrityTests) ... ok
+test_nan_resource_series (test_s4_integrity.IntegrityTests) ... ok
+test_negative_latency_even_when_raw_and_derived_agree (test_s4_integrity.IntegrityTests) ... ok
+test_negative_skip_counter (test_s4_integrity.IntegrityTests) ... ok
+test_new_contract_accepts_complete_mock_cleanup_and_freshness (test_s4_integrity.IntegrityTests) ... ok
+test_new_contract_rejects_missing_cleanup (test_s4_integrity.IntegrityTests) ... ok
+test_new_contract_rejects_remaining_pod (test_s4_integrity.IntegrityTests) ... ok
+test_new_contract_rejects_stale_scrape (test_s4_integrity.IntegrityTests) ... ok
+test_normalized_actor_features_must_match_raw_and_receipt (test_s4_integrity.IntegrityTests) ... ok
+test_normalized_labels_tampered (test_s4_integrity.IntegrityTests) ... ok
+test_one_guard_sample (test_s4_integrity.IntegrityTests) ... ok
+test_original_real_pilot (test_s4_integrity.IntegrityTests) ... ok
+test_quality_counts_tampered (test_s4_integrity.IntegrityTests) ... ok
+test_resource_missing_measurement_points (test_s4_integrity.IntegrityTests) ... ok
+test_reversed_request_time (test_s4_integrity.IntegrityTests) ... ok
+test_timeline_order (test_s4_integrity.IntegrityTests) ... ok
+test_unresolvable_native_reference (test_s4_integrity.IntegrityTests) ... ok
+test_wrong_loss_counter_names (test_s4_integrity.IntegrityTests) ... ok
+test_wrong_request_target (test_s4_integrity.IntegrityTests) ... ok
+test_cleanup_selector_ignores_transcript_file (test_s4_integrity.StatisticAndGuardTests) ... ok
+test_cleanup_selector_ignores_unrelated_runner (test_s4_integrity.StatisticAndGuardTests) ... ok
+test_dead_guard_detected (test_s4_integrity.StatisticAndGuardTests) ... ok
+test_errors_not_silently_counted_as_low_latency_success (test_s4_integrity.StatisticAndGuardTests) ... ok
+test_guard_write_failure_fails_closed (test_s4_integrity.StatisticAndGuardTests) ... ok
+test_nearest_rank_p95 (test_s4_integrity.StatisticAndGuardTests) ... ok
+test_stale_guard_detected (test_s4_integrity.StatisticAndGuardTests) ... ok
+
+----------------------------------------------------------------------
+Ran 49 tests in 54.693s
+
+OK

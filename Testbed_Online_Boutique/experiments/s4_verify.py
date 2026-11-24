@@ -265,7 +265,22 @@ def verify_s4(run):
                 address = ipaddress.ip_address(sock["daddr"])
                 address = str(address.ipv4_mapped) if getattr(address, "ipv4_mapped", None) else str(address)
                 expected_type={"tcp_connect":"tcp_connect_attempt","tcp_sendmsg":"tcp_send"}.get(payload["function_name"])
+                pod = process["pod"]
+                native_fields = {"node": node, "namespace": pod.get("namespace"), "pod": pod.get("name"),
+                                 "workload": pod.get("workload"), "socket": sock,
+                                 "container_id": (pod.get("container") or {}).get("id"),
+                                 "container_pid": (pod.get("container") or {}).get("pid"),
+                                 "binary": process.get("binary"), "pid": process.get("pid"),
+                                 "exec_id": process.get("exec_id"), "arguments": process.get("arguments"),
+                                 "parent_exec_id": (payload.get("parent") or {}).get("exec_id"),
+                                 "kernel_return": payload.get("return"),
+                                 "file_path": next((a["file_arg"].get("path") for a in payload.get("args",[]) if "file_arg" in a),None)}
+                fields_match = all(key in event and event[key] == value for key,value in native_fields.items())
+                receipt_fields_match = (event.get("api_method_from_receipt") == receipt["method"]
+                                        and event.get("http_status_from_receipt") == receipt["status_code"]
+                                        and event.get("grpc_code_from_receipt") is None)
                 valid = (expected_type is not None and event["event_type"]==expected_type
+                         and fields_match and receipt_fields_match
                          and process["pod"]["uid"]==manifest["actor"]["uid"]==event["pod_uid"]
                          and process["pod"]["namespace"]=="boutique"
                          and process["pod"]["container"]["pid"]==receipt["container_pid"]

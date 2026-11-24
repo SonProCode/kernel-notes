@@ -58,3 +58,8 @@ Các run s0-s4-control-* và s4-* lưu cohort đo có request-level Locust, guar
 
 
 Các smoke hồi quy contract v2 và lượt failed_validation/interrupted được giữ để kiểm toán, không cộng vào cohort 861 request. Đọc [báo cáo rà soát S4](../experiments/S4-REVIEW.md) để biết từng lỗi, cách sửa và lần chạy nào được dùng xác nhận.
+
+
+## Nghiệm thu S4 ngày 25/11/2026
+
+[Report chi tiết](../experiments/S4-ACCEPTANCE.md) kiểm tra lại bằng chứng bằng verifier đã sửa, replay nhãn từng cửa sổ và bổ sung throughput/p99 theo pha. Các run hồi quy mới được giữ riêng theo source hash, không cộng vào cohort pilot ngày 23/11. Ngày UTC trong tên thư mục có thể là 24/11, tương ứng sáng 25/11 giờ Việt Nam.

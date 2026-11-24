@@ -140,6 +140,20 @@ class IntegrityTests(unittest.TestCase):
         lines=[json.loads(x) for x in self.saved["normalized.ndjson"].splitlines()];lines[0]["label"]="attack" if lines[0]["label"]!="attack" else "normal"
         (self.root/"normalized.ndjson").write_text("\n".join(json.dumps(x) for x in lines)+"\n");self.rejected()
 
+    def test_normalized_actor_features_must_match_raw_and_receipt(self):
+        mutations = {"socket":lambda r:r["socket"].update(dport=12345),
+                     "binary":lambda r:r.update(binary="/fake/binary"),
+                     "container_pid":lambda r:r.update(container_pid=-123),
+                     "namespace":lambda r:r.update(namespace="wrong-namespace"),
+                     "http_status":lambda r:r.update(http_status_from_receipt=599)}
+        for name,mutate in mutations.items():
+            with self.subTest(field=name):
+                self.setUp()
+                records=[json.loads(x) for x in self.saved["normalized.ndjson"].splitlines()]
+                mutate(next(r for r in records if r.get("operation_id")))
+                (self.root/"normalized.ndjson").write_text("\n".join(json.dumps(r) for r in records)+"\n",encoding="utf-8")
+                self.rejected()
+
 
 class StatisticAndGuardTests(unittest.TestCase):
     def test_cleanup_selector_ignores_transcript_file(self):

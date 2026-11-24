@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "2bc783e",
+  "case": "Only the normalized actor socket dport changed to 12345; raw and receipts unchanged",
+  "previous_verifier_sha256": "5a5e7f09de73be1a56830428525a767ed16f2f6aebb37b341632312f6463ee0b",
+  "current_verifier_sha256": "d8715b4ed9cbc4a27988bff9a13515009e94d4bd1c6044d07a588fc3f7d13a72",
+  "before_passed": true,
+  "after_passed": false,
+  "after_errors": [
+    "Native identity/socket/time/label mismatch"
+  ],
+  "original_pilot_unchanged": true,
+  "scope": "Temporary corrupted copy, not evidence of corrupted real measurements"
+}

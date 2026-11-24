@@ -1,0 +1,90 @@
+{
+  "checked_at_lab_utc": "2026-11-24T18:08:42.385351+00:00",
+  "nodes": {
+    "lab-cp": {
+      "ready": true,
+      "memory_pressure": false
+    },
+    "lab-w1": {
+      "ready": true,
+      "memory_pressure": false
+    },
+    "lab-w2": {
+      "ready": true,
+      "memory_pressure": false
+    }
+  },
+  "deployments": {
+    "adservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "cartservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "checkoutservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "currencyservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "emailservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "frontend": {
+      "desired": 1,
+      "available": 1
+    },
+    "loadgenerator": {
+      "desired": 0,
+      "available": 0
+    },
+    "paymentservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "productcatalogservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "recommendationservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "redis-cart": {
+      "desired": 1,
+      "available": 1
+    },
+    "shippingservice": {
+      "desired": 1,
+      "available": 1
+    }
+  },
+  "remaining_experiment_resources": {
+    "pods": 0,
+    "deployments": 0,
+    "configmaps": 0,
+    "serviceaccounts": 0
+  },
+  "passed": true,
+  "regression_runs": [
+    {
+      "run_id": "s0-s4-control-20261124T180521Z-596177",
+      "status": "completed",
+      "dataset_status": "validated",
+      "passed": true,
+      "current_operational_sources_match": true
+    },
+    {
+      "run_id": "s4-20261124T180653Z-599521",
+      "status": "completed",
+      "dataset_status": "validated",
+      "passed": true,
+      "current_operational_sources_match": true
+    }
+  ]
+}

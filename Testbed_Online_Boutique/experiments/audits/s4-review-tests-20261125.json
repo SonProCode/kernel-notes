@@ -1,0 +1,16 @@
+{
+  "tests_run": 49,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "normalized_feature_mutation_subcases": 5,
+  "source_sha256": {
+    "test_s4.py": "61da1cfdb10652b5321c85dcbac0cb8f43c90ecdb9666e4362001b52bf625eea",
+    "test_s4_integrity.py": "a8d1285595c1c23810c99aef3e49f0a4426fe3b6883f55243652a6f3d22d7404",
+    "test_s4_analysis.py": "fe35d864f397059e3980fdc9bdc464f4d8a433894dea4199eb0502ff83434063",
+    "s4_verify.py": "d8715b4ed9cbc4a27988bff9a13515009e94d4bd1c6044d07a588fc3f7d13a72",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "s4/review.py": "de7e01a2b09057dd5bfe31044bbef346bacd1824898f483fe5491c6a3c5fa8b4"
+  }
+}

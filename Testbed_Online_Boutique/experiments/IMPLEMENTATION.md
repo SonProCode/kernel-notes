@@ -108,3 +108,6 @@ Các lần chạy mới lưu thêm snapshot Prometheus về trạng thái scrape
 
 
 Xem [rà soát sâu S4 ngày 23/11/2026](S4-REVIEW.md): sửa verifier, guard, thứ tự chốt log Locust và kiểm tra cleanup; kết quả hồi quy và giới hạn của dữ liệu lịch sử được ghi riêng.
+
+
+Cập nhật 25/11: [nghiệm thu lại S4](S4-ACCEPTANCE.md) đối chiếu đề cương, sửa kiểm tra đặc trưng normalized, bổ sung RPS/p99 và liệt kê điều kiện còn thiếu trước bộ official.

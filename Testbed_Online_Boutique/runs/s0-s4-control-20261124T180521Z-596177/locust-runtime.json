@@ -1,0 +1,15 @@
+{
+  "metadata": [
+    {
+      "locust_version": "2.43.0",
+      "original_locustfile_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3"
+    }
+  ],
+  "final": [
+    {
+      "recorded_requests": 134,
+      "locust_num_requests": 134,
+      "locust_num_failures": 0
+    }
+  ]
+}

@@ -5,9 +5,10 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 21 · LAB THỰC TẾ · GĐ4 · S4 · 24 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 21 · LAB THỰC TẾ · GĐ4 · S4 · 32 PHÚT ĐỌC</div>
 <h1>S4 · Tải nội bộ và đo tác động</h1><p>Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.</p></header>
-<div class="shell reading"><article class="prose"><p>Cập nhật 23/11/2026. Bài này triển khai <strong>pilot S4 của GĐ4</strong>: tạo tải phụ, đo tác động, thu telemetry và kiểm tra hồi phục. Đọc <a href="20-huong-dan-s1-s2-s3.html">hướng dẫn chung</a> trước nếu bạn chưa quen SSH, sudo, thư mục làm việc và file kết quả.</p>
+<div class="shell reading"><article class="prose"><p>Cập nhật 25/11/2026. Bài này triển khai <strong>pilot S4 của GĐ4</strong>: tạo tải phụ, đo tác động, thu telemetry và kiểm tra hồi phục. Đọc <a href="20-huong-dan-s1-s2-s3.html">hướng dẫn chung</a> trước nếu bạn chưa quen SSH, sudo, thư mục làm việc và file kết quả.</p>
+<p>Đọc thêm <a href="22-s4-tai-noi-bo.html#nghiem-thu-lai-s4-ngay-25-11-2026">nghiệm thu lại ngày 25/11</a> để phân biệt điều kiện pilot và bộ dữ liệu chính thức, cùng khe hở verifier mới đã sửa.</p>
 <h2 id="1-s4-mo-phong-chuyen-gi">1. S4 mô phỏng chuyện gì?</h2>
 <p>Trong đề cương, S4 là “Internal DoS nhẹ”: một Pod gửi request tần suất cao tới một service, quan sát request rate, latency và CPU. Hãy hình dung cửa hàng vẫn có người mua bình thường, đồng thời một nguồn khác liên tục tải trang chủ. Ta đo xem cửa hàng xử lý thêm bao nhiêu việc và người mua có chậm đi không.</p>
 <p>Ở đây đích là <strong>frontend</strong>, phương thức GET, URL <code>/</code>. Đây là trang chủ có xử lý ứng dụng, khác với việc chỉ ping <code>/_healthz</code>. Không sửa dữ liệu nghiệp vụ qua client tải phụ và không gọi địa chỉ ngoài lab. Rate limit/deny thuộc bước mitigation GĐ6, chưa áp dụng trong GĐ4.</p>
@@ -392,6 +393,7 @@ sudo k3s kubectl -n boutique delete pods,deployments,configmaps -l &quot;experim
 <p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-pilots-audit-20261123.json">Audit source/native và tính đồng nhất release</a>.</p>
 <p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/lab-state-s4-20261123.json">Trạng thái lab sau đo và hash source đang triển khai</a>: loadgenerator gốc=0, không còn Pod/Deployment/ConfigMap/SA thí nghiệm; ba node Ready và frontend/checkout/payment available.</p>
 <p>Xem <a href="22-s4-tai-noi-bo.html#ra-soat-sau-s4-ngay-23-11-2026">rà soát sâu S4 ngày 23/11/2026</a>: sửa verifier, guard, thứ tự chốt log Locust và kiểm tra cleanup; kết quả hồi quy và giới hạn của dữ liệu lịch sử được ghi riêng.</p>
+<p>Cập nhật 25/11: <a href="22-s4-tai-noi-bo.html#nghiem-thu-lai-s4-ngay-25-11-2026">nghiệm thu lại S4</a> đối chiếu đề cương, sửa kiểm tra đặc trưng normalized, bổ sung RPS/p99 và liệt kê điều kiện còn thiếu trước bộ official.</p>
 <h2 id="ra-soat-sau-s4-ngay-23-11-2026">Rà soát sâu S4 ngày 23/11/2026</h2>
 <p>Kết luận: số liệu của cohort pilot đã công bố vẫn qua hậu kiểm chặt hơn. Lần rà soát này tìm được các trường hợp verifier hoặc công cụ kiểm thử có thể xử lý sai; đã sửa và bổ sung kiểm thử âm tính. Phạm vi kết luận là chất lượng đường thực hiện và bằng chứng pilot GĐ4.</p>
 <h2 id="1-ba-truong-hop-bao-dat-sai-da-tai-hien">1. Ba trường hợp báo đạt sai đã tái hiện</h2>
@@ -493,7 +495,179 @@ python3 experiments/s4/audit.py --output experiments/audits/my-s4-strict-review.
 <h2 id="7-doi-chieu-de-cuong-va-gioi-han-ket-luan">7. Đối chiếu đề cương và giới hạn kết luận</h2>
 <p>Đã đọc lại đề cương gốc: S4 là Pod gửi request tần suất cao tới service, quan sát request rate, latency và CPU. Đường chạy hiện có actor nội bộ, log từng request, Locust normal, metric CPU/RAM và telemetry có nhãn theo receipt độc lập. GĐ4 yêu cầu cả S1–S5 và dữ liệu attack/normal; hoàn tất pilot S4 chưa đồng nghĩa hoàn tất GĐ4. Rate limit/deny và detector được để đúng các giai đoạn GĐ6/GĐ5 trong đề cương.</p>
 <p>Passed xác nhận tính nhất quán và điều kiện thu dữ liệu đã định nghĩa; dataset vẫn có thể chứa lỗi HTTP thật do tải, và lỗi đó phải được giữ để phân tích. Passed không có nghĩa ứng dụng chịu được mọi mức tải hay detector đã đạt recall/precision cao.</p>
-<p>Cohort hiện chưa khóa seed Locust và chưa có đủ lượt lặp độc lập để suy luận thống kê. CPU rate dùng cửa sổ một phút, còn pha pilot là 30 giây. Bộ official, detector và mitigation vẫn nghiệm thu theo kế hoạch GĐ4/GĐ5/GĐ6.</p><div class="finish"><button class="button" data-complete="22-s4-tai-noi-bo" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="19-s3-runtime-abuse.html">← S3 · Shell, công cụ mạng và token</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<p>Cohort hiện chưa khóa seed Locust và chưa có đủ lượt lặp độc lập để suy luận thống kê. CPU rate dùng cửa sổ một phút, còn pha pilot là 30 giây. Bộ official, detector và mitigation vẫn nghiệm thu theo kế hoạch GĐ4/GĐ5/GĐ6.</p>
+<h2 id="nghiem-thu-lai-s4-ngay-25-11-2026">Nghiệm thu lại S4 ngày 25/11/2026</h2>
+<p><strong>Kết luận: đường triển khai và dữ liệu pilot S4 đạt các tiêu chí đã kiểm tra. Chưa đủ điều kiện gọi là bộ dữ liệu chính thức hoặc bằng chứng đã gây DoS.</strong> Lần kiểm tra này phát hiện và sửa thêm một khe hở trong verifier; không phát hiện log thật đã bị sai theo khe hở đó.</p>
+<h2 id="1-doi-chieu-dung-yeu-cau-de-cuong">1. Đối chiếu đúng yêu cầu đề cương</h2>
+<p>Đề cương gốc mô tả S4: “Internal DoS nhẹ”, Pod gửi request tần suất cao tới một service đích; quan sát request rate, latency, CPU. GĐ4 tạo script tái lập và dữ liệu attack/normal có nhãn. Detector thuộc GĐ5, rate limit/deny thuộc GĐ6; hai phần đó chưa phải điều kiện chốt pilot GĐ4.</p>
+<table>
+<thead>
+<tr>
+<th>Điều kiện</th>
+<th>Bằng chứng hiện có</th>
+<th>Kết luận</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Actor là Pod trong cluster, gọi đúng service</td>
+<td>GET <code>/</code> tới frontend ClusterIP; topology, UID, source port và thời gian được lưu</td>
+<td>Đạt pilot</td>
+</tr>
+<tr>
+<td>Tải có thể tái lập và có giới hạn</td>
+<td>3/6/10 RPS, pacing, concurrency, timeout socket và deadline controller; ghi slot bỏ qua</td>
+<td>Đạt pilot</td>
+</tr>
+<tr>
+<td>Có traffic normal chạy cùng</td>
+<td>Locust tạm 10 users, dùng hành trình gốc trong image; loadgenerator gốc=0</td>
+<td>Đạt pilot</td>
+</tr>
+<tr>
+<td>Ghi mức tải thực và lỗi</td>
+<td>Receipt từng request; phân biệt số gửi, bỏ qua và lỗi HTTP</td>
+<td>Đạt pilot</td>
+</tr>
+<tr>
+<td>Có latency của người mua</td>
+<td>Log từng request Locust; p50/p95 và phân tích bổ sung p99</td>
+<td>Đạt mô tả pilot, chưa đủ mẫu ước lượng tail ổn định</td>
+</tr>
+<tr>
+<td>Có CPU/RAM frontend</td>
+<td>Bốn query CPU/RAM frontend và namespace boutique có mẫu hợp lệ</td>
+<td>Đạt thu dữ liệu; cửa sổ CPU 60 giây làm trộn các pha pilot 30 giây</td>
+</tr>
+<tr>
+<td>Có dữ liệu attack/normal có nhãn</td>
+<td>Actor đối chiếu receipt độc lập; S0/pre/recovery có nhãn normal; sự kiện mơ hồ giữ unknown</td>
+<td>Đạt pilot; smoke chủ động giữ actor ở unknown</td>
+</tr>
+<tr>
+<td>Không suy diễn TCP thành HTTP</td>
+<td>Native hook chứng minh hoạt động socket; HTTP status/path lấy từ receipt</td>
+<td>Đạt phương pháp</td>
+</tr>
+<tr>
+<td>Có kiểm tra dừng và dọn tài nguyên</td>
+<td>Guard, heartbeat, kiểm thử SIGTERM; cleanup và snapshot sau chạy</td>
+<td>Đạt đường kiểm thử đã thực hiện</td>
+</tr>
+<tr>
+<td>Có nguồn mã và dữ liệu để double check</td>
+<td>Source hash trong archive, replay normalized và nhãn cửa sổ, checksum bản xuất</td>
+<td>Đạt</td>
+</tr>
+<tr>
+<td>Có bộ chính thức 90 giây, lặp và đối chứng</td>
+<td>Chưa có các lượt official S4 theo kế hoạch</td>
+<td><strong>Chưa đủ</strong></td>
+</tr>
+<tr>
+<td>Chứng minh suy giảm do tải hoặc hiệu quả chặn</td>
+<td>Chưa đủ thiết kế thống kê; detector/mitigation chưa thuộc phần này</td>
+<td><strong>Chưa kết luận</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Cohort lịch sử v1 chưa có tuổi scrape và cleanup.json riêng từng run; chỉ có checkpoint của cả cohort. Giữ đúng giới hạn này, không bổ sung ngược bằng chứng bằng file của lượt mới. Các lượt mới contract v2 bắt buộc có đủ bằng chứng freshness và cleanup riêng.</p>
+<h2 id="2-loi-moi-da-tim-duoc-va-sua">2. Lỗi mới đã tìm được và sửa</h2>
+<p>Trên bản sao run <code>s4-20261123T050441Z-1864262</code>, chỉ sửa <code>socket.dport</code> của một event actor trong normalized thành 12345. Log raw và receipt vẫn giữ nguyên. Verifier ở commit <code>2bc783e</code> vẫn trả passed=true: nó kiểm raw có đúng receipt nhưng chưa so toàn bộ trường đặc trưng ở normalized với raw.</p>
+<p>Bản sửa so thêm socket, node, namespace, Pod/workload, container ID/PID, binary, PID/exec ID, arguments, parent exec ID, kernel return và đường dẫn file của các event actor có operation_id. Trường HTTP method/status ghép từ receipt cũng phải khớp. Bản sao sai bị từ chối. Các event background và toàn bộ nhãn cửa sổ được đối chiếu thêm bằng cách dựng lại từ raw trong audit.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-normalized-fields-reproduction-20261125.json">Bằng chứng trước/sau</a> lưu hash verifier và kết quả. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-review-tests-20261125.json">49 kiểm thử</a>, gồm 5 subcase sửa socket/binary/container PID/namespace/HTTP status, kiểm tra bản sửa. Không ghi đè log lịch sử để làm cho chúng đạt.</p>
+<h2 id="3-phan-tich-them-request-rate-va-p99">3. Phân tích thêm request rate và p99</h2>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-acceptance-20261125.json">Báo cáo nghiệm thu máy đọc được</a> mở archive vào thư mục tạm, kiểm source, verifier, dựng lại từng bản ghi normalized và nhãn cửa sổ. Report kiểm checksum toàn bộ runs/ trước/sau để xác nhận không sửa bằng chứng. <strong>12/12 lượt completed/validated được đọc lại đều đạt</strong>, gồm 5 pilot/control và 7 smoke; 11 lượt nằm trong gate nghiệm thu chính, một smoke v1 ngắn được kiểm tra bổ sung riêng. Các lượt lỗi/interrupted được liệt kê với lý do loại trừ, không tính là dữ liệu attack hoàn tất.</p>
+<p>Phân tích mới tách rõ:</p>
+<ul>
+<li><code>started_rps</code>: số request bắt đầu trong pha chia thời lượng pha.</li>
+<li><code>completed_rps</code>: số request hoàn tất trong pha chia thời lượng pha.</li>
+<li>Latency: chỉ các request HTTP 200 không có exception, bắt đầu và kết thúc trong cùng pha; lỗi và request vắt qua biên được đếm riêng.</li>
+<li><code>p99_ms</code>: nearest-rank trên cùng tập latency. Nếu dưới 100 mẫu thành công, p99 chính là giá trị lớn nhất trong mẫu này; không coi đó là ước lượng tail ổn định của hệ thống.</li>
+</ul>
+<p>Ví dụ cohort đã công bố:</p>
+<table>
+<thead>
+<tr>
+<th>Profile</th>
+<th>Mẫu Locust trong pha đo</th>
+<th>Locust completed RPS</th>
+<th>p99 mẫu (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 control</td>
+<td>64</td>
+<td>2,13</td>
+<td>250,72</td>
+</tr>
+<tr>
+<td>S4 3 RPS / w1</td>
+<td>62</td>
+<td>1,97</td>
+<td>181,18</td>
+</tr>
+<tr>
+<td>S4 6 RPS / w1</td>
+<td>66</td>
+<td>2,11</td>
+<td>289,77</td>
+</tr>
+<tr>
+<td>S4 10 RPS / w1</td>
+<td>66</td>
+<td>2,06</td>
+<td>780,84</td>
+</tr>
+<tr>
+<td>S4 10 RPS / w2</td>
+<td>63</td>
+<td>2,00</td>
+<td>397,11</td>
+</tr>
+</tbody>
+</table>
+<p>Đây là RPS của người mua Locust, tách khỏi RPS tải phụ. Thời lượng pha dùng timeline thực, có thể dài hơn cửa sổ gửi của client vì khởi động exec và đợi request cuối. Không dùng p99 của các pha ít mẫu này làm ngưỡng cảnh báo chính thức. Bảng p95 và 861 request tải phụ ở <a href="22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026">kết quả pilot</a> vẫn giữ nguyên.</p>
+<p>CPU frontend và CPU namespace cũng có ý nghĩa khác nhau: namespace boutique gồm cả actor và Locust tạm. Muốn đánh giá chi phí xử lý của service, ưu tiên series frontend. Query <code>rate(...[1m])</code> làm mượt theo một phút; <code>step=5</code> chỉ là bước đánh giá query, không biến nó thành CPU đo độc lập mỗi 5 giây. Xem <a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">Prometheus querying basics</a>.</p>
+<h2 id="4-con-thieu-gi-truoc-khi-nghiem-thu-chinh-thuc">4. Còn thiếu gì trước khi nghiệm thu chính thức?</h2>
+<ol>
+<li>Chốt một profile cuối, giữ source/image/topology và cấu hình telemetry nhất quán. Theo kế hoạch repo, chạy <strong>ít nhất 3 lượt official S4, pha tải 90 giây</strong>, placement w1, w2, w1; thêm lượt nếu cần cân bằng so sánh hai worker.</li>
+<li>Thu S0 đối chứng bằng cùng instrumentation cuối, xen kẽ với S4. Ghi thứ tự chạy hoặc seed; seed nếu có cũng không tự loại bỏ mọi biến động của mạng và lịch CPU.</li>
+<li>Giữ warm-up đủ ổn định, pre/recovery đủ dài; tách ít nhất phần đầu 60 giây của pha tải khi diễn giải CPU cửa sổ 1 phút. Lưu cả mẫu chuyển tiếp; không xóa dữ liệu bất lợi. Chốt trước cách tính steady state, RPS, latency, lỗi và điều kiện hồi phục.</li>
+<li>Báo số mẫu, lỗi, p50/p95/p99 và độ biến động giữa các lượt. Chỉ kết luận có suy giảm nếu bằng chứng lặp lại hỗ trợ; tải nhẹ vẫn ổn định là kết quả hợp lệ.</li>
+<li>Kiểm đủ receipt ↔ raw ↔ normalized, freshness, loss counter, guard và cleanup cho từng lượt mới. Tách failed/interrupted/smoke khỏi tập official; không trộn source v1/v2 để tính như cùng một cohort.</li>
+</ol>
+<p>Phần này là điều kiện cho tập chính thức và đánh giá định lượng. Có thể tiếp tục pilot S5 trước, rồi khóa cấu hình để thu bộ official S0–S5. Không cần ép lab sập để gọi pilot S4 là hoàn thành.</p>
+<h2 id="5-tu-kiem-tra-lai-tu-dau">5. Tự kiểm tra lại từ đâu?</h2>
+<p>Trên lab-cp, hoặc máy có Python và bản clone đầy đủ, vào thư mục có <code>experiments/</code>:</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+python3 -m unittest discover -s experiments -p 'test_s4*.py' -v
+python3 experiments/s4/review.py --output experiments/audits/my-s4-acceptance.json
+</code></pre>
+<p>Lệnh review không chạy tải và không thay dữ liệu trong runs/. Đọc <code>passed</code> cùng từng run và <code>official_dataset_ready</code>; một bộ pilot đạt không tự trở thành bộ dữ liệu chính thức.</p>
+<h2 id="6-hoi-quy-va-trang-thai-lab">6. Hồi quy và trạng thái lab</h2>
+<p>Đã chạy và tải về hai lượt mới, không dùng lại số liệu cũ để gọi là hồi quy mới:</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s4-control-20261124T180521Z-596177/manifest.json">s0-s4-control-20261124T180521Z-596177</a></td>
+<td>Control smoke hoàn tất, validated</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261124T180653Z-599521/manifest.json">s4-20261124T180653Z-599521</a></td>
+<td>S4 smoke trên w2, 3 RPS × 12 giây, 36/36 request khớp raw; validated</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-final-state-20261125.json">Snapshot sau hồi quy</a> xác nhận source vận hành trên lab khớp cả hai manifest, ba node Ready, không MemoryPressure, ứng dụng available, loadgenerator gốc=0 và không còn Pod/Deployment/ConfigMap/ServiceAccount thí nghiệm. Các run mới vẫn là smoke, không đổi thành official hoặc cộng vào 861 request pilot cũ.</p>
+<p>Snapshot trước thử: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s4-live-state-20261125.json">trạng thái trực tiếp ngày 25/11</a>, ba node Ready, không MemoryPressure, các deployment đạt số replica mong đợi và không có tài nguyên thí nghiệm thừa. Timestamp trong file là UTC; ngày 24/11 lúc 18 giờ UTC tương ứng ngày 25/11 lúc 01 giờ Việt Nam.</p><div class="finish"><button class="button" data-complete="22-s4-tai-noi-bo" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="19-s3-runtime-abuse.html">← S3 · Shell, công cụ mạng và token</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#1-s4-mo-phong-chuyen-gi">1. S4 mô phỏng chuyện gì?</a></li>
 <li><a href="#2-rps-concurrency-va-p95-la-gi">2. RPS, concurrency và p95 là gì?</a></li>
@@ -531,6 +705,13 @@ python3 experiments/s4/audit.py --output experiments/audits/my-s4-strict-review.
 </li>
 <li><a href="#6-chay-lai-kiem-tra">6. Chạy lại kiểm tra</a></li>
 <li><a href="#7-doi-chieu-de-cuong-va-gioi-han-ket-luan">7. Đối chiếu đề cương và giới hạn kết luận</a></li>
+<li><a href="#nghiem-thu-lai-s4-ngay-25-11-2026">Nghiệm thu lại S4 ngày 25/11/2026</a></li>
+<li><a href="#1-doi-chieu-dung-yeu-cau-de-cuong">1. Đối chiếu đúng yêu cầu đề cương</a></li>
+<li><a href="#2-loi-moi-da-tim-duoc-va-sua">2. Lỗi mới đã tìm được và sửa</a></li>
+<li><a href="#3-phan-tich-them-request-rate-va-p99">3. Phân tích thêm request rate và p99</a></li>
+<li><a href="#4-con-thieu-gi-truoc-khi-nghiem-thu-chinh-thuc">4. Còn thiếu gì trước khi nghiệm thu chính thức?</a></li>
+<li><a href="#5-tu-kiem-tra-lai-tu-dau">5. Tự kiểm tra lại từ đâu?</a></li>
+<li><a href="#6-hoi-quy-va-trang-thai-lab">6. Hồi quy và trạng thái lab</a></li>
 </ul>
 </div>
 </aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>
