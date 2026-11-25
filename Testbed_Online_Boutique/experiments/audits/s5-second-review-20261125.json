@@ -1,0 +1,345 @@
+{
+  "runs": [
+    {
+      "run_id": "s5-20261125T054746Z-1520142",
+      "mode": "smoke",
+      "node": "w1",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "errors": [],
+      "uploads": 12,
+      "received": 12,
+      "payload_bytes": 786432,
+      "native_counts": {
+        "tcp_connect_attempt": 12,
+        "tcp_send": 24
+      },
+      "kernel_send_bytes_requested": 790224,
+      "locust_requests": 137,
+      "locust_by_phase": {
+        "pre_attack": {
+          "requests": 20,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 20,
+          "p50_ms": 35.17662989906967,
+          "p95_ms": 97.30437106918544,
+          "max_ms": 107.66251699533314,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "attack": {
+          "requests": 30,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 30,
+          "p50_ms": 44.65469601564109,
+          "p95_ms": 244.69805893022567,
+          "max_ms": 364.4267900381237,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "recovery": {
+          "requests": 30,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 30,
+          "p50_ms": 42.032595025375485,
+          "p95_ms": 342.7913479972631,
+          "max_ms": 452.56406301632524,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        }
+      },
+      "events_by_label": {
+        "unknown": 6196,
+        "normal": 3110
+      },
+      "receiver_peer_ips": [
+        "192.168.141.143"
+      ],
+      "code_bundle_sha256": "0dc006fac8ad189998c8edb1dbf68896964d527ee2800134ceb1bf995628f7fa",
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "calls": 12,
+      "policy_spec_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_unchanged": true
+    },
+    {
+      "run_id": "s5-20261125T055108Z-1526279",
+      "mode": "pilot",
+      "node": "w1",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "errors": [],
+      "uploads": 60,
+      "received": 60,
+      "payload_bytes": 3932160,
+      "native_counts": {
+        "tcp_connect_attempt": 60,
+        "tcp_send": 120
+      },
+      "kernel_send_bytes_requested": 3951120,
+      "locust_requests": 364,
+      "locust_by_phase": {
+        "pre_attack": {
+          "requests": 61,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 61,
+          "p50_ms": 30.619377037510276,
+          "p95_ms": 91.51022997684777,
+          "max_ms": 160.9460550826043,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "attack": {
+          "requests": 129,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 129,
+          "p50_ms": 31.424558022990823,
+          "p95_ms": 98.77611510455608,
+          "max_ms": 184.19694795738906,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "recovery": {
+          "requests": 70,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 70,
+          "p50_ms": 26.639481890015304,
+          "p95_ms": 58.359915972687304,
+          "max_ms": 100.80997494515032,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        }
+      },
+      "events_by_label": {
+        "unknown": 16814,
+        "normal": 8955,
+        "attack": 180
+      },
+      "receiver_peer_ips": [
+        "192.168.141.143"
+      ],
+      "code_bundle_sha256": "fca3bde896b769128bf2e9b5ff58e7f1d4095681960826a8650edd37fba13f38",
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "calls": 60,
+      "policy_spec_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_unchanged": true
+    },
+    {
+      "run_id": "s5-20261125T055455Z-1533348",
+      "mode": "pilot",
+      "node": "w2",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "errors": [],
+      "uploads": 60,
+      "received": 60,
+      "payload_bytes": 3932160,
+      "native_counts": {
+        "tcp_connect_attempt": 60,
+        "tcp_send": 120
+      },
+      "kernel_send_bytes_requested": 3951120,
+      "locust_requests": 386,
+      "locust_by_phase": {
+        "pre_attack": {
+          "requests": 62,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 62,
+          "p50_ms": 29.71806190907955,
+          "p95_ms": 84.48603795841336,
+          "max_ms": 153.40179798658937,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "attack": {
+          "requests": 141,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 141,
+          "p50_ms": 32.5982189970091,
+          "p95_ms": 120.29041396453977,
+          "max_ms": 172.4243750795722,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "recovery": {
+          "requests": 71,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 71,
+          "p50_ms": 33.09096198063344,
+          "p95_ms": 98.25809695757926,
+          "max_ms": 115.91619497630745,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        }
+      },
+      "events_by_label": {
+        "unknown": 17740,
+        "normal": 9052,
+        "attack": 180
+      },
+      "receiver_peer_ips": [
+        "192.168.141.144"
+      ],
+      "code_bundle_sha256": "fca3bde896b769128bf2e9b5ff58e7f1d4095681960826a8650edd37fba13f38",
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "calls": 60,
+      "policy_spec_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_unchanged": true
+    },
+    {
+      "run_id": "s5-20261125T055833Z-1540255",
+      "mode": "smoke",
+      "node": "w1",
+      "status": "interrupted",
+      "included": false
+    },
+    {
+      "run_id": "s5-20261125T064830Z-1608732",
+      "mode": "smoke",
+      "node": "w1",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "errors": [],
+      "uploads": 12,
+      "received": 12,
+      "payload_bytes": 786432,
+      "native_counts": {
+        "tcp_connect_attempt": 12,
+        "tcp_send": 24
+      },
+      "kernel_send_bytes_requested": 790224,
+      "locust_requests": 141,
+      "locust_by_phase": {
+        "pre_attack": {
+          "requests": 29,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 29,
+          "p50_ms": 36.59587202128023,
+          "p95_ms": 93.17349700722843,
+          "max_ms": 99.2623419733718,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "attack": {
+          "requests": 32,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 32,
+          "p50_ms": 29.284970019944012,
+          "p95_ms": 117.77034192346036,
+          "max_ms": 265.8398869680241,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "recovery": {
+          "requests": 22,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 22,
+          "p50_ms": 40.47717398498207,
+          "p95_ms": 838.8216469902545,
+          "max_ms": 1084.5917260739952,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        }
+      },
+      "events_by_label": {
+        "unknown": 6634,
+        "normal": 3722
+      },
+      "receiver_peer_ips": [
+        "192.168.141.143"
+      ],
+      "code_bundle_sha256": "0aa13ce40aa19d1968544a8d96dca921db2e84f03c828479321ccadbf9206676",
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "calls": 12,
+      "policy_spec_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_unchanged": true
+    },
+    {
+      "run_id": "s5-20261125T064955Z-1611951",
+      "mode": "smoke",
+      "node": "w2",
+      "status": "completed",
+      "included": true,
+      "passed": true,
+      "errors": [],
+      "uploads": 12,
+      "received": 12,
+      "payload_bytes": 786432,
+      "native_counts": {
+        "tcp_connect_attempt": 12,
+        "tcp_send": 24
+      },
+      "kernel_send_bytes_requested": 790224,
+      "locust_requests": 137,
+      "locust_by_phase": {
+        "pre_attack": {
+          "requests": 32,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 32,
+          "p50_ms": 33.08654099237174,
+          "p95_ms": 114.09345199353993,
+          "max_ms": 126.87510694377124,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "attack": {
+          "requests": 26,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 26,
+          "p50_ms": 28.93497608602047,
+          "p95_ms": 87.0695780031383,
+          "max_ms": 87.10970403626561,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        },
+        "recovery": {
+          "requests": 24,
+          "failures": 0,
+          "failure_ratio": 0.0,
+          "latency_sample_count": 24,
+          "p50_ms": 26.203532004728913,
+          "p95_ms": 76.51144394185394,
+          "max_ms": 78.43722403049469,
+          "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+        }
+      },
+      "events_by_label": {
+        "unknown": 5666,
+        "normal": 3718
+      },
+      "receiver_peer_ips": [
+        "192.168.141.144"
+      ],
+      "code_bundle_sha256": "0aa13ce40aa19d1968544a8d96dca921db2e84f03c828479321ccadbf9206676",
+      "actor_image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+      "locust_image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+      "calls": 12,
+      "policy_spec_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_unchanged": true
+    },
+    {
+      "run_id": "s5-20261125T065118Z-1615176",
+      "mode": "smoke",
+      "node": "w1",
+      "status": "interrupted",
+      "included": false
+    }
+  ],
+  "analysis_sha256": "609eedc7a16d5e20bb49c1099ab2361d69deb20a8337514e33b574db8c416b09",
+  "verifier_sha256": "7e2a8c2242ad953efb00ee6d4799af15215b1be9a1d8fadc0c00b469dfb37f64",
+  "pilots_reviewed": 2,
+  "same_pilot_sources_and_images": true,
+  "historical_evidence_unchanged": true,
+  "all_completed_validated_runs_passed": true,
+  "pilot_uploads": 120,
+  "pilot_received_payload_bytes": 7864320,
+  "passed": true,
+  "scope": "Functional pilot and labelled synthetic uploads; official cohort/detector/mitigation not certified"
+}

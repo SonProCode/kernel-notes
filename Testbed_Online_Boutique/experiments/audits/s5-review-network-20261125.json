@@ -1,0 +1,19 @@
+{
+  "scope": "Ephemeral loopback ports and synthetic bytes only; lab receiver port 18080 untouched",
+  "previous_default_reuse_address": false,
+  "cases": [
+    {
+      "reuse_address": false,
+      "rebound": false,
+      "errno": 98
+    },
+    {
+      "reuse_address": true,
+      "rebound": true
+    }
+  ],
+  "active_listener_still_blocks_bind": true,
+  "receiver_source_sha256": "b248544282716ebee5545c390fb101d57dce7c44dbf8d7b6d9c1ace3fc5c156d",
+  "check_source_sha256": "dda5801763a8c9de28727328ba721f308cf2c428f9f455748821d6cc1d9ddb34",
+  "passed": true
+}

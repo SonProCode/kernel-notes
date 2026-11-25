@@ -1,0 +1,24 @@
+{
+  "baseline_commit": "9911aa8",
+  "previous_verifier_sha256": "a03ef84739ab8829af99ad0d15b608536489716ef48faffd5dd87af2303b7531",
+  "current_verifier_sha256": "7e2a8c2242ad953efb00ee6d4799af15215b1be9a1d8fadc0c00b469dfb37f64",
+  "cases": [
+    {
+      "case": "guard_probes_false_streak_zero",
+      "before_passed": true,
+      "after_passed": false,
+      "new_errors": [
+        "Guard probe streak inconsistent"
+      ]
+    },
+    {
+      "case": "actor_image_not_in_pod_snapshot",
+      "before_passed": true,
+      "after_passed": false,
+      "new_errors": [
+        "Pod UID/image differs from snapshot: actor"
+      ]
+    }
+  ],
+  "scope": "Corrupted temporary copy of the bundled smoke. No original run files modified."
+}

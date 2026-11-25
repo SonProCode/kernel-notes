@@ -1,0 +1,20 @@
+{
+  "baseline_commit": "9911aa8",
+  "scope": "Copied cohort only; a validated smoke manifest image was corrupted. The original datasets remain untouched.",
+  "previous_audit_sha256": "0d77c98ec2f6434a752c74452aa7dda0424cbe1b916c2b1aeb3f899918569a64",
+  "current_audit_sha256": "609eedc7a16d5e20bb49c1099ab2361d69deb20a8337514e33b574db8c416b09",
+  "cases": [
+    {
+      "version": "previous",
+      "return_code": 0,
+      "overall_passed": true,
+      "corrupt_validated_smoke_passed": false
+    },
+    {
+      "version": "current",
+      "return_code": 1,
+      "overall_passed": false,
+      "corrupt_validated_smoke_passed": false
+    }
+  ]
+}

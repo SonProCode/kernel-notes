@@ -1,0 +1,76 @@
+{
+  "events_by_type": {
+    "tcp_send": 9299,
+    "process_exec": 26,
+    "process_exit": 28,
+    "tcp_connect_attempt": 31
+  },
+  "events_by_label": {
+    "unknown": 5666,
+    "normal": 3718
+  },
+  "events_by_node": {
+    "lab-w1": 4979,
+    "lab-w2": 4405
+  },
+  "quality": {},
+  "operations": 12,
+  "operations_with_matched_event": 12,
+  "event_types_by_operation": {
+    "upload-00000": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00001": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00002": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00003": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00004": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00005": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00006": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00007": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00008": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00009": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00010": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00011": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ]
+  },
+  "unmatched_operations": [],
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "capture_checks_passed": true
+}

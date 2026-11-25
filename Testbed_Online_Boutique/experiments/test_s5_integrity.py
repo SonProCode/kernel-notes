@@ -69,6 +69,31 @@ class S5IntegrityTests(unittest.TestCase):
         self.edit("metrics-after.json",lambda d:d["agent_scrape_age_seconds"]["data"]["result"][0].update(value=[0,"120"]));self.rejected()
     def test_receiver_root_identity_rejected(self):
         self.edit_rows("receiver.ndjson",lambda r:next(v for v in r if v["kind"]=="receiver_ready").update(uid=0));self.rejected()
+    def test_failed_guard_probes_with_reset_streak_rejected(self):
+        def change(rows):
+            for r in rows:r.update(probe_ok=False,consecutive_probe_failures=0)
+        self.edit_rows("guard.ndjson",change);self.rejected()
+    def test_missing_guard_probe_result_rejected(self):
+        self.edit_rows("guard.ndjson",lambda r:r[0].pop("probe_ok"));self.rejected()
+    def test_negative_guard_streak_rejected(self):
+        self.edit_rows("guard.ndjson",lambda r:r[0].update(consecutive_probe_failures=-1));self.rejected()
+    def test_actor_image_must_match_captured_pod(self):
+        self.edit("manifest.json",lambda d:d["actor"].update(image_id="docker.io/library/python@sha256:"+"0"*64));self.rejected()
+    def test_locust_image_must_match_captured_pod(self):
+        self.edit("manifest.json",lambda d:d["locust"].update(image_id="fake-image"));self.rejected()
+    def test_actor_ip_must_match_captured_pod(self):
+        self.edit("manifest.json",lambda d:d["actor"].update(ip="10.42.0.254"));self.rejected()
+    def test_unhealthy_node_snapshot_rejected(self):
+        def mutate(d):
+            for c in d["items"][0]["status"]["conditions"]:
+                if c["type"]=="MemoryPressure":c["status"]="True"
+        self.edit("nodes-after.json",mutate);self.rejected()
+    def test_reversed_resource_timestamps_rejected(self):
+        def mutate(d):
+            for v in d.values():v["data"]["result"][0]["values"].reverse()
+        self.edit("prometheus-resources.json",mutate);self.rejected()
+    def test_wrong_resource_result_type_rejected(self):
+        self.edit("prometheus-resources.json",lambda d:d["frontend_cpu_cores"]["data"].update(resultType="vector"));self.rejected()
     def test_source_hash_tampered(self):
         p=self.root/"source/s5/client.py";original=p.read_bytes()
         try:p.write_bytes(b"changed");self.rejected()

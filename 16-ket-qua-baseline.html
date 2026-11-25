@@ -66,6 +66,8 @@ wc -l telemetry.ndjson
 <p><a href="22-s4-tai-noi-bo.html#nghiem-thu-lai-s4-ngay-25-11-2026">Report chi tiết</a> kiểm tra lại bằng chứng bằng verifier đã sửa, replay nhãn từng cửa sổ và bổ sung throughput/p99 theo pha. Các run hồi quy mới được giữ riêng theo source hash, không cộng vào cohort pilot ngày 23/11. Ngày UTC trong tên thư mục có thể là 24/11, tương ứng sáng 25/11 giờ Việt Nam.</p>
 <h2 id="pilot-s5-ngay-25-11-2026">Pilot S5 ngày 25/11/2026</h2>
 <p>Các run s5-* có actor/receiver receipt, raw và source snapshot. <a href="23-s5-gui-du-lieu-gia.html">Hướng dẫn S5</a> giải thích topology receiver ngoài mạng Pod, SNAT và số byte; <a href="23-s5-gui-du-lieu-gia.html#ket-qua-pilot-s5-ngay-25-11-2026">bảng kết quả</a> chỉ cộng payload của các pilot hoàn tất. Lượt interrupted giữ riêng để chứng minh cleanup và không cộng vào cohort.</p>
+<h2 id="ra-soat-s5-sau-pilot">Rà soát S5 sau pilot</h2>
+<p><a href="23-s5-gui-du-lieu-gia.html#ra-soat-s5-sau-pilot-ngay-25-11-2026">Rà soát chi tiết</a> lưu lỗi bind TIME_WAIT, ACK sai kiểu và các kiểm tra verifier/audit bổ sung. Các smoke hồi quy mới và SIGTERM được lưu riêng; không cộng vào 120 payload pilot. Archive, receipt và nhãn các lượt đã công bố được giữ nguyên.</p>
 <h2 id="phan-tich-baseline-15-phut">Phân tích baseline 15 phút</h2>
 <p>Phân tích sự kiện tcp_send trong cửa sổ đo của lượt này. Đích được đối chiếu với Service ClusterIP, EndpointSlice của hai snapshot và IP nguồn có danh tính workload trong log. Việc suy ra phía server dựa trên cổng lắng nghe trong Service và EndpointSlice.</p>
 <p>Tổng cộng <strong>141,639</strong> sự kiện gửi TCP. Ánh xạ được <strong>132,163</strong> sự kiện tới một workload đích duy nhất. Có <strong>16</strong> luồng nguồn–đích–cổng gửi về phía server.</p>
@@ -260,6 +262,7 @@ wc -l telemetry.ndjson
 <li><a href="#s4-va-s0-control-ngay-23-11-2026">S4 và S0 control ngày 23/11/2026</a></li>
 <li><a href="#nghiem-thu-s4-ngay-25-11-2026">Nghiệm thu S4 ngày 25/11/2026</a></li>
 <li><a href="#pilot-s5-ngay-25-11-2026">Pilot S5 ngày 25/11/2026</a></li>
+<li><a href="#ra-soat-s5-sau-pilot">Rà soát S5 sau pilot</a></li>
 <li><a href="#phan-tich-baseline-15-phut">Phân tích baseline 15 phút</a></li>
 <li><a href="#theo-tung-phut">Theo từng phút</a></li>
 <li><a href="#buoc-tiep-theo">Bước tiếp theo</a></li>

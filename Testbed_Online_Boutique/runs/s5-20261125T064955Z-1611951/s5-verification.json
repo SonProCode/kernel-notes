@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "scope": "Synthetic exfiltration pilot; not real data theft or egress-policy enforcement",
+  "verifier_sha256": "7e2a8c2242ad953efb00ee6d4799af15215b1be9a1d8fadc0c00b469dfb37f64",
+  "run_id": "s5-20261125T064955Z-1611951",
+  "mode": "smoke",
+  "uploads": 12,
+  "received": 12,
+  "received_payload_bytes": 786432,
+  "operations_with_native_evidence": 12,
+  "native_event_counts": {
+    "tcp_connect_attempt": 12,
+    "tcp_send": 24
+  },
+  "kernel_send_bytes_requested": 790224,
+  "kernel_bytes_by_operation": {
+    "upload-00000": 65852,
+    "upload-00001": 65852,
+    "upload-00002": 65852,
+    "upload-00003": 65852,
+    "upload-00004": 65852,
+    "upload-00005": 65852,
+    "upload-00006": 65852,
+    "upload-00007": 65852,
+    "upload-00008": 65852,
+    "upload-00009": 65852,
+    "upload-00010": 65852,
+    "upload-00011": 65852
+  },
+  "locust_requests": 137,
+  "locust_by_phase": {
+    "pre_attack": {
+      "requests": 32,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 32,
+      "p50_ms": 33.08654099237174,
+      "p95_ms": 114.09345199353993,
+      "max_ms": 126.87510694377124,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    },
+    "attack": {
+      "requests": 26,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 26,
+      "p50_ms": 28.93497608602047,
+      "p95_ms": 87.0695780031383,
+      "max_ms": 87.10970403626561,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    },
+    "recovery": {
+      "requests": 24,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 24,
+      "p50_ms": 26.203532004728913,
+      "p95_ms": 76.51144394185394,
+      "max_ms": 78.43722403049469,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    }
+  },
+  "normalized_events": 9384,
+  "events_by_label": {
+    "unknown": 5666,
+    "normal": 3718
+  },
+  "receiver_peer_ips": [
+    "192.168.141.144"
+  ],
+  "raw_normalized_and_windows_replay_match": true,
+  "errors": []
+}

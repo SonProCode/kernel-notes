@@ -107,6 +107,8 @@ def read(slug):
     if slug == "23-s5-gui-du-lieu-gia":
         report = ROOT / "Testbed_Online_Boutique/experiments/S5-RESULTS.md"
         text += "\n\n" + report.read_text(encoding="utf-8").replace("# Kết quả", "## Kết quả", 1)
+        review = ROOT / "Testbed_Online_Boutique/experiments/S5-REVIEW.md"
+        text += "\n\n" + review.read_text(encoding="utf-8").replace("# Rà soát", "## Rà soát", 1)
     if slug == "22-s4-tai-noi-bo":
         report = ROOT / "Testbed_Online_Boutique/experiments/S4-RESULTS.md"
         text += "\n\n" + report.read_text(encoding="utf-8").replace("# Kết quả", "## Kết quả", 1)
@@ -133,6 +135,8 @@ def read(slug):
         page = next((key for key, value in LAB_SOURCES.items() if value == document), None)
         if document == "Testbed_Online_Boutique/experiments/S5-RESULTS.md":
             return "](23-s5-gui-du-lieu-gia.html#ket-qua-pilot-s5-ngay-25-11-2026)"
+        if document == "Testbed_Online_Boutique/experiments/S5-REVIEW.md":
+            return "](23-s5-gui-du-lieu-gia.html#ra-soat-s5-sau-pilot-ngay-25-11-2026)"
         if document == "Testbed_Online_Boutique/experiments/S4-RESULTS.md":
             return "](22-s4-tai-noi-bo.html#ket-qua-pilot-s4-ngay-23-11-2026)"
         if document == "Testbed_Online_Boutique/experiments/S4-REVIEW.md":

@@ -47,3 +47,6 @@ Hai pilot ghi 750 request Locust trên toàn lượt, gồm setup/warm-up/finali
 Đã kiểm chứng gửi payload giả tới endpoint lab ngoài mạng Pod và có dữ liệu có nhãn để phân tích. Chưa thử exfiltration Internet, DNS/TLS/covert channel; chưa đo recall/precision hay hiệu quả egress deny. Những phạm vi đó không được suy ra từ pilot này.
 
 Tập official vẫn cần các lượt lặp và S0 đối chứng theo kế hoạch. Cần chốt tập đặc trưng/schema thống nhất cho S0–S5; các schema v4/v5/v6 đang được giữ theo phiên bản, không ghép mù làm cùng một bảng huấn luyện. Dữ liệu raw còn nguyên để phân tích lại theo phiên bản mới khi cần.
+
+
+Xem [rà soát S5 sau pilot](S5-REVIEW.md) để đọc các lỗi đã tái hiện/sửa, 88 kiểm thử, hậu kiểm dữ liệu gốc và smoke bản mới. Số liệu 120 payload pilot gốc được giữ riêng theo source của các lượt đó.

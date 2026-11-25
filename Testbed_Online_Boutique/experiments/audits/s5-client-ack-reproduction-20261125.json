@@ -1,0 +1,20 @@
+{
+  "baseline_commit": "9911aa8",
+  "scope": "Malformed HTTP 200 JSON array via a fake connection; no network or original runs changed",
+  "cases": [
+    {
+      "version": "previous",
+      "source_sha256": "d3d5fcea13f16648d07d64c713263aa61eb25f036ad3deea19df37d153e18e70",
+      "uncaught_exception": "AttributeError",
+      "receipt_count": 0,
+      "receipt_outcome": null
+    },
+    {
+      "version": "current",
+      "source_sha256": "a86e28266edd9ba4931d3b5699763698b96a197a019012d40c01bd7783135d57",
+      "uncaught_exception": null,
+      "receipt_count": 1,
+      "receipt_outcome": "failed"
+    }
+  ]
+}

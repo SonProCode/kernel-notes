@@ -18,7 +18,8 @@ def now():
 
 
 class Receiver(HTTPServer):
-    allow_reuse_address = False
+    # Permit a new run after TIME_WAIT; an active listener still owns its port.
+    allow_reuse_address = True
 
     def __init__(self, address, run_id, calls, sink=None):
         if type(calls) is not int or not 1 <= calls <= 60:

@@ -1,0 +1,96 @@
+{
+  "schema_version": 5,
+  "run_id": "s5-20261125T065118Z-1615176",
+  "scenario_id": "S5",
+  "mode": "smoke",
+  "status": "interrupted",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 12,
+  "pre_seconds": 12,
+  "recovery_seconds": 12,
+  "s5": {
+    "calls": 60,
+    "rate": 1,
+    "payload_bytes": 65536,
+    "fixture_id": "gd4-s5-synthetic-v1",
+    "verification_contract": 1,
+    "method": "POST",
+    "path": "/upload",
+    "request_timeout_seconds": 3,
+    "receiver_ip": "192.168.141.142",
+    "receiver_port": 18080,
+    "topology": "host_receiver_outside_pod_network",
+    "cross_host_clock_tolerance_seconds": 2
+  },
+  "temporary_resources": {
+    "actor": "gd4-s5-1615176",
+    "locust_deployment": "gd4-locust-1615176",
+    "configmap": "gd4-s5-code-1615176"
+  },
+  "source_snapshot": "source",
+  "script_sha256": {
+    "runner.py": "2623a079a84cc1480bd50c294329c2979ad8f7be93256e89c21c38f8232d506e",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "s5_runner.py": "0895965298b8530e8038dcb4c6cb4e171fc84550aedca27efae934027fe5a7be",
+    "s5_normalize.py": "d37f71f7ba36b07eef0cedf2ddc7b69a0398390b7c7e8c4c07341f87ae3c3d73",
+    "s5_verify.py": "7e2a8c2242ad953efb00ee6d4799af15215b1be9a1d8fadc0c00b469dfb37f64",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "s4_verify.py": "d8715b4ed9cbc4a27988bff9a13515009e94d4bd1c6044d07a588fc3f7d13a72",
+    "s5/client.py": "a86e28266edd9ba4931d3b5699763698b96a197a019012d40c01bd7783135d57",
+    "s5/fixture.py": "26f0a64458107b2e2f234cec96a84d5d471a48207de76c2efbb7e4e73efece3f",
+    "s5/receiver.py": "b248544282716ebee5545c390fb101d57dce7c44dbf8d7b6d9c1ace3fc5c156d",
+    "s4/locust_wrapper.py": "b6ea6f97281b9ffce0fd03894172df5070c9857010084fcb9fa21624ab81af10",
+    "telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "code_bundle_sha256": "0aa13ce40aa19d1968544a8d96dca921db2e84f03c828479321ccadbf9206676",
+  "frontend_probe": {
+    "service": "frontend",
+    "ip": "10.43.221.147",
+    "port": 80,
+    "target_ips": [
+      "10.42.1.12",
+      "10.43.221.147"
+    ],
+    "target_ports": [
+      80,
+      8080
+    ]
+  },
+  "targets": [
+    {
+      "ip": "192.168.141.142",
+      "port": 18080,
+      "target_ips": [
+        "192.168.141.142"
+      ],
+      "target_ports": [
+        18080
+      ]
+    }
+  ],
+  "receiver": {
+    "pid": 1615290,
+    "uid": 1000,
+    "ip": "192.168.141.142",
+    "port": 18080
+  },
+  "actor": {
+    "name": "gd4-s5-1615176",
+    "uid": "e6f57bc7-13f9-4227-bc40-32994af8d430",
+    "ip": "10.42.1.102",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0"
+  },
+  "capture_start": "2026-11-25T06:51:21.979567+00:00",
+  "locust": {
+    "pod": "gd4-locust-1615176-6b4f85887c-fqmxc",
+    "uid": "51c5dd50-a543-43b9-9e93-5743bf7964f8",
+    "image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "original_deployment_unchanged": true
+  },
+  "error": "KeyboardInterrupt: Signal 15",
+  "finished": "2026-11-25T06:52:09.688030+00:00",
+  "cleanup_errors": [],
+  "guard_triggered": false
+}

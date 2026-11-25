@@ -1,0 +1,12 @@
+{
+  "run_id": "s5-20261125T064830Z-1608732",
+  "scheduled": 12,
+  "submitted": 12,
+  "skipped_late": 0,
+  "started": "2026-11-25T06:49:16.257725+00:00",
+  "ended": "2026-11-25T06:49:28.257971+00:00",
+  "elapsed_seconds": 12.000274013960734,
+  "interrupted": false,
+  "rate": 1,
+  "payload_bytes": 65536
+}

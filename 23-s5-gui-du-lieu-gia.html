@@ -5,9 +5,10 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 22 · LAB THỰC TẾ · GĐ4 · S5 · 14 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 22 · LAB THỰC TẾ · GĐ4 · S5 · 19 PHÚT ĐỌC</div>
 <h1>S5 · Gửi dữ liệu giả ra endpoint lab</h1><p>Đối chiếu payload 64 KiB qua client, receiver ngoài mạng Pod và log Tetragon.</p></header>
 <div class="shell reading"><article class="prose"><p>Cập nhật 25/11/2026. Đây là <strong>pilot S5 của GĐ4</strong>. Mục tiêu là tạo dữ liệu có nhãn và chứng minh một Pod đã gửi payload tới receiver mình kiểm soát. Đề cương gọi kịch bản này là data exfiltration mô phỏng. Payload hoàn toàn được sinh trong bộ nhớ; script không đọc dữ liệu nghiệp vụ, token hoặc file của ứng dụng.</p>
+<p>Đọc thêm <a href="23-s5-gui-du-lieu-gia.html#ra-soat-s5-sau-pilot-ngay-25-11-2026">rà soát sau pilot</a>: sửa bind lại receiver khi TIME_WAIT, xử lý ACK sai kiểu và siết điều kiện verifier/audit; có kết quả hồi quy của bản mới.</p>
 <h2 id="1-s5-la-gi-khac-s4-o-dau">1. S5 là gì, khác S4 ở đâu?</h2>
 <p>S4 tạo thêm nhiều request đọc trang chủ để quan sát tác động của tải. S5 mô phỏng một workload gửi dữ liệu tới một địa chỉ ngoài nhóm service nghiệp vụ. Ví dụ, một Pod của cửa hàng gửi một khối dữ liệu tới địa chỉ IP không nằm trong các Service Boutique.</p>
 <p>Để học và đo trong lab, ta dùng <strong>64 KiB dữ liệu giả</strong>, gửi một lần mỗi giây. Receiver kiểm tra checksum và trả xác nhận. Không cần lấy dữ liệu thật để chứng minh đường gửi hoạt động.</p>
@@ -280,7 +281,102 @@ python3 experiments/s5/audit.py --output experiments/audits/my-s5-audit.json
 </ol>
 <h2 id="dieu-chua-duoc-ket-luan">Điều chưa được kết luận</h2>
 <p>Đã kiểm chứng gửi payload giả tới endpoint lab ngoài mạng Pod và có dữ liệu có nhãn để phân tích. Chưa thử exfiltration Internet, DNS/TLS/covert channel; chưa đo recall/precision hay hiệu quả egress deny. Những phạm vi đó không được suy ra từ pilot này.</p>
-<p>Tập official vẫn cần các lượt lặp và S0 đối chứng theo kế hoạch. Cần chốt tập đặc trưng/schema thống nhất cho S0–S5; các schema v4/v5/v6 đang được giữ theo phiên bản, không ghép mù làm cùng một bảng huấn luyện. Dữ liệu raw còn nguyên để phân tích lại theo phiên bản mới khi cần.</p><div class="finish"><button class="button" data-complete="23-s5-gui-du-lieu-gia" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="22-s4-tai-noi-bo.html">← S4 · Tải nội bộ và đo tác động</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<p>Tập official vẫn cần các lượt lặp và S0 đối chứng theo kế hoạch. Cần chốt tập đặc trưng/schema thống nhất cho S0–S5; các schema v4/v5/v6 đang được giữ theo phiên bản, không ghép mù làm cùng một bảng huấn luyện. Dữ liệu raw còn nguyên để phân tích lại theo phiên bản mới khi cần.</p>
+<p>Xem <a href="23-s5-gui-du-lieu-gia.html#ra-soat-s5-sau-pilot-ngay-25-11-2026">rà soát S5 sau pilot</a> để đọc các lỗi đã tái hiện/sửa, 88 kiểm thử, hậu kiểm dữ liệu gốc và smoke bản mới. Số liệu 120 payload pilot gốc được giữ riêng theo source của các lượt đó.</p>
+<h2 id="ra-soat-s5-sau-pilot-ngay-25-11-2026">Rà soát S5 sau pilot ngày 25/11/2026</h2>
+<p><strong>Kết luận: hai pilot 60 payload vẫn đạt khi kiểm lại dữ liệu; bản triển khai đã được sửa thêm lỗi khởi động lại receiver và các khe hở kiểm tra. Có thể chốt ở mức pilot.</strong> Chưa dùng kết quả này thay bộ official có lặp/đối chứng, đánh giá detector hoặc hiệu quả egress deny.</p>
+<h2 id="1-nhung-van-de-da-tai-hien">1. Những vấn đề đã tái hiện</h2>
+<table>
+<thead>
+<tr>
+<th>Vấn đề</th>
+<th>Trước sửa</th>
+<th>Sau sửa / bằng chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Receiver khởi động lại khi socket còn TIME_WAIT</td>
+<td>Có thể báo Errno 98 dù lượt trước đã dừng</td>
+<td>Bật SO_REUSEADDR qua allow_reuse_address=True; thử Linux loopback tái hiện cấu hình cũ lỗi và cấu hình mới bind lại thành công</td>
+</tr>
+<tr>
+<td>ACK HTTP 200 là JSON array thay vì object</td>
+<td>AttributeError, chưa ghi được receipt cho thao tác lỗi</td>
+<td>Kiểm kiểu ACK; ghi receipt outcome=failed, error=ValueError</td>
+</tr>
+<tr>
+<td>Probe guard bị sửa thành false nhưng streak vẫn bằng 0</td>
+<td>Verifier vẫn passed</td>
+<td>Tính lại chuỗi lỗi từ probe_ok; kiểm kiểu và từ chối bộ đếm không nhất quán hoặc ba lần lỗi liên tiếp</td>
+</tr>
+<tr>
+<td>Image ID trong manifest không khớp Pod snapshot</td>
+<td>Verifier vẫn passed</td>
+<td>So UID/image actor và Locust với snapshot trước/sau; kiểm thêm IP và placement của actor</td>
+</tr>
+<tr>
+<td>Smoke đã đánh dấu validated nhưng hậu kiểm bị lỗi</td>
+<td>Audit tổng có thể vẫn passed vì chỉ chốt điều kiện hai pilot</td>
+<td>Audit tổng yêu cầu mọi lượt completed/validated được đưa vào kiểm tra đều đạt</td>
+</tr>
+</tbody>
+</table>
+<p>Hai vấn đề guard/image được thử bằng cách cố ý sửa <strong>bản sao tạm</strong> của smoke, không phải phát hiện hai lỗi đó trong log thật. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-verifier-reproduction-20261125.json">Report verifier trước/sau</a> lưu baseline commit 9911aa8 và hash của hai verifier.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-client-ack-reproduction-20261125.json">ACK sai kiểu</a> được thử với fake connection không đi mạng; test giao thức còn dùng HTTP loopback thật để xác nhận client xuất receipt lỗi. Lượt có lỗi này sẽ không đạt nghiệm thu upload.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-audit-reproduction-20261125.json">Report audit tổng trước/sau</a> dùng bản sao hai pilot và một smoke có manifest bị sửa. Verifier từ chối smoke ở cả hai lần; bản audit mới còn từ chối kết quả tổng thay vì che khuất lỗi đó bằng cohort pilot hợp lệ.</p>
+<h2 id="2-loi-time_wait-va-cach-tu-kiem-tra">2. Lỗi TIME_WAIT và cách tự kiểm tra</h2>
+<p>Khi kết nối TCP vừa đóng, hệ điều hành có thể giữ trạng thái TIME_WAIT. Cấu hình receiver cũ tắt address reuse, nên bind lại ngay có thể thất bại. Cơ chế SO_REUSEADDR hỗ trợ dùng lại socket ở trạng thái này trên POSIX. <a href="https://docs.python.org/3.10/library/socket.html#example">Python socket documentation</a>.</p>
+<p>Phép kiểm trên Linux dùng <strong>cổng loopback ngẫu nhiên</strong>, không đụng receiver 18080 hoặc Pod:</p>
+<ul>
+<li>Mô phỏng giá trị cũ allow_reuse_address=False: bind lại thất bại, errno=98.</li>
+<li>Dùng cấu hình mới True: bind lại thành công.</li>
+<li>Khi một listener còn hoạt động: listener thứ hai vẫn bị từ chối. Không kill hay thay thế dịch vụ đang giữ cổng.</li>
+</ul>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-review-network-20261125.json">Bằng chứng Linux</a> có hash receiver và script kiểm tra. Có thể tự chạy trên lab-cp, từ thư mục Testbed_Online_Boutique:</p>
+<pre><code class="language-bash">python3 experiments/s5/check_rebind.py --output experiments/audits/my-s5-rebind.json
+</code></pre>
+<p>Đọc passed và ba kết quả trong report. Script này dành cho Linux; các phép kiểm giao thức/fixture khác có thể chạy trên máy có Python và dataset đi kèm.</p>
+<h2 id="3-kiem-tra-bo-sung-trong-verifier-audit">3. Kiểm tra bổ sung trong verifier/audit</h2>
+<p>Ngoài những lỗi trên, bản kiểm tra mới xác minh node Ready/không MemoryPressure ở hai snapshot; timestamp resource phải tăng, không gián đoạn quá 35 giây và đúng kiểu matrix. Probe guard phải có kết quả boolean và chuỗi bộ đếm hợp lệ.</p>
+<p>Audit so policy spec trước/sau từng lượt và giữa các pilot. Kiểm tra không sửa bằng chứng bao phủ cả cây file dưới từng run, kể cả raw/source nếu đã giải nén. Nhãn/background features và cửa sổ 10 giây tiếp tục được dựng lại từ raw rồi so toàn bộ bản ghi.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-review-regression-20261125.json">88 kiểm thử kết hợp S4/S5</a> đều đạt, 0 failure/error/skipped. Trong đó S5 có 39 test, S4 có 49 test. Các kiểm thử âm tính dùng bản sao và không ghi đè archive, manifest, receipt hoặc nhãn đã công bố.</p>
+<h2 id="4-hoi-quy-ban-moi-tren-lab">4. Hồi quy bản mới trên lab</h2>
+<table>
+<thead>
+<tr>
+<th>Run mới</th>
+<th>Vai trò</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s5-20261125T064830Z-1608732/manifest.json">s5-20261125T064830Z-1608732</a></td>
+<td>Smoke w1, 12 payload</td>
+<td>completed/validated, đủ nhận và native evidence</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s5-20261125T064955Z-1611951/manifest.json">s5-20261125T064955Z-1611951</a></td>
+<td>Smoke w2, 12 payload</td>
+<td>completed/validated, đủ nhận và native evidence</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s5-20261125T065118Z-1615176/manifest.json">s5-20261125T065118Z-1615176</a></td>
+<td>SIGTERM khi đang upload</td>
+<td>interrupted; receiver đã nhận 2 payload, cleanup đạt</td>
+</tr>
+</tbody>
+</table>
+<p>Hai smoke chạy tuần tự trên cùng port receiver. Tổng 24 payload smoke mới được lưu riêng; không cộng vào 120 payload của hai pilot cũ. Các run có source snapshot riêng và giữ nhãn smoke=unknown.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-review-final-state-20261125.json">Snapshot sau hồi quy</a> xác nhận source trên lab khớp hai smoke mới, cả ba node Ready/không MemoryPressure, ứng dụng đạt replica mong đợi, loadgenerator gốc=0, không còn tài nguyên thí nghiệm và port 18080 đã đóng.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s5-second-review-20261125.json">Audit toàn bộ S5 sau sửa</a> kiểm lại cả cohort cũ và các smoke mới. Hai pilot gốc tiếp tục có 120/120 payload, 7.864.320 byte body, checksum và connect/send khớp. Bảng số liệu lịch sử ở <a href="23-s5-gui-du-lieu-gia.html#ket-qua-pilot-s5-ngay-25-11-2026">kết quả pilot</a> được giữ nguyên, cùng source/image của chính lượt đó.</p>
+<h2 id="5-double-check-va-gioi-han-nghiem-thu">5. Double check và giới hạn nghiệm thu</h2>
+<pre><code class="language-bash">python3 -m unittest discover -s experiments -p 'test_s5*.py' -v
+python3 experiments/s5/audit.py --output experiments/audits/my-s5-review.json
+</code></pre>
+<p>Lệnh audit không tạo tải mới. Đọc từng run, all_completed_validated_runs_passed, passed, source hash và lý do loại trừ. Lượt failed/interrupted không được tính là attack đã hoàn tất.</p>
+<p>S5 đã chứng minh gửi dữ liệu giả đến receiver ngoài mạng Pod trong lab, có traffic normal chạy cùng và có bằng chứng ba phía. Cần thu các lượt official lặp, S0 đối chứng và thống nhất đặc trưng/schema trước khi đánh giá định lượng GĐ4/GĐ5. Kết quả hiện không suy ra khả năng exfiltration Internet hay hiệu quả chặn của policy.</p><div class="finish"><button class="button" data-complete="23-s5-gui-du-lieu-gia" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="22-s4-tai-noi-bo.html">← S4 · Tải nội bộ và đo tác động</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#1-s5-la-gi-khac-s4-o-dau">1. S5 là gì, khác S4 ở đâu?</a></li>
 <li><a href="#2-topology-dang-dung">2. Topology đang dùng</a></li>
@@ -301,6 +397,12 @@ python3 experiments/s5/audit.py --output experiments/audits/my-s5-audit.json
 <li><a href="#hau-kiem-va-trang-thai-cuoi">Hậu kiểm và trạng thái cuối</a></li>
 <li><a href="#nhat-ky-trien-khai-de-double-check">Nhật ký triển khai để double check</a></li>
 <li><a href="#dieu-chua-duoc-ket-luan">Điều chưa được kết luận</a></li>
+<li><a href="#ra-soat-s5-sau-pilot-ngay-25-11-2026">Rà soát S5 sau pilot ngày 25/11/2026</a></li>
+<li><a href="#1-nhung-van-de-da-tai-hien">1. Những vấn đề đã tái hiện</a></li>
+<li><a href="#2-loi-time_wait-va-cach-tu-kiem-tra">2. Lỗi TIME_WAIT và cách tự kiểm tra</a></li>
+<li><a href="#3-kiem-tra-bo-sung-trong-verifier-audit">3. Kiểm tra bổ sung trong verifier/audit</a></li>
+<li><a href="#4-hoi-quy-ban-moi-tren-lab">4. Hồi quy bản mới trên lab</a></li>
+<li><a href="#5-double-check-va-gioi-han-nghiem-thu">5. Double check và giới hạn nghiệm thu</a></li>
 </ul>
 </div>
 </aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

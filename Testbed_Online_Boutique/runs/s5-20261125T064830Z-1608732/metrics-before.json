@@ -1,0 +1,172 @@
+{
+  "agent_up": {
+    "status": "success",
+    "data": {
+      "resultType": "vector",
+      "result": [
+        {
+          "metric": {
+            "__name__": "up",
+            "endpoint": "metrics",
+            "instance": "192.168.141.143:2112",
+            "job": "tetragon",
+            "namespace": "telemetry",
+            "node": "lab-w1",
+            "pod": "tetragon-68mlr",
+            "service": "tetragon",
+            "tetragon_pod": "tetragon-68mlr"
+          },
+          "value": [
+            1795589330.722,
+            "1"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "up",
+            "endpoint": "metrics",
+            "instance": "192.168.141.144:2112",
+            "job": "tetragon",
+            "namespace": "telemetry",
+            "node": "lab-w2",
+            "pod": "tetragon-jhpf4",
+            "service": "tetragon",
+            "tetragon_pod": "tetragon-jhpf4"
+          },
+          "value": [
+            1795589330.722,
+            "1"
+          ]
+        }
+      ]
+    }
+  },
+  "loss_and_export": {
+    "status": "success",
+    "data": {
+      "resultType": "vector",
+      "result": [
+        {
+          "metric": {
+            "__name__": "tetragon_events_export_failed_total",
+            "node": "lab-w1"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_export_ratelimit_events_dropped_total",
+            "node": "lab-w1"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_observer_ringbuf_events_lost_total",
+            "node": "lab-w1"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_observer_ringbuf_queue_events_lost_total",
+            "node": "lab-w1"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_events_export_failed_total",
+            "node": "lab-w2"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_export_ratelimit_events_dropped_total",
+            "node": "lab-w2"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_observer_ringbuf_events_lost_total",
+            "node": "lab-w2"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        },
+        {
+          "metric": {
+            "__name__": "tetragon_observer_ringbuf_queue_events_lost_total",
+            "node": "lab-w2"
+          },
+          "value": [
+            1795589330.889,
+            "0"
+          ]
+        }
+      ]
+    }
+  },
+  "agent_scrape_age_seconds": {
+    "status": "success",
+    "data": {
+      "resultType": "vector",
+      "result": [
+        {
+          "metric": {
+            "endpoint": "metrics",
+            "instance": "192.168.141.143:2112",
+            "job": "tetragon",
+            "namespace": "telemetry",
+            "node": "lab-w1",
+            "pod": "tetragon-68mlr",
+            "service": "tetragon",
+            "tetragon_pod": "tetragon-68mlr"
+          },
+          "value": [
+            1795589331.03,
+            "7.322999954223633"
+          ]
+        },
+        {
+          "metric": {
+            "endpoint": "metrics",
+            "instance": "192.168.141.144:2112",
+            "job": "tetragon",
+            "namespace": "telemetry",
+            "node": "lab-w2",
+            "pod": "tetragon-jhpf4",
+            "service": "tetragon",
+            "tetragon_pod": "tetragon-jhpf4"
+          },
+          "value": [
+            1795589331.03,
+            "4.174000024795532"
+          ]
+        }
+      ]
+    }
+  }
+}

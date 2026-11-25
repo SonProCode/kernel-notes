@@ -68,3 +68,8 @@ Các smoke hồi quy contract v2 và lượt failed_validation/interrupted đư�
 ## Pilot S5 ngày 25/11/2026
 
 Các run s5-* có actor/receiver receipt, raw và source snapshot. [Hướng dẫn S5](../experiments/S5.md) giải thích topology receiver ngoài mạng Pod, SNAT và số byte; [bảng kết quả](../experiments/S5-RESULTS.md) chỉ cộng payload của các pilot hoàn tất. Lượt interrupted giữ riêng để chứng minh cleanup và không cộng vào cohort.
+
+
+## Rà soát S5 sau pilot
+
+[Rà soát chi tiết](../experiments/S5-REVIEW.md) lưu lỗi bind TIME_WAIT, ACK sai kiểu và các kiểm tra verifier/audit bổ sung. Các smoke hồi quy mới và SIGTERM được lưu riêng; không cộng vào 120 payload pilot. Archive, receipt và nhãn các lượt đã công bố được giữ nguyên.

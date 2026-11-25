@@ -54,6 +54,8 @@ def run(run_id, calls):
                 if len(raw) > 8192:
                     raise ValueError("response_too_large")
                 acknowledgment = json.loads(raw)
+                if not isinstance(acknowledgment, dict):
+                    raise ValueError("receiver_acknowledgment_not_object")
                 if status != 200 or acknowledgment.get("operation_id") != operation or acknowledgment.get("run_id") != run_id or acknowledgment.get("payload_sha256") != digest or acknowledgment.get("payload_bytes") != PAYLOAD_BYTES:
                     raise ValueError("receiver_acknowledgment_mismatch")
             except (OSError, http.client.HTTPException, ValueError) as exception:

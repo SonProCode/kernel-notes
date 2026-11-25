@@ -1,0 +1,15 @@
+{
+  "scope": "Only ephemeral loopback sockets and generated synthetic data; production receiver port untouched",
+  "cases": [
+    {
+      "reuse_address": false,
+      "address": "loopback ephemeral port",
+      "result": "OSError: [Errno 98] Address already in use"
+    },
+    {
+      "reuse_address": true,
+      "address": "loopback ephemeral port",
+      "result": "rebound"
+    }
+  ]
+}

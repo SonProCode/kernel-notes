@@ -141,11 +141,30 @@ def verify_s5(run):
             return state,original
         before,original=pod_state("before");after,original_after=pod_state("after")
         check(before==after and original==original_after and original["replicas"]==0,"Workload replaced/restarted or original loadgenerator changed")
+        for stage in ("before","after"):
+            snapshot=json.loads((run/f"boutique-{stage}.json").read_text())
+            pods=[p for p in snapshot["items"] if p["kind"]=="Pod"]
+            for key,name,container in (("actor",manifest["actor"]["name"],"actor"),("locust",manifest["locust"]["pod"],"main")):
+                captured=next(p for p in pods if p["metadata"]["name"]==name)
+                identity=manifest[key]
+                image=next(c["imageID"] for c in captured["status"]["containerStatuses"] if c["name"]==container)
+                check(captured["metadata"]["uid"]==identity["uid"] and image==identity["image_id"],"Pod UID/image differs from snapshot: "+key)
+                if key=="actor":
+                    check(captured["spec"]["nodeName"]=="lab-"+manifest["node"] and captured["status"]["podIP"]==identity["ip"],"Actor placement/IP differs from snapshot")
+            nodes=json.loads((run/f"nodes-{stage}.json").read_text())["items"]
+            check({n["metadata"]["name"] for n in nodes}==WORKERS|{"lab-cp"},"Node snapshot missing/unexpected node")
+            for node in nodes:
+                conditions={c["type"]:c["status"] for c in node["status"]["conditions"]}
+                check(conditions.get("Ready")=="True" and conditions.get("MemoryPressure")=="False","Unhealthy node snapshot")
         guard=rows(run/"guard.ndjson")
         check(all(any(g["phase"]==p for g in guard) for p in ("warmup","pre_attack","attack","recovery")),"Guard phase coverage missing")
         guard_times=[timestamp(g["timestamp"]) for g in guard]
         check(bool(guard_times) and all(0<(b-a).total_seconds()<=35 for a,b in zip(guard_times,guard_times[1:])) and (times[-1]-guard_times[-1]).total_seconds()<=35,"Guard heartbeat missing/gapped")
+        failed_probes=0
         for g in guard:
+            check(type(g.get("probe_ok")) is bool,"Missing/invalid guard probe result")
+            failed_probes=0 if g.get("probe_ok") is True else failed_probes+1
+            check(type(g.get("consecutive_probe_failures")) is int and g["consecutive_probe_failures"]==failed_probes and failed_probes<3,"Guard probe streak inconsistent")
             check(not g["reasons"] and g["consecutive_probe_failures"]<3 and {uid:v["restarts"] for uid,v in g["pods"].items()}==before,"Guard detected unhealthy workload")
             moment=timestamp(g["timestamp"])
             check(g["phase"] in bounds,"Unknown guard phase")
@@ -173,7 +192,9 @@ def verify_s5(run):
             series=value.get("data",{}).get("result",[])
             check(value.get("status")=="success" and len(series)==1,"Invalid resource series: "+name)
             points=[(float(t),float(v)) for t,v in series[0]["values"]] if len(series)==1 else []
+            check(value.get("data",{}).get("resultType")=="matrix","Wrong resource result type: "+name)
             check(bool(points) and all(math.isfinite(t) and math.isfinite(v) and v>=0 for t,v in points),"Nonfinite/negative resource: "+name)
+            check(all(0<b[0]-a[0]<=35 for a,b in zip(points,points[1:])),"Resource timestamp order/gap invalid: "+name)
             for phase in ("pre_attack","attack","recovery"):
                 lo,hi=bounds[phase];check(any(lo.timestamp()<=t<hi.timestamp() for t,v in points),"Resource phase missing: "+name+"/"+phase)
         cleanup=json.loads((run/"cleanup.json").read_text())

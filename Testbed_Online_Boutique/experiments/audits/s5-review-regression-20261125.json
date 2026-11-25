@@ -1,0 +1,22 @@
+{
+  "tests_run": 88,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "scope": "Combined S4 and reviewed S5 protocol/integrity regression.",
+  "source_sha256": {
+    "runner.py": "2623a079a84cc1480bd50c294329c2979ad8f7be93256e89c21c38f8232d506e",
+    "check_cleanup.py": "80e7a739ac8e15f9fdb51997b474a9ce8f9d2d931e2678c34985bf2113486a7f",
+    "s5_runner.py": "0895965298b8530e8038dcb4c6cb4e171fc84550aedca27efae934027fe5a7be",
+    "s5_verify.py": "7e2a8c2242ad953efb00ee6d4799af15215b1be9a1d8fadc0c00b469dfb37f64",
+    "s5_normalize.py": "d37f71f7ba36b07eef0cedf2ddc7b69a0398390b7c7e8c4c07341f87ae3c3d73",
+    "s5/client.py": "a86e28266edd9ba4931d3b5699763698b96a197a019012d40c01bd7783135d57",
+    "s5/receiver.py": "b248544282716ebee5545c390fb101d57dce7c44dbf8d7b6d9c1ace3fc5c156d",
+    "s5/fixture.py": "26f0a64458107b2e2f234cec96a84d5d471a48207de76c2efbb7e4e73efece3f",
+    "s4_verify.py": "d8715b4ed9cbc4a27988bff9a13515009e94d4bd1c6044d07a588fc3f7d13a72",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "test_s5.py": "a1096e2e1c2091c50c8524833e33b3acddd9ae1c5a2dcaa132c028bf1161cfde",
+    "test_s5_integrity.py": "d593dca59495919ed508d12cb782c0c38798f80257778b4c57f4f5da0e3452a6"
+  }
+}

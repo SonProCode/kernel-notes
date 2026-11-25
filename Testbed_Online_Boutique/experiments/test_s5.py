@@ -9,13 +9,14 @@ from pathlib import Path
 import sys
 import threading
 import signal
+import socket
 import tempfile
 import unittest
 from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parent/"s5"))
 from fixture import PAYLOAD_BYTES, operation_id, payload
-from receiver import Receiver
+from receiver import Receiver, Handler
 
 RUN="s5-20261125T010000Z-123"
 
@@ -71,6 +72,8 @@ class ReceiverTests(unittest.TestCase):
     def test_oversized_body_rejected(self):self.assertEqual(self.upload(body=b"x"*65537)[0],400)
     def test_chunked_framing_rejected(self):self.assertEqual(self.upload({"Transfer-Encoding":"chunked"})[0],400)
     def test_wrong_endpoint_rejected(self):self.assertEqual(self.upload(path="/other")[0],400)
+    def test_receiver_enables_reuse_for_completed_connections(self):
+        self.assertEqual(self.server.socket.getsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR),1)
 
     def test_real_client_obtains_ack_and_leaves_no_pid_file(self):
         spec=importlib.util.spec_from_file_location("s5_client",Path(__file__).parent/"s5/client.py")
@@ -87,6 +90,23 @@ class ReceiverTests(unittest.TestCase):
                 self.assertFalse((root/"s5-action.pid").exists())
                 summary=json.loads((root/"s5-client-summary.json").read_text())
                 self.assertEqual(summary["submitted"],1);self.assertGreaterEqual(summary["elapsed_seconds"],1)
+        finally:
+            for s,h in previous.items():signal.signal(s,h)
+
+    def test_client_records_failure_for_json_ack_that_is_not_an_object(self):
+        spec=importlib.util.spec_from_file_location("s5_client_bad_ack",Path(__file__).parent/"s5/client.py")
+        client=importlib.util.module_from_spec(spec);spec.loader.exec_module(client)
+        previous={s:signal.getsignal(s) for s in (signal.SIGTERM,signal.SIGINT)}
+        original_reply=Handler.reply
+        try:
+            with tempfile.TemporaryDirectory() as directory,contextlib.redirect_stdout(io.StringIO()) as out:
+                root=Path(directory)
+                with patch.object(client,"RECEIVER_IP","127.0.0.1"),patch.object(client,"RECEIVER_PORT",self.server.server_port),patch.object(client,"Path",lambda p:root/Path(p).name),patch.object(Handler,"reply",lambda handler,code,data:original_reply(handler,code,["unexpected"])):
+                    client.run(RUN,1)
+                receipt=json.loads(out.getvalue())
+                self.assertEqual(receipt["outcome"],"failed")
+                self.assertEqual(receipt["error"],"ValueError")
+                self.assertEqual(json.loads((root/"s5-client-summary.json").read_text())["submitted"],1)
         finally:
             for s,h in previous.items():signal.signal(s,h)
 
