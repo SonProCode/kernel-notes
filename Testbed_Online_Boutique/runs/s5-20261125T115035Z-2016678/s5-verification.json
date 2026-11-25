@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "scope": "Synthetic exfiltration pilot; not real data theft or egress-policy enforcement",
+  "verifier_sha256": "76a199ac20ca414202af3f088c56355d8960fae727e80bf22412337c3d8b8f0f",
+  "run_id": "s5-20261125T115035Z-2016678",
+  "mode": "smoke",
+  "profile": "upload",
+  "scenario_id": "S5",
+  "uploads": 30,
+  "received": 30,
+  "received_payload_bytes": 1966080,
+  "operations_with_native_evidence": 30,
+  "native_event_counts": {
+    "tcp_connect_attempt": 30,
+    "tcp_send": 60
+  },
+  "kernel_send_bytes_requested": 1975560,
+  "kernel_bytes_by_operation": {
+    "upload-00000": 65852,
+    "upload-00001": 65852,
+    "upload-00002": 65852,
+    "upload-00003": 65852,
+    "upload-00004": 65852,
+    "upload-00005": 65852,
+    "upload-00006": 65852,
+    "upload-00007": 65852,
+    "upload-00008": 65852,
+    "upload-00009": 65852,
+    "upload-00010": 65852,
+    "upload-00011": 65852,
+    "upload-00012": 65852,
+    "upload-00013": 65852,
+    "upload-00014": 65852,
+    "upload-00015": 65852,
+    "upload-00016": 65852,
+    "upload-00017": 65852,
+    "upload-00018": 65852,
+    "upload-00019": 65852,
+    "upload-00020": 65852,
+    "upload-00021": 65852,
+    "upload-00022": 65852,
+    "upload-00023": 65852,
+    "upload-00024": 65852,
+    "upload-00025": 65852,
+    "upload-00026": 65852,
+    "upload-00027": 65852,
+    "upload-00028": 65852,
+    "upload-00029": 65852
+  },
+  "locust_requests": 323,
+  "locust_by_phase": {
+    "pre_attack": {
+      "requests": 77,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 77,
+      "p50_ms": 29.71769799478352,
+      "p95_ms": 89.94322700891644,
+      "max_ms": 140.79193701036274,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    },
+    "attack": {
+      "requests": 74,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 74,
+      "p50_ms": 26.2285330099985,
+      "p95_ms": 88.44204701017588,
+      "max_ms": 95.90467798989266,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    },
+    "recovery": {
+      "requests": 70,
+      "failures": 1,
+      "failure_ratio": 0.014285714285714285,
+      "latency_sample_count": 69,
+      "p50_ms": 73.14888294786215,
+      "p95_ms": 1506.848538061604,
+      "max_ms": 2040.918578975834,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    }
+  },
+  "normalized_events": 22251,
+  "events_by_label": {
+    "unknown": 12507,
+    "normal": 9744
+  },
+  "receiver_peer_ips": [
+    "192.168.141.143"
+  ],
+  "raw_normalized_and_windows_replay_match": true,
+  "errors": []
+}

@@ -2,6 +2,8 @@
 
 Ngày lập kế hoạch 18/11/2026, giờ Việt Nam.
 
+**Cập nhật 25/11:** đọc [tổng kiểm tra S0–S5 và đối chứng](S0-S5-REVIEW.md) để xem 16 pilot đã được hậu kiểm, batch bổ sung sáu lượt và các việc còn thiếu trước bộ dữ liệu chính thức. [Bản đồ schema](FEATURE-SCHEMA-MAP.md) giải thích cách chuẩn bị feature và tránh nhập nhầm smoke/unknown vào tập normal.
+
 **Trang này là kế hoạch tổng thể.** Người mới thực hành đọc [USAGE.md](USAGE.md), rồi [S1](S1.md), [S2](S2.md), [S3](S3.md). [Báo cáo rà soát 22/11](REVIEW-S1-S2-S3.md) phân biệt phần đã chạy với phần dự kiến. Một số đoạn thiết kế bên dưới mô tả mốc ban đầu (ví dụ fixture token giả); S3 runtime hiện có projected token thật của actor tạm như bài S3 giải thích.
 
 Kế hoạch bám mục 5, 6.2, 9 và 11 của đề cương luận văn. GĐ4 kéo dài tuần 11–14, với sản phẩm bàn giao là bộ dữ liệu attack/normal có nhãn và script tái lập S1–S5. Các mức tải, thời lượng, số lượt lặp và ngưỡng dừng dưới đây là phương án triển khai đề xuất cho lab ba VM, mỗi VM 4 GB RAM. Sau lượt thử ngắn, ghi cấu hình đã chốt vào manifest và giữ cố định trong các lượt so sánh.

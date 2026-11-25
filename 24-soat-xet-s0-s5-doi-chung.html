@@ -1,0 +1,374 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S0–S5 · Kiểm chứng và đối chứng · Kernel Notes</title><meta name="description" content="Đọc kết quả 16 pilot, sáu lượt bổ sung và phân biệt dữ liệu hợp lệ với kết luận thực nghiệm.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 23 · LAB THỰC TẾ · GĐ4 · Đối chứng · 15 PHÚT ĐỌC</div>
+<h1>S0–S5 · Kiểm chứng và đối chứng</h1><p>Đọc kết quả 16 pilot, sáu lượt bổ sung và phân biệt dữ liệu hợp lệ với kết luận thực nghiệm.</p></header>
+<div class="shell reading"><article class="prose"><p>Cập nhật ngày 25/11/2026. <strong>Đã kiểm tra lại 16 pilot chức năng S1–S5 và chạy xong batch bổ sung 6 lượt.</strong> Đường mô phỏng, thu log và đối chiếu bằng chứng đã được xác nhận ở mức pilot. Bộ dữ liệu chính thức vẫn cần lịch chạy, các lần lặp độc lập và hợp đồng feature chung.</p>
+<h2 id="1-doi-chung-nghia-la-gi">1. Đối chứng nghĩa là gì?</h2>
+<p>Giả sử lúc chạy S4, p95 của trang web tăng. Chỉ nhìn một lượt S4 chưa biết phần tăng đến từ tải phụ, thay đổi vị trí Pod hay dao động của ứng dụng. Ta cần một lượt tương tự nhưng không bật hành vi mô phỏng, gọi là <strong>đối chứng S0</strong>.</p>
+<p>Ví dụ cặp S5: cả hai lượt đều có 10 người mua Locust, actor trên w1 và receiver lắng nghe ở control-plane. Lượt S0 không upload; lượt S5 gửi payload giả. Như vậy, chi phí tạo actor và receiver cùng có ở hai bên. Nếu S0 không có receiver thì so sánh sẽ lẫn thêm khác biệt đó.</p>
+<p>Một cặp giống cấu hình vẫn có thể khác thứ tự request, thời gian xử lý và độ trễ. Vì vậy cặp ngắn này kiểm tra được cách tổ chức thí nghiệm; chưa đủ để kết luận định lượng về tác động hay hiệu quả phát hiện.</p>
+<h2 id="2-tong-kiem-tra-cac-kich-ban-da-co">2. Tổng kiểm tra các kịch bản đã có</h2>
+<table>
+<thead>
+<tr>
+<th>Phần</th>
+<th>Pilot chức năng đạt</th>
+<th>Nội dung kiểm tra</th>
+<th>Giới hạn cần nhớ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 GĐ3</td>
+<td>1 lượt 60 giây, 1 lượt 900 giây đạt kiểm tra capture ban đầu</td>
+<td>Replay raw, lượng sự kiện, hai agent</td>
+<td>Schema và bộ quan sát cũ; chỉ làm tham chiếu lịch sử</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>5/5</td>
+<td>22 lần thử TCP mỗi lượt, receipt và native event</td>
+<td>Hai lượt đầu thiếu source snapshot và metric mất log; không coi là cùng mức provenance với lượt mới</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>3/3</td>
+<td>Lời gọi gRPC payment trái luồng, client/server và native TCP</td>
+<td>Chứng minh đường gọi trong lab, chưa đánh giá detector hay policy chặn</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>2/2</td>
+<td>Shell, curl/wget/nc/nmap, đọc projected token; 18 thao tác mỗi lượt</td>
+<td>Actor là Pod tạm; không tuyên bố đã khai thác lỗ hổng ứng dụng</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>4/4</td>
+<td>861 HTTP request tải phụ có bằng chứng kernel, Locust và hồi phục</td>
+<td>Cohort cũ không khóa seed; đối chứng w1 không thay cho w2</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>2/2</td>
+<td>120 upload, 7.864.320 byte payload giả; client–receiver–kernel khớp</td>
+<td>Receiver trong lab, ngoài mạng Pod; chưa đại diện mọi hình thức exfiltration</td>
+</tr>
+</tbody>
+</table>
+<p><strong>16 là tổng pilot S1–S5: 5 + 3 + 2 + 4 + 2.</strong> Không cộng smoke, interrupted, failed_validation hoặc lượt bổ sung ở mục tiếp theo vào cohort này.</p>
+<p>Baseline <code>s0-tetragon-20261116T172527Z-2155454</code> chỉ có 3 sự kiện và capture không đạt: <strong>loại khỏi tập baseline dùng phân tích</strong>. Baseline 17/11 có 141.642 sự kiện vẫn giữ làm tham chiếu lịch sử, không tự biến thành đối chứng cùng source/policy của mọi S1–S5.</p>
+<p>Báo cáo máy đọc được, được chạy lại bằng verifier hiện tại:</p>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-final-s1-s3-20261125.json">S1–S3</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-final-s4-20261125.json">S4, gồm các smoke hồi quy</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-final-s5-20261125.json">S5, gồm các smoke hồi quy</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-controls-20261125.json">Batch đối chứng và replay S0 lịch sử</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-live-controls-20261125.json">Kiểm chứng lại trực tiếp trên VM</a>: sáu case và hai cặp cùng đạt như bản xuất về Windows.</li>
+</ul>
+<h2 id="3-sau-luot-bo-sung-thuc-su-da-chay">3. Sáu lượt bổ sung thực sự đã chạy</h2>
+<p>Batch <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/batch-controls-20261125T113929Z-1995885/batch.json">batch-controls-20261125T113929Z-1995885</a> đã hoàn tất cả sáu case. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/controls-protocol.json">Protocol</a> ghi trước thứ tự, tham số và hash source. Coordinator kiểm tra lại source trước mỗi case và dừng nếu source đổi hoặc một case lỗi; không tự bỏ lượt lỗi để chọn kết quả đẹp.</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Run ID</th>
+<th>Mục đích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 nghiệp vụ</td>
+<td><code>s0-20261125T113929Z-1995886</code></td>
+<td>10 user, warm-up 30 giây, đo 120 giây; tham chiếu normal định tính cho S1–S3</td>
+</tr>
+<tr>
+<td>S0 đối chứng S4</td>
+<td><code>s0-s4-control-20261125T114222Z-2000363</code></td>
+<td>Actor w2, Locust w1, không gửi tải phụ</td>
+</tr>
+<tr>
+<td>S4 so sánh</td>
+<td><code>s4-20261125T114457Z-2005619</code></td>
+<td>Cùng cấu hình nền, tải phụ 10 RPS, concurrency 4 trong 30 giây</td>
+</tr>
+<tr>
+<td>S0 đối chứng S5</td>
+<td><code>s0-s5-control-20261125T114740Z-2011018</code></td>
+<td>Actor w1, Locust w1, receiver có mặt nhưng không upload trong 30 giây</td>
+</tr>
+<tr>
+<td>S5 so sánh</td>
+<td><code>s5-20261125T115035Z-2016678</code></td>
+<td>30 upload, mỗi payload 64 KiB, cùng cấu hình nền</td>
+</tr>
+<tr>
+<td>Quản trị hợp lệ</td>
+<td><code>s0-s5-control-20261125T115338Z-2022595</code></td>
+<td>Shell chạy Python GET frontend <code>/_healthz</code>, nhận HTTP 200, không upload</td>
+</tr>
+</tbody>
+</table>
+<p>Lượt S0 nghiệp vụ dùng <code>mode=pilot</code>. Năm lượt còn lại dùng <code>mode=smoke</code> để kiểm tra đối chứng ở mức chức năng. Trong smoke S4/S5, sự kiện của hành vi mô phỏng vẫn có thể mang nhãn <code>unknown</code>; <strong>không tự đổi chúng thành attack rồi nhập vào tập huấn luyện</strong>. Cần dùng run chính thức/pilot theo hợp đồng nhãn tương ứng khi xây bộ attack có nhãn.</p>
+<p>Lượt thử chẩn đoán trước batch <code>s0-s5-control-20261125T113439Z-1988110</code> được giữ riêng. Nó không phải case thứ bảy và không thay thế case đã khai báo trước.</p>
+<h3 id="s0-nghiep-vu-cho-thay-dieu-gi">S0 nghiệp vụ cho thấy điều gì?</h3>
+<p>Đo được <strong>19.079 sự kiện normal</strong> trong 120 giây, có cả hai worker. Suy luồng theo IP và cổng Service/EndpointSlice thấy <strong>16/16 cạnh giao tiếp đã triển khai</strong>, gồm checkoutservice → paymentservice. Không thấy cạnh đã ánh xạ nào nằm ngoài danh sách kỳ vọng. Gửi TCP theo chiều trả lời hoặc chưa ánh xạ được được giữ riêng, không coi là cạnh nghiệp vụ mới.</p>
+<p>Bảng Locust tích lũy cuối có 17 checkout, 0 lỗi. Bảng này bao gồm cả warm-up, không phải 17 checkout riêng của cửa sổ đo. Cũng không được coi 19.079 sự kiện là 19.079 HTTP request: một request có thể tạo nhiều lần gửi TCP, một kết nối phục vụ nhiều request.</p>
+<p>Lượt này không có actor tấn công và không thấy process_exec trong cửa sổ đo. Nó giúp tham chiếu hành vi nghiệp vụ bình thường, nhưng chưa phải cặp đo overhead chính xác với S1–S3: Locust gốc chưa xuất latency từng request và không có continuous guard như bộ S4/S5.</p>
+<h3 id="hai-cap-s4-s5-co-that-su-giong-cau-hinh-khong">Hai cặp S4/S5 có thật sự giống cấu hình không?</h3>
+<p>Report đối chứng kiểm tra source bundle, actor và Locust thực sự chạy ở node nào, image digest, Pod spec đã bỏ tên tài nguyên sinh động, CPU/RAM, biến môi trường, source Locust gốc, phiên bản Locust, số user, spawn rate, seed, thời lượng cấu hình, policy, đích gọi và UID/image/vị trí của các Pod ứng dụng nền. <strong>Cả hai cặp đều khớp.</strong> Đồng thời manifest phải khớp tham số protocol, không chỉ tin dòng lệnh trong batch.json.</p>
+<p>Seed=42 được ghi nhận trong Locust. Seed cố định trạng thái PRNG ban đầu; không đảm bảo các greenlet đồng thời tạo cùng chuỗi request và cùng thời điểm. Thứ tự case đã khai báo trước nhưng không được ngẫu nhiên hóa: đây vẫn là giới hạn của pilot.</p>
+<h2 id="4-doc-ket-qua-so-sanh-ma-khong-ket-luan-qua-muc">4. Đọc kết quả so sánh mà không kết luận quá mức</h2>
+<p>Các số dưới đây tính từ request Locust từng pha. P95 chỉ tính request HTTP 200 không có exception; tỷ lệ lỗi tính riêng.</p>
+<table>
+<thead>
+<tr>
+<th>Lượt</th>
+<th>Hành vi phụ thực sự</th>
+<th>Mẫu Locust trong pha đo / lỗi</th>
+<th>P95 trước / trong / hồi phục (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0–S4 w2</td>
+<td>0 request tải phụ</td>
+<td>68 / 0</td>
+<td>108,89 / 180,46 / 104,36</td>
+</tr>
+<tr>
+<td>S4 w2</td>
+<td>297 request tải phụ có native evidence</td>
+<td>81 / 0</td>
+<td>91,91 / 311,72 / 99,34</td>
+</tr>
+<tr>
+<td>S0–S5 w1</td>
+<td>0 upload; receiver nhận 0</td>
+<td>64 / 0</td>
+<td>92,92 / 64,10 / 125,21</td>
+</tr>
+<tr>
+<td>S5 w1</td>
+<td>30/30 upload, 1.966.080 byte payload</td>
+<td>74 / 0</td>
+<td>89,94 / 88,44 / 1.506,85</td>
+</tr>
+</tbody>
+</table>
+<p>Đây là mô tả <strong>một cặp mỗi họ</strong>, chưa có khoảng tin cậy hay kiểm định. Pha attack S4 thực tế kéo dài khoảng 31,46 giây do khởi động/kết thúc client, trong khi control đo khoảng 30 giây; phải dùng timeline để tính rate thực tế, không chia mọi thứ cố định cho 30.</p>
+<h3 id="mot-loi-checkout-o-pha-hoi-phuc-s5">Một lỗi checkout ở pha hồi phục S5</h3>
+<p>Locust ghi một <code>POST /cart/checkout</code> HTTP 500, sequence 315, từ 11:52:45.176780Z đến 11:52:57.014750Z, khoảng 11,84 giây. Pha recovery có 70 request, 1 lỗi; 69 request thành công được dùng tính percentile. Vì vậy không được ghi “toàn bộ traffic không lỗi”.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-recovery-diagnostic-20261125.json">Log hậu kiểm</a> có frontend request ID <code>c3077351-c3f5-48c0-a457-64212042018a</code>: payment từ chối loại thẻ <code>visa_electron</code>, frontend trả 500. Payment log cùng thời điểm có <code>UnacceptedCreditCard</code>. Bằng chứng giải thích lỗi chức năng cụ thể này; <strong>chưa giải thích đầy đủ biến động độ trễ và chưa chứng minh S5 gây ra hoặc không gây ra biến động đó</strong>. Giữ nguyên cả lượt và lỗi, không chạy lại để thay kết quả.</p>
+<p>30 payload vẫn được nhận đủ và khớp checksum, receipt cùng native event. Verifier kiểm chứng bằng chứng thí nghiệm, chất lượng thu và điều kiện dừng; không lấy điều kiện “mọi request mua hàng phải thành công” làm định nghĩa dữ liệu hợp lệ.</p>
+<h2 id="5-vi-sao-can-mot-luot-shell-python-hop-le">5. Vì sao cần một lượt shell/Python hợp lệ?</h2>
+<p>Trong S3, kẻ mô phỏng dùng shell và công cụ mạng. Nhưng người quản trị cũng có thể dùng shell để kiểm tra ứng dụng. Ví dụ ở case <code>s0-admin</code>: người vận hành được phép mở shell, chạy Python gọi frontend <code>/_healthz</code>, nhận HTTP 200. Tetragon ghi được process_exec của shell/Python và TCP tới frontend; receiver không nhận upload.</p>
+<p>Đây là <strong>mẫu normal khó phân biệt</strong>, giúp kiểm tra báo nhầm sau này. Không thể viết quy tắc “thấy shell là attack” rồi coi đã đáp ứng mọi yêu cầu. Cần thêm danh tính, nguồn–đích, mục đích được phép, đường dẫn file và ngữ cảnh.</p>
+<p>Case này có tác vụ quản trị nên được giữ riêng, không thay cho đối chứng S5 thuần túy không có can thiệp. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s5-control-20261125T115338Z-2022595/normal-admin.json">Receipt</a> ghi purpose, Pod UID, PID, URL, thời điểm và status; verifier đối chiếu với raw. Chỉ thêm chữ “normal” vào manifest mà không có bằng chứng không đủ.</p>
+<h2 id="6-tu-double-check-nhu-the-nao">6. Tự double check như thế nào?</h2>
+<p>Trên <code>lab-cp</code>, từ thư mục <code>~/Testbed_Online_Boutique</code> đã cập nhật:</p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+sudo python3 experiments/review_controls.py --include-legacy \
+  --output experiments/audits/controls-recheck.json
+sudo python3 experiments/audit_scenarios.py \
+  --output experiments/audits/s1-s3-recheck.json
+sudo python3 experiments/s4/review.py \
+  --output experiments/audits/s4-recheck.json
+sudo python3 experiments/s5/audit.py \
+  --output experiments/audits/s5-recheck.json
+</code></pre>
+<p>Các lệnh trên <strong>đọc và kiểm chứng</strong>, không chạy tấn công mới. Kết quả ghi ngoài <code>runs/</code>. Nếu thiếu archive cũ trên VM, dùng bản repo đầy đủ; không tạo file giả để qua kiểm tra. Verifier giải nén vào thư mục tạm để replay, không ghi đè dữ liệu lịch sử.</p>
+<p>Mở <code>experiments/audits/s0-s5-controls-20261125.json</code>: xem <code>passed</code>, từng <code>cases[].verification</code>, hai <code>pairs[].mismatched_fields</code>, <code>original_evidence_unchanged</code> và <code>official_ready=false</code>. Khi sai source/node/seed/cấu hình, phải xử lý sai khác trước khi ghép cặp.</p>
+<p>Muốn <strong>chạy lại cả batch</strong>, đây là lệnh tạo lượt mới, có traffic trong lab:</p>
+<table>
+<thead>
+<tr>
+<th>Cờ mới</th>
+<th>Ý nghĩa dễ nhớ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--scenario S0 --s4-control</code></td>
+<td>Giữ actor/Locust của S4, tắt client tải phụ</td>
+</tr>
+<tr>
+<td><code>--scenario S0 --s5-control</code></td>
+<td>Giữ actor/Locust/receiver của S5, tắt client upload</td>
+</tr>
+<tr>
+<td><code>--s5-calls 30</code></td>
+<td>Với S5: 30 upload; với S0–S5 control: cửa sổ không upload dài 30 giây</td>
+</tr>
+<tr>
+<td><code>--node w1</code></td>
+<td>Chọn worker chạy actor</td>
+</tr>
+<tr>
+<td><code>--loadgen-node w1</code></td>
+<td>Chọn worker chạy Locust tạm của họ S4/S5</td>
+</tr>
+<tr>
+<td><code>--locust-seed 42</code></td>
+<td>Cố định và ghi nhận seed PRNG ban đầu của Locust có instrument</td>
+</tr>
+<tr>
+<td><code>--normal-admin</code></td>
+<td>Chỉ dùng cùng S0–S5 control; chạy chẩn đoán hợp lệ và lưu receipt riêng</td>
+</tr>
+</tbody>
+</table>
+<p>Protocol đã chứa đầy đủ các cờ cho từng case nên không cần gõ sáu lệnh thủ công:</p>
+<pre><code class="language-bash">sudo python3 experiments/run_controls.py
+</code></pre>
+<p>Chỉ chạy khi cần tái lập. Lịch của protocol này mất khoảng 16 phút cộng chi phí kiểm tra/cleanup. Coordinator dùng khóa batch và hash source; không sửa source giữa chừng. Nếu một lần cập nhật source làm hash không khớp, khôi phục đúng bản đã chốt hoặc tạo protocol mới có ID/hash/tham số đã rà soát. Không tắt kiểm tra hash. Lượt mới có run ID mới, không ghi đè lượt cũ.</p>
+<p>Trong mỗi run, <code>manifest.json</code> nói chạy gì; <code>timeline.ndjson</code> nói khi nào; receipt nói client/receiver đã thực hiện gì; <code>dataset.tar.gz</code> giữ raw, source và bản chuẩn hóa; <code>*-verification.json</code> là kết quả kiểm chứng tại thời điểm chạy. Báo cáo audit mới nằm ngoài run để phân biệt kết luận hậu kiểm với bằng chứng gốc.</p>
+<h2 id="7-kiem-thu-va-trang-thai-cuoi">7. Kiểm thử và trạng thái cuối</h2>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-tests-20261125.json">Report kiểm thử</a> và <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-tests-20261125.log">log chi tiết</a> ghi số test thực chạy, lỗi, skip và hash source: 109 test đạt, không skip. Có các kiểm tra âm: sửa seed, đổi node/env/resource, bỏ receipt quản trị, thêm TCP tới receiver trong control hoặc đổi manifest khác protocol đều phải bị từ chối.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-tests-initial-20261125.json">Lượt kiểm thử đầu</a> được giữ cùng <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-tests-initial-20261125.log">log</a>: Windows có thể đóng/reset TCP khi receiver từ chối header trước khi đọc body, làm test sai endpoint lỗi transport thay vì nhận HTTP 400. Đã sửa helper test để chỉ chấp nhận transport đóng khi receiver thực sự ghi đúng lý do từ chối; không giả lập thành công và không đổi receiver dùng trong lab.</p>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/s0-s5-final-state-20261125.json">Trạng thái lab sau batch</a>: 3 node Ready, không MemoryPressure, deployment ứng dụng đủ replica, loadgenerator gốc trở về 0, không còn tài nguyên tạm và receiver cổng 18080 đã đóng. 14 hash source đã khai báo vẫn khớp. Đây là trạng thái chụp tại thời điểm hậu kiểm, không phải cam kết cluster luôn giữ nguyên sau đó.</p>
+<h2 id="8-tiep-theo-lam-gi">8. Tiếp theo làm gì?</h2>
+<ol>
+<li>Dùng <a href="24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5">bản đồ schema</a> để chốt feature và tiêu chí chọn lượt; chia tập theo run, tránh rò rỉ nhãn.</li>
+<li>Lập protocol chính thức có thứ tự/seed lưu trước, thời lượng đã chốt, các lần lặp độc lập trên cả worker và S0 dài 15 phút theo kế hoạch. Đối chứng phải dùng cùng bộ quan sát/source/cấu hình phù hợp từng họ.</li>
+<li>Kiểm tra dữ liệu chính thức rồi mới đánh giá detector GĐ5: precision/recall, báo nhầm trên nghiệp vụ và quản trị hợp lệ, độ trễ phát hiện. Đánh giá policy bật/tắt và overhead cần thí nghiệm riêng.</li>
+</ol>
+<p>Phần vừa hoàn thành đủ để chốt <strong>rà soát và bổ sung đối chứng pilot</strong>. Chưa thể ghi “bộ attack/normal chính thức hoàn chỉnh” hoặc “đã chứng minh chặn/phát hiện S1–S5”.</p>
+<h2 id="ban-do-schema-truoc-khi-phan-tich-s0s5">Bản đồ schema trước khi phân tích S0–S5</h2>
+<p>Ngày 25/11/2026. Schema là quy ước tên và ý nghĩa từng trường. Hai file cùng NDJSON không có nghĩa là có thể nối vào nhau rồi huấn luyện ngay.</p>
+<h2 id="cac-phien-ban-dang-co">Các phiên bản đang có</h2>
+<table>
+<thead>
+<tr>
+<th>Dữ liệu</th>
+<th>Bản ghi sự kiện</th>
+<th>Nhãn</th>
+<th>Cách sử dụng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 GĐ3</td>
+<td>schema 2, baseline thất bại cũ schema 1</td>
+<td>Chưa có hợp đồng nhãn GĐ4</td>
+<td>Tham chiếu lịch sử; loại baseline chỉ 3 event</td>
+</tr>
+<tr>
+<td>S1 cũ</td>
+<td>Có label_version v2</td>
+<td>Nhãn lịch sử</td>
+<td>Hai lượt đầu thiếu snapshot source; đánh dấu hạn chế</td>
+</tr>
+<tr>
+<td>S0 nghiệp vụ mới và S1–S3 hiện hành</td>
+<td>schema 4</td>
+<td>label_version v4</td>
+<td>Đối chiếu raw và source theo từng run</td>
+</tr>
+<tr>
+<td>S4 và S0–S4</td>
+<td>schema 5</td>
+<td>label_version v5</td>
+<td>Có request-level Locust và cửa sổ pha</td>
+</tr>
+<tr>
+<td>S5 và S0–S5</td>
+<td>schema 6</td>
+<td>label_version v6</td>
+<td>Có receipt upload, socket/native identity và receiver</td>
+</tr>
+</tbody>
+</table>
+<p><code>manifest.schema_version</code> có thể là 3/4/5; đó là phiên bản của <strong>manifest</strong>, không phải schema sự kiện trong normalized.ndjson. Phải đọc từng loại file riêng. Khi kiểm kê tự động, đếm phiên bản thực trong archive; không đoán từ tên thư mục.</p>
+<h2 id="hop-dong-feature-de-xuat">Hợp đồng feature đề xuất</h2>
+<p>Feature là con số hoặc thuộc tính detector được phép quan sát. Ví dụ “số đích TCP khác nhau trong 5 giây” hữu ích hơn tên Pod ngẫu nhiên. Bảng này là thiết kế cho bước sau; chưa có bộ dữ liệu hợp nhất được chứng nhận.</p>
+<table>
+<thead>
+<tr>
+<th>Trường chung</th>
+<th>Ý nghĩa và quy tắc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>timestamp_utc</td>
+<td>Giữ thời gian sự kiện gốc; chuyển UTC, giữ độ chính xác khi có thể</td>
+</tr>
+<tr>
+<td>event_type</td>
+<td>Phân biệt process_exec, process_exit, tcp_connect_attempt, tcp_send và file event; không gộp send với connect</td>
+</tr>
+<tr>
+<td>workload, namespace, node</td>
+<td>Ngữ cảnh từ Pod metadata; lưu provenance ánh xạ</td>
+</tr>
+<tr>
+<td>process/parent identity</td>
+<td>Dùng exec_id, parent_exec_id, PID khi raw có; không tự gán từ tên binary</td>
+</tr>
+<tr>
+<td>binary</td>
+<td>Tên tiến trình thực tế; shell hợp lệ cũng có thể xuất hiện trong normal</td>
+</tr>
+<tr>
+<td>source/destination IP, port</td>
+<td>S0 cũ có socket.dst_ip/dst_port; bản mới dùng daddr/dport. Chuẩn hóa IPv4-mapped IPv6 trước khi ánh xạ</td>
+</tr>
+<tr>
+<td>destination service</td>
+<td>Tra Service/EndpointSlice snapshot theo <strong>IP và cổng</strong>, phân biệt chiều trả lời; lưu unresolved thay vì đoán</td>
+</tr>
+<tr>
+<td>bytes_requested</td>
+<td>Đối số số byte yêu cầu gửi ở hook kernel, không phải payload hay byte đã truyền thành công. Nếu bản chuẩn hóa cũ thiếu, chỉ bổ sung từ raw có đối số tương ứng; thiếu thì null kèm cờ missing</td>
+</tr>
+<tr>
+<td>file access</td>
+<td>Path, thao tác và kết quả từ raw/policy file; không coi process_exec là bằng chứng đã đọc file</td>
+</tr>
+<tr>
+<td>label và evidence</td>
+<td>Tách khỏi feature; suy từ nhật ký thao tác/receipt và native evidence theo hợp đồng phiên bản</td>
+</tr>
+</tbody>
+</table>
+<p>Ví dụ S5 mới có payload receiver 1.966.080 byte nhưng kernel_send_bytes_requested là 1.975.560: có header HTTP và cách chia lần send. Không dùng hiệu số này làm bằng chứng mất dữ liệu. Tetragon cũng không đồng nghĩa HTTP access log.</p>
+<h2 id="tranh-ro-ri-nhan-va-bao-cao-nham">Tránh rò rỉ nhãn và báo cáo nhầm</h2>
+<ul>
+<li>Không dùng run_id, scenario_id, operation_id, tên actor có tiền tố s5, fixture hash, label/evidence làm đầu vào detector. Chúng có thể tiết lộ đáp án do cách dựng lab.</li>
+<li>Tách train/validation/test <strong>theo toàn bộ run</strong>, trước khi tạo cửa sổ. Chia ngẫu nhiên các dòng cùng một lượt dễ đưa những mẫu gần như giống nhau sang cả train và test.</li>
+<li>Nếu đánh giá khả năng tổng quát giữa node, chốt riêng cách chia w1/w2 và kiểm tra phân bố workload; không mặc nhiên coi hai node độc lập hoàn toàn.</li>
+<li>Không đổi toàn bộ pha attack thành nhãn attack: nghiệp vụ Locust vẫn chạy trong pha đó. Các bản ghi không đủ bằng chứng giữ unknown.</li>
+<li>Không dùng smoke S4/S5 có hành vi unknown như normal để tăng số mẫu normal. Case s0-admin chỉ có phần measurement được xác nhận là tác vụ hợp lệ; setup vẫn theo hợp đồng nhãn của runner.</li>
+<li>Không lấy số thao tác khớp native event làm recall detector. Đó là kiểm tra coverage bằng chứng thực hiện; detector chưa được chạy và chấm điểm ở đây.</li>
+</ul>
+<p>Khi triển khai bộ hợp nhất, tạo thư mục derived mới, lưu converter version/hash, nguồn raw, hợp đồng ánh xạ và thống kê missing. Giữ nguyên dữ liệu lịch sử. Chạy lại raw replay và kiểm tra mẫu từng họ trước khi sử dụng feature cho GĐ5.</p>
+<p><a href="24-soat-xet-s0-s5-doi-chung.html">Trở lại báo cáo S0–S5</a>.</p><div class="finish"><button class="button" data-complete="24-soat-xet-s0-s5-doi-chung" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="23-s5-gui-du-lieu-gia.html">← S5 · Gửi dữ liệu giả ra endpoint lab</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-doi-chung-nghia-la-gi">1. Đối chứng nghĩa là gì?</a></li>
+<li><a href="#2-tong-kiem-tra-cac-kich-ban-da-co">2. Tổng kiểm tra các kịch bản đã có</a></li>
+<li><a href="#3-sau-luot-bo-sung-thuc-su-da-chay">3. Sáu lượt bổ sung thực sự đã chạy</a><ul>
+<li><a href="#s0-nghiep-vu-cho-thay-dieu-gi">S0 nghiệp vụ cho thấy điều gì?</a></li>
+<li><a href="#hai-cap-s4-s5-co-that-su-giong-cau-hinh-khong">Hai cặp S4/S5 có thật sự giống cấu hình không?</a></li>
+</ul>
+</li>
+<li><a href="#4-doc-ket-qua-so-sanh-ma-khong-ket-luan-qua-muc">4. Đọc kết quả so sánh mà không kết luận quá mức</a><ul>
+<li><a href="#mot-loi-checkout-o-pha-hoi-phuc-s5">Một lỗi checkout ở pha hồi phục S5</a></li>
+</ul>
+</li>
+<li><a href="#5-vi-sao-can-mot-luot-shell-python-hop-le">5. Vì sao cần một lượt shell/Python hợp lệ?</a></li>
+<li><a href="#6-tu-double-check-nhu-the-nao">6. Tự double check như thế nào?</a></li>
+<li><a href="#7-kiem-thu-va-trang-thai-cuoi">7. Kiểm thử và trạng thái cuối</a></li>
+<li><a href="#8-tiep-theo-lam-gi">8. Tiếp theo làm gì?</a></li>
+<li><a href="#ban-do-schema-truoc-khi-phan-tich-s0s5">Bản đồ schema trước khi phân tích S0–S5</a></li>
+<li><a href="#cac-phien-ban-dang-co">Các phiên bản đang có</a></li>
+<li><a href="#hop-dong-feature-de-xuat">Hợp đồng feature đề xuất</a></li>
+<li><a href="#tranh-ro-ri-nhan-va-bao-cao-nham">Tránh rò rỉ nhãn và báo cáo nhầm</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>

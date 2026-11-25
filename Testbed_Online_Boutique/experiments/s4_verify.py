@@ -89,6 +89,8 @@ def input_integrity(run, manifest, receipts, locust, runtime, timeline):
         raw_meta, raw_final, raw_requests = read_locust_raw(run)
         check(raw_requests == locust and raw_meta == runtime["metadata"] and raw_final == runtime["final"], "Derived Locust data differs from raw log")
         check(len(raw_meta) == len(raw_final) == 1, "Missing/duplicate Locust metadata or final counter")
+        if manifest.get("locust_seed") is not None:
+            check(len(raw_meta)==1 and raw_meta[0].get("random_seed")==manifest["locust_seed"],"Locust seed differs from manifest")
         check([r["sequence"] for r in locust] == list(range(1, len(locust)+1)), "Locust sequence missing/duplicated")
         if len(raw_final) == 1:
             check(all(nonnegative_int(raw_final[0][k]) for k in ("recorded_requests","locust_num_requests","locust_num_failures")), "Invalid Locust final counter types")

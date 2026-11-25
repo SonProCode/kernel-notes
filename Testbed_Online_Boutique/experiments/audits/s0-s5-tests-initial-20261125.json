@@ -1,0 +1,22 @@
+{
+  "tests_run": 108,
+  "failures": 0,
+  "errors": 1,
+  "skipped": 0,
+  "passed": false,
+  "scope": "All current S4/S5 regressions and S0 control/graph/comparability evidence tests",
+  "source_sha256": {
+    "runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "run_controls.py": "b72f63f347fec46219da6c878c0a5d1dbf80615911c050cec99a0f82e52db159",
+    "review_controls.py": "f265ac3e23d108e35bbb80478edb8403b33d764d0e895b43870f78d1d9c70d47",
+    "s4_runner.py": "86a357259a7011c5dce9bad40c8c45d73e2b52245b019c36915cad5fb2a7a48d",
+    "s4_verify.py": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+    "s4/locust_wrapper.py": "38d7a50a763d9ad6105f4ba027cc6aa9bf2855f0110771f63b511753af34e6f1",
+    "s5_runner.py": "3a0d5c6614d245f23ff647228b331cad8601fbc26d0bcc5079eb68710d498db7",
+    "s5_normalize.py": "2d3940f1dcd5a27a2f1017bc0f8117cb359b4b2bb49ac30a6b68cc2b7f76d744",
+    "s5_verify.py": "76a199ac20ca414202af3f088c56355d8960fae727e80bf22412337c3d8b8f0f",
+    "s5/fixture.py": "f4a32f9d516ceb887c547014c3ed081ee82022a689778274088ff1f2c8a6e808",
+    "test_controls.py": "b534e2996f4e354dd83a3af6fe9096108994934cf2e3a7123979b8ddbae613e2",
+    "test_control_evidence.py": "2286cfa2ddca0e133a7d3f951f507fb002702253ba037003170a2847d8e2a276"
+  }
+}

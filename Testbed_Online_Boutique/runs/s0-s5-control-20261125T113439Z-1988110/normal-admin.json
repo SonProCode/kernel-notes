@@ -1,0 +1,23 @@
+{
+  "purpose": "operator_authorized_frontend_health_check",
+  "actor_uid": "315c8c17-e801-498d-ab42-d99f473f8ff1",
+  "method": "GET",
+  "path": "/_healthz",
+  "target": {
+    "service": "frontend",
+    "ip": "10.43.221.147",
+    "port": 80,
+    "target_ips": [
+      "10.42.1.12",
+      "10.43.221.147"
+    ],
+    "target_ports": [
+      80,
+      8080
+    ]
+  },
+  "started": "2026-11-25T11:35:27.758122+00:00",
+  "ended": "2026-11-25T11:35:27.859826+00:00",
+  "container_pid": 45,
+  "status_code": 200
+}

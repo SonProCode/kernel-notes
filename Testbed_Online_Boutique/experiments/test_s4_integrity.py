@@ -50,6 +50,8 @@ class IntegrityTests(unittest.TestCase):
         (self.root/"locust.raw.log").write_text("\n".join(output)+"\n",encoding="utf-8")
 
     def test_original_real_pilot(self): self.assertTrue(verify_s4(self.root)["passed"])
+    def test_declared_seed_must_be_observed_in_locust(self):
+        self.edit("manifest.json",lambda d:d.update(locust_seed=42));self.rejected()
     def test_final_before_last_request_rejected_even_if_counters_match(self):
         lines=self.saved["locust.raw.log"].decode().splitlines()
         final=next(line for line in lines if line.startswith("S4FINAL "))

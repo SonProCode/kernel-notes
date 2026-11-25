@@ -39,11 +39,12 @@ def normalize_s5(run):
                     candidates=[r for r in index.get(key,[]) if timestamp(r["started"])<=when<=timestamp(r["ended"])]
                     if len(candidates)==1:operation=candidates[0]
                 label="normal" if phase in ("pre_attack","recovery") and not is_actor else "unknown"
+                if manifest["scenario_id"]=="S0" and phase=="measurement":label="normal"
                 if operation:
                     label="unknown" if manifest["mode"]=="smoke" else "attack"
                     coverage[operation["operation_id"]]+=1
                     types.setdefault(operation["operation_id"],set()).add(kind)
-                record={"schema_version":6,"label_version":"v6","run_id":manifest["run_id"],"scenario_id":"S5",
+                record={"schema_version":6,"label_version":"v6","run_id":manifest["run_id"],"scenario_id":manifest["scenario_id"],
                     "timestamp":raw["time"],"phase":phase,"node":node,"namespace":pod.get("namespace"),
                     "pod":pod.get("name"),"pod_uid":pod.get("uid"),"workload":pod.get("workload"),
                     "container_id":(pod.get("container") or {}).get("id"),"container_pid":(pod.get("container") or {}).get("pid"),
@@ -51,7 +52,7 @@ def normalize_s5(run):
                     "parent_exec_id":(payload.get("parent") or {}).get("exec_id"),"event_type":kind,
                     "socket":sock,"bytes_requested":requested,"kernel_return":payload.get("return"),
                     "operation_id":operation["operation_id"] if operation else None,"label":label,
-                    "evidence":"actor_uid_pid_socket_time_receipt" if operation else "background_outside_action" if label=="normal" else None,
+                    "evidence":"actor_uid_pid_socket_time_receipt" if operation else "normal_control_measurement" if manifest["scenario_id"]=="S0" and phase=="measurement" else "background_outside_action" if label=="normal" else None,
                     "payload_bytes_from_receipt":operation["payload_bytes"] if operation else None,
                     "payload_sha256_from_receipt":operation["payload_sha256"] if operation else None,
                     "http_status_from_receipt":operation["status_code"] if operation else None,

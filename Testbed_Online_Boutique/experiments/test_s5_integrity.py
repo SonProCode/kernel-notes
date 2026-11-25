@@ -67,6 +67,8 @@ class S5IntegrityTests(unittest.TestCase):
         self.edit("metrics-after.json",lambda d:d["loss_and_export"]["data"]["result"][0].update(value=[0,"100"]));self.rejected()
     def test_stale_scrape(self):
         self.edit("metrics-after.json",lambda d:d["agent_scrape_age_seconds"]["data"]["result"][0].update(value=[0,"120"]));self.rejected()
+    def test_declared_seed_must_be_observed_in_locust(self):
+        self.edit("manifest.json",lambda d:d.update(locust_seed=42));self.rejected()
     def test_receiver_root_identity_rejected(self):
         self.edit_rows("receiver.ndjson",lambda r:next(v for v in r if v["kind"]=="receiver_ready").update(uid=0));self.rejected()
     def test_failed_guard_probes_with_reset_streak_rejected(self):

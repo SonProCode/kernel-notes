@@ -4,11 +4,17 @@ import hashlib as _s4_hashlib
 import json as _s4_json
 from pathlib import Path as _s4_Path
 import time as _s4_time
+import os as _s4_os
+import random as _s4_random
 
 import locust
 from locust import events
 _s4_count = 0
 _s4_environment = None
+_s4_seed = _s4_os.environ.get("GD4_LOCUST_SEED")
+if _s4_seed is not None:
+    _s4_seed = int(_s4_seed)
+    _s4_random.seed(_s4_seed)
 
 
 @events.request.add_listener
@@ -45,6 +51,7 @@ def record_final(exit_code, **kwargs):
 
 original = _s4_Path("/loadgen/locustfile.py").read_bytes()
 print("S4META " + _s4_json.dumps({"locust_version": locust.__version__,
+      "random_seed": _s4_seed,
       "original_locustfile_sha256": _s4_hashlib.sha256(original).hexdigest()}), flush=True)
 # Keep the actual image's original task weights, URLs, user type and think time.
 exec(compile(original, "/loadgen/locustfile.py", "exec"), globals())

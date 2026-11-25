@@ -5,9 +5,12 @@
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 15 · LAB THỰC TẾ · GĐ3 · Kết quả · 7 PHÚT ĐỌC</div>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 15 · LAB THỰC TẾ · GĐ3 · Kết quả · 8 PHÚT ĐỌC</div>
 <h1>Đọc kết quả baseline thực tế</h1><p>Đối chiếu 141.642 sự kiện, hiểu kết nối tái sử dụng và tải bộ log để phân tích.</p></header>
-<div class="shell reading"><article class="prose"><p>Các kết quả được sao chép từ thư mục runs trên lab-cp. Lượt baseline sơ bộ gần nhất dùng Tetragon với hai hook tcp_connect và tcp_sendmsg, 10 user ảo, warm-up 400 giây và đo 900 giây.</p>
+<div class="shell reading"><article class="prose"><h2 id="hau-kiem-s0s5-va-batch-doi-chung-25-11-2026">Hậu kiểm S0–S5 và batch đối chứng 25/11/2026</h2>
+<p><a href="24-soat-xet-s0-s5-doi-chung.html">Báo cáo tổng cho người mới</a> giải thích 16 pilot, dữ liệu loại trừ và sáu lượt bổ sung. Batch <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/batch-controls-20261125T113929Z-1995885/batch.json">batch-controls-20261125T113929Z-1995885</a> có protocol/source hash và log điều phối. Các run mới giữ manifest/receipt/report ở ngoài; raw/source/normalized nằm trong dataset.tar.gz của từng run.</p>
+<p>Đối chứng mới gồm S0 nghiệp vụ 120 giây, cặp S0–S4 w2, cặp S0–S5 w1 có receiver và một tác vụ quản trị hợp lệ riêng. Các lượt so sánh smoke không cộng vào cohort pilot S4 861 request hoặc S5 120 upload. Lượt S5 so sánh có một checkout HTTP 500 trong recovery; hậu kiểm server ghi payment từ chối visa_electron. Giữ nguyên lỗi cùng dữ liệu, không loại lượt để làm đẹp kết quả. Xem report tổng để đọc đúng phạm vi.</p>
+<p>Các kết quả được sao chép từ thư mục runs trên lab-cp. Lượt baseline sơ bộ gần nhất dùng Tetragon với hai hook tcp_connect và tcp_sendmsg, 10 user ảo, warm-up 400 giây và đo 900 giây.</p>
 <p><a href="https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/dataset.tar.gz">Tải bộ log 15 phút · khoảng 17 MB</a> · <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/summary.json">Xem summary.json</a> · <a href="https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383">Xem tất cả file của lượt đo</a></p>
 <table>
 <thead>
@@ -255,6 +258,7 @@ wc -l telemetry.ndjson
 <h2 id="buoc-tiep-theo">Bước tiếp theo</h2>
 <p>Đối chiếu các luồng gửi về phía server với cấu hình và mã nguồn Online Boutique để xây danh sách giao tiếp kỳ vọng. Chạy một kịch bản thử có nhãn riêng, chẳng hạn Pod thử kết nối tới một dịch vụ ngoài danh sách giao tiếp kỳ vọng, rồi kiểm tra hệ thống ghi nhận được nguồn, đích và thời điểm. Lưu kết quả này cùng một lượt traffic bình thường để đánh giá phát hiện. Baseline hiện tại đại diện cho 10 user và cửa sổ 15 phút, nên các luồng vắng mặt cần được kiểm chứng thêm.</p><div class="finish"><button class="button" data-complete="16-ket-qua-baseline" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="15-tetragon-thu-telemetry.html">← Thu log Tetragon trên hai worker</a><a href="17-gd4-thuc-nghiem.html">GĐ4 · Tạo dữ liệu attack và normal →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
+<li><a href="#hau-kiem-s0s5-va-batch-doi-chung-25-11-2026">Hậu kiểm S0–S5 và batch đối chứng 25/11/2026</a></li>
 <li><a href="#mo-du-lieu-nen">Mở dữ liệu nén</a></li>
 <li><a href="#kiem-tra-file-tai-ve">Kiểm tra file tải về</a></li>
 <li><a href="#pilot-s3-runtime-ngay-22-11-2026">Pilot S3 runtime ngày 22/11/2026</a></li>

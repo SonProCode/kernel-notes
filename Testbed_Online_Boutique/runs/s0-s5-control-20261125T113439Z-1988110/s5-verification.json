@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "scope": "S0 receiver-present no-upload control; normal traffic and observer probes only",
+  "verifier_sha256": "b7df4f197d079c34545fa159a9e769b8a249a49cff0880bff4addbd94d5e9bc9",
+  "run_id": "s0-s5-control-20261125T113439Z-1988110",
+  "mode": "smoke",
+  "profile": "control",
+  "scenario_id": "S0",
+  "uploads": 0,
+  "received": 0,
+  "received_payload_bytes": 0,
+  "operations_with_native_evidence": 0,
+  "native_event_counts": {},
+  "kernel_send_bytes_requested": 0,
+  "kernel_bytes_by_operation": {},
+  "locust_requests": 155,
+  "locust_by_phase": {
+    "pre_attack": {
+      "requests": 27,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 27,
+      "p50_ms": 28.94185995683074,
+      "p95_ms": 135.00321994069964,
+      "max_ms": 180.98618497606367,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    },
+    "measurement": {
+      "requests": 27,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 27,
+      "p50_ms": 30.08081205189228,
+      "p95_ms": 111.92402092274278,
+      "max_ms": 145.18203504849225,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    },
+    "recovery": {
+      "requests": 28,
+      "failures": 0,
+      "failure_ratio": 0.0,
+      "latency_sample_count": 28,
+      "p50_ms": 31.270495033822954,
+      "p95_ms": 87.14682701975107,
+      "max_ms": 91.77342895418406,
+      "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+    }
+  },
+  "normalized_events": 10964,
+  "events_by_label": {
+    "unknown": 5473,
+    "normal": 5491
+  },
+  "receiver_peer_ips": [],
+  "raw_normalized_and_windows_replay_match": true,
+  "errors": []
+}

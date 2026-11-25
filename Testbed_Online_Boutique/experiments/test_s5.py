@@ -55,7 +55,19 @@ class ReceiverTests(unittest.TestCase):
         try:
             connection.request("POST",path,body=body,headers=headers)
             response=connection.getresponse();return response.status,json.loads(response.read())
+        except (ConnectionAbortedError,ConnectionResetError,BrokenPipeError,http.client.RemoteDisconnected):
+            # A server rejecting headers before reading a body may reset TCP.
+            # Accept that transport outcome only with the receiver's rejection record.
+            if self.receipts and self.receipts[-1].get("kind")=="rejected":
+                return None,{"transport_closed":True}
+            raise
         finally:connection.close()
+
+    def assert_rejected(self,expected_reason,**kwargs):
+        status,_=self.upload(**kwargs)
+        self.assertIn(status,(400,None))
+        self.assertEqual(self.receipts[-1]["kind"],"rejected")
+        self.assertEqual(self.receipts[-1]["reason"],expected_reason)
 
     def test_valid_upload_ack_matches_receiver_and_only_metadata_is_retained(self):
         status,ack=self.upload();self.assertEqual(status,200)
@@ -63,15 +75,15 @@ class ReceiverTests(unittest.TestCase):
         self.assertNotIn("payload",ack);self.assertNotIn("body",ack)
 
     def test_duplicate_operation_rejected_without_second_receive(self):
-        self.assertEqual(self.upload()[0],200);self.assertEqual(self.upload()[0],400)
+        self.assertEqual(self.upload()[0],200);self.assert_rejected("invalid_or_duplicate_operation")
         self.assertEqual(sum(r["kind"]=="received" for r in self.receipts),1)
 
-    def test_wrong_run_rejected(self):self.assertEqual(self.upload({"X-Run-ID":"other"})[0],400)
-    def test_wrong_checksum_rejected(self):self.assertEqual(self.upload({"X-Payload-SHA256":"0"*64})[0],400)
-    def test_nonsynthetic_body_rejected(self):self.assertEqual(self.upload(body=b"x"*65536)[0],400)
-    def test_oversized_body_rejected(self):self.assertEqual(self.upload(body=b"x"*65537)[0],400)
-    def test_chunked_framing_rejected(self):self.assertEqual(self.upload({"Transfer-Encoding":"chunked"})[0],400)
-    def test_wrong_endpoint_rejected(self):self.assertEqual(self.upload(path="/other")[0],400)
+    def test_wrong_run_rejected(self):self.assert_rejected("wrong_source_path_or_run",extra={"X-Run-ID":"other"})
+    def test_wrong_checksum_rejected(self):self.assert_rejected("payload_checksum_mismatch",extra={"X-Payload-SHA256":"0"*64})
+    def test_nonsynthetic_body_rejected(self):self.assert_rejected("payload_checksum_mismatch",body=b"x"*65536)
+    def test_oversized_body_rejected(self):self.assert_rejected("wrong_payload_length_or_type",body=b"x"*65537)
+    def test_chunked_framing_rejected(self):self.assert_rejected("ambiguous_body_length",extra={"Transfer-Encoding":"chunked"})
+    def test_wrong_endpoint_rejected(self):self.assert_rejected("wrong_source_path_or_run",path="/other")
     def test_receiver_enables_reuse_for_completed_connections(self):
         self.assertEqual(self.server.socket.getsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR),1)
 

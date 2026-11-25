@@ -15,7 +15,7 @@ def operation_id(index):
 
 
 def payload(run_id, operation):
-    if not re.fullmatch(r"s5-[0-9]{8}T[0-9]{6}Z-[0-9]+", run_id):
+    if not re.fullmatch(r"(?:s5|s0-s5-control)-[0-9]{8}T[0-9]{6}Z-[0-9]+", run_id):
         raise ValueError("Invalid lab run ID")
     if not re.fullmatch(r"upload-[0-9]{5}", operation) or int(operation[7:]) >= 60:
         raise ValueError("Invalid operation ID")

@@ -52,6 +52,7 @@ def run_s4(args):
                 "temporary_resources": {"actor": actor, "locust_deployment": loadname, "configmap": config},
                 "source_snapshot": "source", "script_sha256": {}}
     manifest["s4"]["verification_contract"] = 2
+    manifest["locust_seed"]=args.locust_seed
     for name in ("runner.py", "label.py", "s4_runner.py", "s4_support.py", "s4_verify.py", "s4/client.py", "s4/locust_wrapper.py"):
         content = (ROOT / name).read_bytes()
         manifest["script_sha256"][name] = hashlib.sha256(content).hexdigest()
@@ -152,12 +153,15 @@ def run_s4(args):
         template = copy.deepcopy(original["spec"]["template"])
         template["metadata"] = {"labels": {**labels, "app": loadname}}
         template["spec"]["automountServiceAccountToken"] = False
+        if args.loadgen_node:
+            template["spec"].setdefault("nodeSelector",{})["lab.slot"]=args.loadgen_node
         template["spec"]["terminationGracePeriodSeconds"] = 15
         template["spec"].setdefault("volumes", []).append({"name": "s4-code", "configMap": {"name": config}})
         main = next(c for c in template["spec"]["containers"] if c["name"] == "main")
         main["command"] = ["locust"]
         main["args"] = ["-f", "/s4/locust_wrapper.py", "--host=http://frontend:80", "--headless", "--users=10", "--spawn-rate=1", "--stop-timeout=3"]
         main.setdefault("env", []).extend([{"name": "PYTHONUNBUFFERED", "value": "1"}, {"name": "PYTHONDONTWRITEBYTECODE", "value": "1"}])
+        if args.locust_seed is not None:main["env"].append({"name":"GD4_LOCUST_SEED","value":str(args.locust_seed)})
         main.setdefault("volumeMounts", []).append({"name": "s4-code", "mountPath": "/s4", "readOnly": True})
         deployment = {"apiVersion": "apps/v1", "kind": "Deployment", "metadata": {"name": loadname, "namespace": "boutique", "labels": labels},
                       "spec": {"replicas": 1, "selector": {"matchLabels": {"app": loadname}}, "template": template}}

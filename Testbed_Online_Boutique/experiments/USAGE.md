@@ -1,5 +1,7 @@
 # Bắt đầu sử dụng S1, S2, S3 từ con số 0
 
+Sau khi đọc từng kịch bản, xem [báo cáo tổng S0–S5 và đối chứng](S0-S5-REVIEW.md): có kết quả hậu kiểm, cách đọc dữ liệu normal hợp lệ và lệnh kiểm chứng lại mà không chạy tấn công mới.
+
 Cập nhật 22/11/2026. Đọc bài này trước, rồi chọn [S1](S1.md), [S2](S2.md) hoặc [S3](S3.md). [Báo cáo rà soát](REVIEW-S1-S2-S3.md) ghi rõ đã kiểm chứng gì và giới hạn nào còn lại.
 
 ## 1. Ta đang làm gì trong lab?

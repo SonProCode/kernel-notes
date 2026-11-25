@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-11-25T12:00:40.219324+00:00",
+  "nodes": {
+    "lab-cp": {
+      "MemoryPressure": "False",
+      "DiskPressure": "False",
+      "PIDPressure": "False",
+      "Ready": "True"
+    },
+    "lab-w1": {
+      "MemoryPressure": "False",
+      "DiskPressure": "False",
+      "PIDPressure": "False",
+      "Ready": "True"
+    },
+    "lab-w2": {
+      "MemoryPressure": "False",
+      "DiskPressure": "False",
+      "PIDPressure": "False",
+      "Ready": "True"
+    }
+  },
+  "deployments": {
+    "adservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "cartservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "checkoutservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "currencyservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "emailservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "frontend": {
+      "desired": 1,
+      "available": 1
+    },
+    "loadgenerator": {
+      "desired": 0,
+      "available": 0
+    },
+    "paymentservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "productcatalogservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "recommendationservice": {
+      "desired": 1,
+      "available": 1
+    },
+    "redis-cart": {
+      "desired": 1,
+      "available": 1
+    },
+    "shippingservice": {
+      "desired": 1,
+      "available": 1
+    }
+  },
+  "temporary_resource_count": 0,
+  "temporary_pods_by_prefix": [],
+  "receiver_18080_closed": true,
+  "batch": "batch-controls-20261125T113929Z-1995885",
+  "batch_completed": true,
+  "completed_cases": 6,
+  "frozen_source_matches": {
+    "runner.py": true,
+    "label.py": true,
+    "actor.py": true,
+    "s4_runner.py": true,
+    "s4_support.py": true,
+    "s4_verify.py": true,
+    "s4/locust_wrapper.py": true,
+    "s5_runner.py": true,
+    "s5_normalize.py": true,
+    "s5_verify.py": true,
+    "s5/client.py": true,
+    "s5/receiver.py": true,
+    "s5/fixture.py": true,
+    "run_controls.py": true
+  },
+  "disk": "Filesystem                         Size  Used Avail Use% Mounted on\n/dev/mapper/ubuntu--vg-ubuntu--lv   38G   16G   20G  45% /\n",
+  "passed": true
+}

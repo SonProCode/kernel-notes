@@ -1,5 +1,11 @@
 # Các lượt đo Online Boutique
 
+## Hậu kiểm S0–S5 và batch đối chứng 25/11/2026
+
+[Báo cáo tổng cho người mới](../experiments/S0-S5-REVIEW.md) giải thích 16 pilot, dữ liệu loại trừ và sáu lượt bổ sung. Batch [batch-controls-20261125T113929Z-1995885](batch-controls-20261125T113929Z-1995885/batch.json) có protocol/source hash và log điều phối. Các run mới giữ manifest/receipt/report ở ngoài; raw/source/normalized nằm trong dataset.tar.gz của từng run.
+
+Đối chứng mới gồm S0 nghiệp vụ 120 giây, cặp S0–S4 w2, cặp S0–S5 w1 có receiver và một tác vụ quản trị hợp lệ riêng. Các lượt so sánh smoke không cộng vào cohort pilot S4 861 request hoặc S5 120 upload. Lượt S5 so sánh có một checkout HTTP 500 trong recovery; hậu kiểm server ghi payment từ chối visa_electron. Giữ nguyên lỗi cùng dữ liệu, không loại lượt để làm đẹp kết quả. Xem report tổng để đọc đúng phạm vi.
+
 Các kết quả được sao chép từ thư mục runs trên lab-cp. Lượt baseline sơ bộ gần nhất dùng Tetragon với hai hook tcp_connect và tcp_sendmsg, 10 user ảo, warm-up 400 giây và đo 900 giây.
 
 [Tải bộ log 15 phút · khoảng 17 MB](https://github.com/SonProCode/kernel-notes/raw/refs/heads/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383/dataset.tar.gz) · [Xem summary.json](s0-tetragon-20261117T162618Z-3967383/summary.json) · [Xem tất cả file của lượt đo](https://github.com/SonProCode/kernel-notes/tree/main/Testbed_Online_Boutique/runs/s0-tetragon-20261117T162618Z-3967383)

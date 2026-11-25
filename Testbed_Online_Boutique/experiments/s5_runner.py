@@ -7,6 +7,7 @@ import json
 import os
 import pwd
 import socket
+import shlex
 from pathlib import Path
 import signal
 import subprocess
@@ -35,16 +36,20 @@ def run_s5(args):
         node = next(n for n in nodes if n["metadata"]["name"] == name)
         if not any(c["type"] == "Ready" and c["status"] == "True" for c in node["status"]["conditions"]):
             raise RuntimeError("Worker not Ready: " + name)
-    run_id = f's5-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{os.getpid()}'
+    control=args.s5_control
+    prefix="s0-s5-control" if control else "s5"
+    run_id = f'{prefix}-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{os.getpid()}'
     output = ROOT.parent / "runs" / run_id
     output.mkdir(mode=0o700); (output / "raw").mkdir()
     print("Run:", output, flush=True)
     actor, loadname, config = f"gd4-s5-{os.getpid()}", f"gd4-locust-{os.getpid()}", f"gd4-s5-code-{os.getpid()}"
     labels = {"experiment-run": run_id}
-    manifest = {"schema_version": 5, "run_id": run_id, "scenario_id": "S5", "mode": args.mode,
+    manifest = {"schema_version": 5, "run_id": run_id, "scenario_id": "S0" if control else "S5", "mode": args.mode,
+        "locust_seed":args.locust_seed,
         "status": "setup", "node": args.node, "users": 10, "spawn_rate": 1,
+        "normal_admin":{"enabled":args.normal_admin,"purpose":"operator_authorized_frontend_health_check" if args.normal_admin else None},
         "warmup_seconds": args.warmup, "pre_seconds": args.pre, "recovery_seconds": args.recovery,
-        "s5": {"calls": args.s5_calls, "rate": 1, "payload_bytes": 65536,
+        "s5": {"calls": args.s5_calls, "rate": 0 if control else 1, "profile":"control" if control else "upload", "payload_bytes": 65536,
                "fixture_id": "gd4-s5-synthetic-v1", "verification_contract": 1,
                "method": "POST", "path": "/upload", "request_timeout_seconds": 3,
                "receiver_ip": "192.168.141.142", "receiver_port": 18080,
@@ -174,12 +179,15 @@ def run_s5(args):
         template = copy.deepcopy(original["spec"]["template"])
         template["metadata"] = {"labels": {**labels, "app": loadname}}
         template["spec"]["automountServiceAccountToken"] = False
+        if args.loadgen_node:
+            template["spec"].setdefault("nodeSelector",{})["lab.slot"]=args.loadgen_node
         template["spec"]["terminationGracePeriodSeconds"] = 15
         template["spec"].setdefault("volumes", []).append({"name": "s5-code", "configMap": {"name": config}})
         main = next(c for c in template["spec"]["containers"] if c["name"] == "main")
         main["command"] = ["locust"]
         main["args"] = ["-f", "/s5/locust_wrapper.py", "--host=http://frontend:80", "--headless", "--users=10", "--spawn-rate=1", "--stop-timeout=3"]
         main.setdefault("env", []).extend([{"name": "PYTHONUNBUFFERED", "value": "1"}, {"name": "PYTHONDONTWRITEBYTECODE", "value": "1"}])
+        if args.locust_seed is not None:main["env"].append({"name":"GD4_LOCUST_SEED","value":str(args.locust_seed)})
         main.setdefault("volumeMounts", []).append({"name": "s5-code", "mountPath": "/s5", "readOnly": True})
         deployment = {"apiVersion": "apps/v1", "kind": "Deployment", "metadata": {"name": loadname, "namespace": "boutique", "labels": labels},
                       "spec": {"replicas": 1, "selector": {"matchLabels": {"app": loadname}}, "template": template}}
@@ -200,18 +208,30 @@ def run_s5(args):
         guard = Guard(output, actor, target, lambda: phase); guard.start()
         mark("warmup"); pause(args.warmup)
         mark("pre_attack"); pause(args.pre)
-        mark("attack")
-        receipts, errors = (output/"actor-receipts.ndjson").open("w"), (output/"actor.stderr").open("w")
-        handles.extend((receipts,errors))
-        action=subprocess.Popen(["k3s","kubectl","-n","boutique","exec",actor,"-c","actor","--",
-            "python3","/s5/client.py","--run-id",run_id,"--calls",str(args.s5_calls)],stdout=receipts,stderr=errors)
-        deadline=time.monotonic()+args.s5_calls+15
-        while action.poll() is None:
-            healthy()
-            if time.monotonic()>deadline:raise RuntimeError("S5 client exceeded bounded deadline")
-            time.sleep(.2)
-        if action.returncode:raise RuntimeError("S5 client failed; inspect actor.stderr")
-        write_json(output/"s5-client-summary.json",json.loads(k("-n","boutique","exec",actor,"-c","actor","--","cat","/tmp/s5-client-summary.json")))
+        mark("measurement" if control else "attack")
+        if control:
+            (output/"actor.stderr").touch()
+            started=now();tick=time.monotonic()
+            if args.normal_admin:
+                program="import datetime,json,os,urllib.request; start=datetime.datetime.now(datetime.timezone.utc).isoformat(); r=urllib.request.urlopen('http://"+target["ip"]+":80/_healthz',timeout=3); print(json.dumps({'started':start,'ended':datetime.datetime.now(datetime.timezone.utc).isoformat(),'container_pid':os.getpid(),'status_code':r.status}))"
+                proof=json.loads(k("-n","boutique","exec",actor,"-c","actor","--","/bin/sh","-c","python3 -c "+shlex.quote(program),timeout=10))
+                write_json(output/"normal-admin.json",{"purpose":"operator_authorized_frontend_health_check","actor_uid":manifest["actor"]["uid"],"method":"GET","path":"/_healthz","target":target,**proof})
+            pause(args.s5_calls)
+            write_json(output/"s5-client-summary.json",{"run_id":run_id,"scheduled":0,"submitted":0,"skipped_late":0,
+                "started":started,"ended":now(),"elapsed_seconds":time.monotonic()-tick,"interrupted":False,
+                "rate":0,"payload_bytes":65536,"source":"controller_no_upload"})
+        else:
+            receipts, errors = (output/"actor-receipts.ndjson").open("w"), (output/"actor.stderr").open("w")
+            handles.extend((receipts,errors))
+            action=subprocess.Popen(["k3s","kubectl","-n","boutique","exec",actor,"-c","actor","--",
+                "python3","/s5/client.py","--run-id",run_id,"--calls",str(args.s5_calls)],stdout=receipts,stderr=errors)
+            deadline=time.monotonic()+args.s5_calls+15
+            while action.poll() is None:
+                healthy()
+                if time.monotonic()>deadline:raise RuntimeError("S5 client exceeded bounded deadline")
+                time.sleep(.2)
+            if action.returncode:raise RuntimeError("S5 client failed; inspect actor.stderr")
+            write_json(output/"s5-client-summary.json",json.loads(k("-n","boutique","exec",actor,"-c","actor","--","cat","/tmp/s5-client-summary.json")))
         mark("recovery"); pause(args.recovery)
         manifest["measurement_end"] = now(); mark("finalize")
         guard.close()

@@ -1,0 +1,748 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Node",
+      "metadata": {
+        "annotations": {
+          "alpha.kubernetes.io/provided-node-ip": "192.168.141.142",
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"d6:32:fe:26:96:a4\"}",
+          "flannel.alpha.coreos.com/backend-type": "vxlan",
+          "flannel.alpha.coreos.com/kube-subnet-manager": "true",
+          "flannel.alpha.coreos.com/public-ip": "192.168.141.142",
+          "k3s.io/hostname": "manager",
+          "k3s.io/internal-ip": "192.168.141.142",
+          "k3s.io/node-args": "[\"server\",\"--node-name\",\"lab-cp\",\"--node-ip\",\"192.168.141.142\",\"--tls-san\",\"192.168.141.142\",\"--agent-token-file\",\"/etc/rancher/k3s/agent-join-secret\",\"--flannel-backend\",\"vxlan\",\"--node-taint\",\"lab.role=control-plane:NoSchedule\",\"--disable\",\"traefik\",\"--disable\",\"servicelb\",\"--disable\",\"local-storage\",\"--flannel-iface\",\"ens33\"]",
+          "k3s.io/node-config-hash": "RBOHYYIWAU2KIQYMHPRC3EL5IX4ELNVOBNPGHUFJONM4MRLQYQ7A====",
+          "k3s.io/node-env": "{}",
+          "node.alpha.kubernetes.io/ttl": "0",
+          "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+        },
+        "creationTimestamp": "2026-11-15T13:19:49Z",
+        "finalizers": [
+          "wrangler.cattle.io/node"
+        ],
+        "labels": {
+          "beta.kubernetes.io/arch": "amd64",
+          "beta.kubernetes.io/instance-type": "k3s",
+          "beta.kubernetes.io/os": "linux",
+          "kubernetes.io/arch": "amd64",
+          "kubernetes.io/hostname": "lab-cp",
+          "kubernetes.io/os": "linux",
+          "node-role.kubernetes.io/control-plane": "true",
+          "node.kubernetes.io/instance-type": "k3s"
+        },
+        "name": "lab-cp",
+        "resourceVersion": "438585",
+        "uid": "e542a320-c67f-42f8-a6bf-395f6181a49a"
+      },
+      "spec": {
+        "podCIDR": "10.42.0.0/24",
+        "podCIDRs": [
+          "10.42.0.0/24"
+        ],
+        "providerID": "k3s://lab-cp",
+        "taints": [
+          {
+            "effect": "NoSchedule",
+            "key": "lab.role",
+            "value": "control-plane"
+          }
+        ]
+      },
+      "status": {
+        "addresses": [
+          {
+            "address": "192.168.141.142",
+            "type": "InternalIP"
+          },
+          {
+            "address": "manager",
+            "type": "Hostname"
+          }
+        ],
+        "allocatable": {
+          "cpu": "4",
+          "ephemeral-storage": "37974563196",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "3968780Ki",
+          "pods": "110"
+        },
+        "capacity": {
+          "cpu": "4",
+          "ephemeral-storage": "39036352Ki",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "3968780Ki",
+          "pods": "110"
+        },
+        "conditions": [
+          {
+            "lastHeartbeatTime": "2026-11-25T11:35:28Z",
+            "lastTransitionTime": "2026-11-15T13:19:49Z",
+            "message": "kubelet has sufficient memory available",
+            "reason": "KubeletHasSufficientMemory",
+            "status": "False",
+            "type": "MemoryPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:35:28Z",
+            "lastTransitionTime": "2026-11-15T13:19:49Z",
+            "message": "kubelet has no disk pressure",
+            "reason": "KubeletHasNoDiskPressure",
+            "status": "False",
+            "type": "DiskPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:35:28Z",
+            "lastTransitionTime": "2026-11-15T13:19:49Z",
+            "message": "kubelet has sufficient PID available",
+            "reason": "KubeletHasSufficientPID",
+            "status": "False",
+            "type": "PIDPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:35:28Z",
+            "lastTransitionTime": "2026-11-15T13:19:49Z",
+            "message": "kubelet is posting ready status",
+            "reason": "KubeletReady",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "daemonEndpoints": {
+          "kubeletEndpoint": {
+            "Port": 10250
+          }
+        },
+        "features": {
+          "supplementalGroupsPolicy": true
+        },
+        "images": [
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:8c9bac11973b94b59be88d6e11fee4429aa743c8846cdc75d65b18db33f6a106",
+              "quay.io/prometheus/node-exporter:v1.12.1-distroless"
+            ],
+            "sizeBytes": 13123706
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-pause@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4",
+              "docker.io/rancher/mirrored-pause:3.10.2"
+            ],
+            "sizeBytes": 320805
+          }
+        ],
+        "nodeInfo": {
+          "architecture": "amd64",
+          "bootID": "59d08c35-a993-492d-a2dc-bed22e1ae9ab",
+          "containerRuntimeVersion": "containerd://2.2.7-k3s1",
+          "kernelVersion": "5.15.0-198-generic",
+          "kubeProxyVersion": "",
+          "kubeletVersion": "v1.35.9+k3s1",
+          "machineID": "cf956cb257434875b8b1b15c9ac51402",
+          "operatingSystem": "linux",
+          "osImage": "Ubuntu 22.04.5 LTS",
+          "systemUUID": "e9744d56-0dff-f868-174e-42443e799ef7"
+        },
+        "runtimeHandlers": [
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": ""
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": "runc"
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": false,
+              "userNamespaces": false
+            },
+            "name": "runhcs-wcow-process"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Node",
+      "metadata": {
+        "annotations": {
+          "alpha.kubernetes.io/provided-node-ip": "192.168.141.143",
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"da:23:60:ae:bd:34\"}",
+          "flannel.alpha.coreos.com/backend-type": "vxlan",
+          "flannel.alpha.coreos.com/kube-subnet-manager": "true",
+          "flannel.alpha.coreos.com/public-ip": "192.168.141.143",
+          "k3s.io/hostname": "worker-1",
+          "k3s.io/internal-ip": "192.168.141.143",
+          "k3s.io/node-args": "[\"agent\",\"--server\",\"https://192.168.141.142:6443\",\"--token-file\",\"/etc/rancher/k3s/agent-token\",\"--node-name\",\"lab-w1\",\"--node-ip\",\"192.168.141.143\",\"--node-label\",\"lab.slot=w1\",\"--flannel-iface\",\"ens33\"]",
+          "k3s.io/node-config-hash": "CUGCGWICKAB6YFK3GBPADZQSLXQ5YBDC6LJFE6VTPQ3KU7OSPWGA====",
+          "k3s.io/node-env": "{}",
+          "node.alpha.kubernetes.io/ttl": "0",
+          "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+        },
+        "creationTimestamp": "2026-11-15T13:26:22Z",
+        "finalizers": [
+          "wrangler.cattle.io/node"
+        ],
+        "labels": {
+          "beta.kubernetes.io/arch": "amd64",
+          "beta.kubernetes.io/instance-type": "k3s",
+          "beta.kubernetes.io/os": "linux",
+          "kubernetes.io/arch": "amd64",
+          "kubernetes.io/hostname": "lab-w1",
+          "kubernetes.io/os": "linux",
+          "lab.slot": "w1",
+          "node.kubernetes.io/instance-type": "k3s"
+        },
+        "name": "lab-w1",
+        "resourceVersion": "438714",
+        "uid": "57cab657-1c2f-426c-92c2-344882855dbb"
+      },
+      "spec": {
+        "podCIDR": "10.42.1.0/24",
+        "podCIDRs": [
+          "10.42.1.0/24"
+        ],
+        "providerID": "k3s://lab-w1"
+      },
+      "status": {
+        "addresses": [
+          {
+            "address": "192.168.141.143",
+            "type": "InternalIP"
+          },
+          {
+            "address": "worker-1",
+            "type": "Hostname"
+          }
+        ],
+        "allocatable": {
+          "cpu": "4",
+          "ephemeral-storage": "37974563196",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "3968772Ki",
+          "pods": "110"
+        },
+        "capacity": {
+          "cpu": "4",
+          "ephemeral-storage": "39036352Ki",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "3968772Ki",
+          "pods": "110"
+        },
+        "conditions": [
+          {
+            "lastHeartbeatTime": "2026-11-25T11:39:14Z",
+            "lastTransitionTime": "2026-11-15T13:26:22Z",
+            "message": "kubelet has sufficient memory available",
+            "reason": "KubeletHasSufficientMemory",
+            "status": "False",
+            "type": "MemoryPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:39:14Z",
+            "lastTransitionTime": "2026-11-15T13:26:22Z",
+            "message": "kubelet has no disk pressure",
+            "reason": "KubeletHasNoDiskPressure",
+            "status": "False",
+            "type": "DiskPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:39:14Z",
+            "lastTransitionTime": "2026-11-15T13:26:22Z",
+            "message": "kubelet has sufficient PID available",
+            "reason": "KubeletHasSufficientPID",
+            "status": "False",
+            "type": "PIDPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:39:14Z",
+            "lastTransitionTime": "2026-11-15T13:26:22Z",
+            "message": "kubelet is posting ready status",
+            "reason": "KubeletReady",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "daemonEndpoints": {
+          "kubeletEndpoint": {
+            "Port": 10250
+          }
+        },
+        "features": {
+          "supplementalGroupsPolicy": true
+        },
+        "images": [
+          {
+            "names": [
+              "docker.io/grafana/grafana@sha256:54e297ac67e2b72572f926892f4e06074dc4f79f2a56ed9a9ca9a88a46f28733",
+              "docker.io/grafana/grafana:13.3.1-distroless"
+            ],
+            "sizeBytes": 488494816
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/adservice@sha256:7b26b5ea1a6472ca62b3c20c6f6ac12dd1fbcf18ba596a2c174982bcccdfc0c8",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/adservice:v0.10.7"
+            ],
+            "sizeBytes": 109886572
+          },
+          {
+            "names": [
+              "quay.io/cilium/tetragon@sha256:5ed9088a1582131d71b06c98e0d549a37a71ae63ab13aabefc7a47553c822a9d",
+              "quay.io/cilium/tetragon:v1.8.0"
+            ],
+            "sizeBytes": 97664399
+          },
+          {
+            "names": [
+              "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+              "docker.io/library/python:3.12.8-slim-bookworm"
+            ],
+            "sizeBytes": 45389175
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator:v0.10.7"
+            ],
+            "sizeBytes": 45105060
+          },
+          {
+            "names": [
+              "docker.io/library/redis@sha256:7958cfbb9d152f87dadfbc89f1b0b15938f0b81ff8982feb327476f4911935c3",
+              "docker.io/library/redis:alpine"
+            ],
+            "sizeBytes": 39541534
+          },
+          {
+            "names": [
+              "quay.io/kiwigrid/k8s-sidecar@sha256:52d311dcedd587421a236c4d6c621f05614c40a51386e955e0699dca97ec0880",
+              "quay.io/kiwigrid/k8s-sidecar:2.14.3"
+            ],
+            "sizeBytes": 26873261
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-coredns-coredns@sha256:7efd3c635b03efd68c4e8398fc45f0d993d0e9ab016f72c1cefb0fd6d01aa286",
+              "docker.io/rancher/mirrored-coredns-coredns:1.14.7"
+            ],
+            "sizeBytes": 24261571
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-metrics-server@sha256:d9862115e7c7881280d3d75ca26bda8ffc0fc213315979575bf23ce9826205c0",
+              "docker.io/rancher/mirrored-metrics-server:v0.9.0"
+            ],
+            "sizeBytes": 23258428
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/cartservice@sha256:e5310c2aa45732e351c55c88051700d958dc7ed2693e66405fc6c70cf080109e",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/cartservice:v0.10.7"
+            ],
+            "sizeBytes": 17877810
+          },
+          {
+            "names": [
+              "quay.io/cilium/tetragon-operator@sha256:af2b6f0a8609d66190f1d5bbdea38a160d5460f2ea416beea42a615aadd8b35a",
+              "quay.io/cilium/tetragon-operator:v1.8.0"
+            ],
+            "sizeBytes": 16872850
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:8c9bac11973b94b59be88d6e11fee4429aa743c8846cdc75d65b18db33f6a106",
+              "quay.io/prometheus/node-exporter:v1.12.1-distroless"
+            ],
+            "sizeBytes": 13123706
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/frontend@sha256:e1cbd4561d3c9d27497dc0e8b1c12da194c4bf2ea82648f58bf38f073698f483",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/frontend:v0.10.7"
+            ],
+            "sizeBytes": 12733339
+          },
+          {
+            "names": [
+              "ghcr.io/jkroepke/kube-webhook-certgen@sha256:8009b04f9873f7279b5adee37fdd03b6a9aa7b6751d4f69fde2683010e41cd1f",
+              "ghcr.io/jkroepke/kube-webhook-certgen:1.11.1"
+            ],
+            "sizeBytes": 9531083
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/checkoutservice@sha256:f0e72ff7b438dd2e8776fb142d5132cfa5ba02c523466f1491270c576412d33f",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/checkoutservice:v0.10.7"
+            ],
+            "sizeBytes": 7844068
+          },
+          {
+            "names": [
+              "docker.io/library/busybox@sha256:dc2d74b28e4cf8984fa52af1f39bc7c3d9c73760b41a74d629f5d11b1ab28616"
+            ],
+            "sizeBytes": 2236931
+          },
+          {
+            "names": [
+              "docker.io/library/busybox@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec",
+              "docker.io/library/busybox:1.37.0"
+            ],
+            "sizeBytes": 2222118
+          },
+          {
+            "names": [
+              "docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662",
+              "docker.io/library/busybox:1.36.1"
+            ],
+            "sizeBytes": 2217006
+          },
+          {
+            "names": [
+              "quay.io/cilium/hubble-export-stdout@sha256:cf701f96d1c8de30231792e35733e1ab07451e11751ef4f676f482836759da06",
+              "quay.io/cilium/hubble-export-stdout:v1.1.1"
+            ],
+            "sizeBytes": 1527921
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-pause@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4",
+              "docker.io/rancher/mirrored-pause:3.10.2"
+            ],
+            "sizeBytes": 320805
+          }
+        ],
+        "nodeInfo": {
+          "architecture": "amd64",
+          "bootID": "a01005e9-686e-4f5c-a2b7-bf37d399b6b7",
+          "containerRuntimeVersion": "containerd://2.2.7-k3s1",
+          "kernelVersion": "5.15.0-198-generic",
+          "kubeProxyVersion": "",
+          "kubeletVersion": "v1.35.9+k3s1",
+          "machineID": "122e767a150e6781e073bb2c6af9aeb5",
+          "operatingSystem": "linux",
+          "osImage": "Ubuntu 22.04.5 LTS",
+          "systemUUID": "977b4d56-b566-dc22-b95c-a57c430800b4"
+        },
+        "runtimeHandlers": [
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": ""
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": "runc"
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": false,
+              "userNamespaces": false
+            },
+            "name": "runhcs-wcow-process"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Node",
+      "metadata": {
+        "annotations": {
+          "alpha.kubernetes.io/provided-node-ip": "192.168.141.144",
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"b6:5a:b2:de:bc:ca\"}",
+          "flannel.alpha.coreos.com/backend-type": "vxlan",
+          "flannel.alpha.coreos.com/kube-subnet-manager": "true",
+          "flannel.alpha.coreos.com/public-ip": "192.168.141.144",
+          "k3s.io/hostname": "worker-2",
+          "k3s.io/internal-ip": "192.168.141.144",
+          "k3s.io/node-args": "[\"agent\",\"--server\",\"https://192.168.141.142:6443\",\"--token-file\",\"/etc/rancher/k3s/agent-token\",\"--node-name\",\"lab-w2\",\"--node-ip\",\"192.168.141.144\",\"--node-label\",\"lab.slot=w2\",\"--flannel-iface\",\"ens33\"]",
+          "k3s.io/node-config-hash": "6KQMNWGHJ5AKTFSKV5TF5TNGK5UBQ6CSFYXWLEFY6W4QOXZFIS2A====",
+          "k3s.io/node-env": "{}",
+          "node.alpha.kubernetes.io/ttl": "0",
+          "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+        },
+        "creationTimestamp": "2026-11-15T13:26:23Z",
+        "finalizers": [
+          "wrangler.cattle.io/node"
+        ],
+        "labels": {
+          "beta.kubernetes.io/arch": "amd64",
+          "beta.kubernetes.io/instance-type": "k3s",
+          "beta.kubernetes.io/os": "linux",
+          "kubernetes.io/arch": "amd64",
+          "kubernetes.io/hostname": "lab-w2",
+          "kubernetes.io/os": "linux",
+          "lab.slot": "w2",
+          "node.kubernetes.io/instance-type": "k3s"
+        },
+        "name": "lab-w2",
+        "resourceVersion": "438666",
+        "uid": "0d5fa152-2798-46cb-82bb-0558502f548b"
+      },
+      "spec": {
+        "podCIDR": "10.42.2.0/24",
+        "podCIDRs": [
+          "10.42.2.0/24"
+        ],
+        "providerID": "k3s://lab-w2"
+      },
+      "status": {
+        "addresses": [
+          {
+            "address": "192.168.141.144",
+            "type": "InternalIP"
+          },
+          {
+            "address": "worker-2",
+            "type": "Hostname"
+          }
+        ],
+        "allocatable": {
+          "cpu": "4",
+          "ephemeral-storage": "37974563196",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "3968752Ki",
+          "pods": "110"
+        },
+        "capacity": {
+          "cpu": "4",
+          "ephemeral-storage": "39036352Ki",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "3968752Ki",
+          "pods": "110"
+        },
+        "conditions": [
+          {
+            "lastHeartbeatTime": "2026-11-25T11:37:37Z",
+            "lastTransitionTime": "2026-11-15T13:26:23Z",
+            "message": "kubelet has sufficient memory available",
+            "reason": "KubeletHasSufficientMemory",
+            "status": "False",
+            "type": "MemoryPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:37:37Z",
+            "lastTransitionTime": "2026-11-15T13:26:23Z",
+            "message": "kubelet has no disk pressure",
+            "reason": "KubeletHasNoDiskPressure",
+            "status": "False",
+            "type": "DiskPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:37:37Z",
+            "lastTransitionTime": "2026-11-15T13:26:23Z",
+            "message": "kubelet has sufficient PID available",
+            "reason": "KubeletHasSufficientPID",
+            "status": "False",
+            "type": "PIDPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-11-25T11:37:37Z",
+            "lastTransitionTime": "2026-11-15T13:26:24Z",
+            "message": "kubelet is posting ready status",
+            "reason": "KubeletReady",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "daemonEndpoints": {
+          "kubeletEndpoint": {
+            "Port": 10250
+          }
+        },
+        "features": {
+          "supplementalGroupsPolicy": true
+        },
+        "images": [
+          {
+            "names": [
+              "quay.io/prometheus/prometheus@sha256:9764044e09eb2c9e1abdb12d0f0188d4efb7384b0262d3c080f0fc59045c89ba",
+              "quay.io/prometheus/prometheus:v3.16.0-distroless"
+            ],
+            "sizeBytes": 115829580
+          },
+          {
+            "names": [
+              "quay.io/cilium/tetragon@sha256:5ed9088a1582131d71b06c98e0d549a37a71ae63ab13aabefc7a47553c822a9d",
+              "quay.io/cilium/tetragon:v1.8.0"
+            ],
+            "sizeBytes": 97664399
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/currencyservice@sha256:c581681bbf9abec8563e520aac3f3dbe3e7498853b6eb263193bc80c87e42f74",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/currencyservice:v0.10.7"
+            ],
+            "sizeBytes": 50756989
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/paymentservice@sha256:e1ff27c553f7e0c31f4a10f1950ec0ee34cd41d77dd819b1fcfa139273891602",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/paymentservice:v0.10.7"
+            ],
+            "sizeBytes": 49012100
+          },
+          {
+            "names": [
+              "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+              "docker.io/library/python:3.12.8-slim-bookworm"
+            ],
+            "sizeBytes": 45389175
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/emailservice@sha256:1142813191b50f7e74bd1d8957d3b272496e9648b745d2c9914752b94356eade",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/emailservice:v0.10.7"
+            ],
+            "sizeBytes": 40748054
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/recommendationservice@sha256:69291992f5511e9199d08c24a3ceb6470b39461933304fbdad1c7ddfc7358fd9",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/recommendationservice:v0.10.7"
+            ],
+            "sizeBytes": 40089154
+          },
+          {
+            "names": [
+              "quay.io/prometheus-operator/prometheus-operator@sha256:7986c2afa118c9dea07d01c5e1a29555824582e92f6ee8607591d1a7178acf29",
+              "quay.io/prometheus-operator/prometheus-operator:v0.95.2"
+            ],
+            "sizeBytes": 22645444
+          },
+          {
+            "names": [
+              "registry.k8s.io/kube-state-metrics/kube-state-metrics@sha256:42cfe3723a5f058171c627537fb57a3ea0f26e4380fa18555a95cb1a1b4cfc5b",
+              "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.20.0"
+            ],
+            "sizeBytes": 19261896
+          },
+          {
+            "names": [
+              "quay.io/prometheus-operator/prometheus-config-reloader@sha256:cc74ddedad4ab1c49446971f6d51302ad4303d8660a2018af925c7f62c114304",
+              "quay.io/prometheus-operator/prometheus-config-reloader:v0.95.2"
+            ],
+            "sizeBytes": 14945771
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:8c9bac11973b94b59be88d6e11fee4429aa743c8846cdc75d65b18db33f6a106",
+              "quay.io/prometheus/node-exporter:v1.12.1-distroless"
+            ],
+            "sizeBytes": 13123706
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/productcatalogservice@sha256:ba573405e9b03ea29970185eeaf0a9de9db7400b9104695e39d4dfc0fb651cb5",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/productcatalogservice:v0.10.7"
+            ],
+            "sizeBytes": 10028947
+          },
+          {
+            "names": [
+              "ghcr.io/jkroepke/kube-webhook-certgen@sha256:8009b04f9873f7279b5adee37fdd03b6a9aa7b6751d4f69fde2683010e41cd1f",
+              "ghcr.io/jkroepke/kube-webhook-certgen:1.11.1"
+            ],
+            "sizeBytes": 9531083
+          },
+          {
+            "names": [
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/shippingservice@sha256:3984397422ef1b45bd8a7c6736f935f4b6a41a1724ea39f9563b26733ed633e4",
+              "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/shippingservice:v0.10.7"
+            ],
+            "sizeBytes": 7631042
+          },
+          {
+            "names": [
+              "docker.io/library/busybox@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec",
+              "docker.io/library/busybox:1.37.0"
+            ],
+            "sizeBytes": 2222118
+          },
+          {
+            "names": [
+              "docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662",
+              "docker.io/library/busybox:1.36.1"
+            ],
+            "sizeBytes": 2217006
+          },
+          {
+            "names": [
+              "quay.io/cilium/hubble-export-stdout@sha256:cf701f96d1c8de30231792e35733e1ab07451e11751ef4f676f482836759da06",
+              "quay.io/cilium/hubble-export-stdout:v1.1.1"
+            ],
+            "sizeBytes": 1527921
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-pause@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4",
+              "docker.io/rancher/mirrored-pause:3.10.2"
+            ],
+            "sizeBytes": 320805
+          }
+        ],
+        "nodeInfo": {
+          "architecture": "amd64",
+          "bootID": "b493df7d-d896-47b4-bce7-6595b6984280",
+          "containerRuntimeVersion": "containerd://2.2.7-k3s1",
+          "kernelVersion": "5.15.0-198-generic",
+          "kubeProxyVersion": "",
+          "kubeletVersion": "v1.35.9+k3s1",
+          "machineID": "a9b5b56fefbdf665af93eff76af9aeb5",
+          "operatingSystem": "linux",
+          "osImage": "Ubuntu 22.04.5 LTS",
+          "systemUUID": "370c4d56-a1fe-9c7a-8492-08cd85dbc2b9"
+        },
+        "runtimeHandlers": [
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": ""
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": "runc"
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": false,
+              "userNamespaces": false
+            },
+            "name": "runhcs-wcow-process"
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}

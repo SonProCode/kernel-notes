@@ -36,7 +36,7 @@ def get(*args):
 
 
 def run(args):
-    if args.scenario == "S5":
+    if args.scenario == "S5" or args.s5_control:
         from s5_runner import run_s5
         return run_s5(args)
     if args.scenario == "S4" or args.s4_control:
@@ -101,7 +101,7 @@ def run(args):
         manifest["git_commit"] = None
     if args.scenario == "S1":
         manifest["script_sha256"]["s1_verify.py"] = hashlib.sha256((ROOT / "s1_verify.py").read_bytes()).hexdigest()
-    if args.scenario in ("S1", "S2") or s3_runtime:
+    if args.scenario in ("S0", "S1", "S2") or s3_runtime:
         for relative in manifest["script_sha256"]:
             source = ROOT / relative
             target = output / "source" / relative
@@ -111,6 +111,12 @@ def run(args):
             target = output / "source" / relative
             target.write_bytes((ROOT / relative).read_bytes())
         manifest["source_snapshot"] = "source"
+    if args.scenario == "S0":
+        content=(ROOT.parent/"telemetry/normalize.py").read_bytes()
+        manifest["script_sha256"]["telemetry/normalize.py"]=hashlib.sha256(content).hexdigest()
+        (output/"source/telemetry").mkdir()
+        (output/"source/telemetry/normalize.py").write_bytes(content)
+        manifest["normal_profile"]="business_reference"
     manifest["code_bundle_sha256"] = hashlib.sha256(
         json.dumps(manifest["script_sha256"], sort_keys=True).encode()).hexdigest()
     write_json(output / "manifest.json", manifest)
@@ -264,6 +270,11 @@ def run(args):
         k("-n", "boutique", "scale", "deployment/loadgenerator", "--current-replicas=0", "--replicas=1")
         scaled = True
         k("-n", "boutique", "rollout", "status", "deployment/loadgenerator", "--timeout=180s")
+        if args.scenario=="S0":
+            active=[p for p in get("-n","boutique","get","pods","-l","app=loadgenerator")["items"] if not p["metadata"].get("deletionTimestamp") and p["status"].get("phase")=="Running"]
+            if len(active)!=1:raise RuntimeError("Expected one original Locust Pod")
+            current=active[0]
+            manifest["normal_workload"]={"pod":current["metadata"]["name"],"uid":current["metadata"]["uid"],"node":current["spec"]["nodeName"],"image_id":next(c["imageID"] for c in current["status"]["containerStatuses"] if c["name"]=="main"),"users":10,"spawn_rate":1}
         deadline = time.monotonic() + 180
         while "All users spawned" not in k("-n", "boutique", "logs", "deployment/loadgenerator", "-c", "main"):
             if time.monotonic() > deadline:
@@ -379,14 +390,25 @@ if __name__ == "__main__":
     parser.add_argument("--s4-duration", type=int, default=30)
     parser.add_argument("--s4-concurrency", type=int, choices=[1, 2, 3, 4], default=2)
     parser.add_argument("--s5-calls", type=int, default=60, help="Synthetic 64 KiB uploads, 1..60 at 1 RPS")
+    parser.add_argument("--s5-control", action="store_true", help="S0 matched receiver-present, no-upload control")
+    parser.add_argument("--loadgen-node", choices=["w1","w2"], help="Pin the temporary S4/S5 Locust for matched controls")
+    parser.add_argument("--normal-admin", action="store_true", help="Authorized shell/Python health diagnostic in a separate S0 S5-family control")
+    parser.add_argument("--locust-seed", type=int, help="Record/fix initial Python random seed in instrumented S4/S5 Locust")
     args = parser.parse_args()
     if args.s4_control and args.scenario != "S0":
         parser.error("--s4-control requires --scenario S0")
+    if args.s5_control and args.scenario!="S0":parser.error("--s5-control requires --scenario S0")
+    if args.s4_control and args.s5_control:parser.error("Choose one control family")
+    if args.normal_admin and not args.s5_control:parser.error("--normal-admin requires --scenario S0 --s5-control")
+    if args.locust_seed is not None and not 0<=args.locust_seed<2**32:parser.error("--locust-seed must be 0..2**32-1")
+    if args.locust_seed is not None and not (args.scenario in ("S4","S5") or args.s4_control or args.s5_control):parser.error("--locust-seed requires an instrumented family")
+    if args.loadgen_node and not (args.scenario in ("S4","S5") or args.s4_control or args.s5_control):
+        parser.error("--loadgen-node is for instrumented S4/S5 families")
     if not 1 <= args.s4_duration <= 90:
         parser.error("--s4-duration must be 1..90 seconds")
     if not 1 <= args.s5_calls <= 60:
         parser.error("--s5-calls must be 1..60")
-    if args.scenario == "S5" and min(args.warmup, args.pre, args.recovery) < 12:
+    if (args.scenario == "S5" or args.s5_control) and min(args.warmup, args.pre, args.recovery) < 12:
         parser.error("S5 phases must be at least 12 seconds for guard/resource samples")
     if args.scenario == "S3" and args.s3_profile is None:
         args.s3_profile = "file-smoke" if args.mode == "smoke" else "runtime"
