@@ -1,0 +1,13 @@
+{
+  "run_id": "s0-s5-control-20261125T192603Z-2658384",
+  "scheduled": 0,
+  "submitted": 0,
+  "skipped_late": 0,
+  "started": "2026-11-25T19:35:04.251729+00:00",
+  "ended": "2026-11-25T19:36:04.252176+00:00",
+  "elapsed_seconds": 60.00047365692444,
+  "interrupted": false,
+  "rate": 0,
+  "payload_bytes": 65536,
+  "source": "controller_no_upload"
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": 3,
+  "run_id": "s2-20261125T185037Z-2598301",
+  "scenario_id": "S2",
+  "mode": "official",
+  "status": "completed",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 400,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "measurement_seconds": 900,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "s2_support.py": "799c6113bbaddd240eddf47d92314398418a8925ac0199adc46d0b1bd64ce9cf",
+    "s2_verify.py": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+    "s2/client.py": "2769308942f0e46bab42831e0e9bce5720c9fb28ea4d0f6c296fa3c2a52dab0a",
+    "s2/protos/demo.proto": "b1f2fa42c0a9305211bf51fba7d8b5832cd3defd7b8855c327ebd5b1f0f86884",
+    "s2/requirements.lock": "704a708cab0be29a0e9455743f341ac957f28d543e03b2c22f5113e4c6e04b49",
+    "s2/fixture.json": "31eade7d6c001ff1fdb689bcad27721a59c3cd13eca30ae6c7dc768d638f7a9c",
+    "expected-communications.csv": "750457f1445cc818cb5ed9c76002e89dcf08a4e505095c81c8c74617447f998c"
+  },
+  "s2": {
+    "method": "/hipstershop.PaymentService/Charge",
+    "calls": 30,
+    "interval_seconds": 2,
+    "rpc_timeout_seconds": 3,
+    "source_role": "gd4_non_checkout",
+    "expected_allowed_caller": "checkoutservice",
+    "access_expectation_source": "expected-communications.csv",
+    "fixture_id": "synthetic-payment-v1"
+  },
+  "git_commit": null,
+  "source_snapshot": "source",
+  "code_bundle_sha256": "457eea510624f2ca2f4c03607f131f323193165335755d281f72c99c5ec3205a",
+  "actor": {
+    "name": "gd4-2598301",
+    "uid": "b4b7b684-ba05-44ab-8a91-e7ab205d7402",
+    "ip": "10.42.1.121",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+    "service_account": "gd4-2598301"
+  },
+  "s2_runtime": {
+    "versions": {
+      "grpcio": "1.76.0",
+      "grpcio-tools": "1.76.0",
+      "protobuf": "6.33.0",
+      "setuptools": "84.2.1",
+      "typing_extensions": "4.16.0"
+    },
+    "generated_sha256": {
+      "demo_pb2_grpc.py": "289ce2d543eef4aef004b5c92e3f3720f6e9e4c76d12da12a9da01ed5b9a440a",
+      "demo_pb2.py": "25fdca84bdca1428c302a70cbdb277b403e06fd90cfab159d6e03f60d76dd8f2"
+    },
+    "bundle_sha256": "f18a95024571a0698b4fe512a501bc441183110f577603ecce78b034ea584672",
+    "proto_sha256": "b1f2fa42c0a9305211bf51fba7d8b5832cd3defd7b8855c327ebd5b1f0f86884"
+  },
+  "targets": [
+    {
+      "service": "paymentservice",
+      "ip": "10.43.35.94",
+      "port": 50051,
+      "target_ips": [
+        "10.42.2.6",
+        "10.43.35.94"
+      ]
+    }
+  ],
+  "capture_start": "2026-11-25T18:50:52.208133+00:00",
+  "measurement_end": "2026-11-25T19:02:49.473764+00:00",
+  "finished": "2026-11-25T19:02:53.137399+00:00",
+  "s2_verification": {
+    "expected_calls": 30,
+    "receipts": 30,
+    "api_successes": 30,
+    "unique_transaction_ids": 30,
+    "rpc_operations_with_network_event": 30,
+    "uniquely_correlated_server_calls": 30,
+    "uncorrelated_operations": [],
+    "ambiguous_operations": [],
+    "clock_tolerance_seconds": 2,
+    "verifier_sha256": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+    "passed": true
+  },
+  "dataset_status": "validated",
+  "matched_operations": 30
+}

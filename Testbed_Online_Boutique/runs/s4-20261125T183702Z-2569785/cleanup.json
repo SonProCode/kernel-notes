@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-11-25T18:49:42.374488+00:00",
+  "remaining": {
+    "pods": 0,
+    "deployments": 0,
+    "configmaps": 0
+  },
+  "original_loadgenerator_unchanged": true,
+  "passed": true
+}

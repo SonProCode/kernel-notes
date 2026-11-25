@@ -1,0 +1,29 @@
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s0-s5-control-20261125T192603Z-2658384
+setup
+warmup
+pre_attack
+measurement
+recovery
+finalize
+Traceback (most recent call last):
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 427, in <module>
+    run(args)
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 41, in run
+    return run_s5(args)
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/s5_runner.py", line 317, in run_s5
+    result = verify_s5(output)
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/s5_verify.py", line 96, in verify_s5
+    raw={n:[json.loads(line) for line in (run/"raw"/(n+".ndjson")).read_text(encoding="utf-8").splitlines()] for n in WORKERS}
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/s5_verify.py", line 96, in <dictcomp>
+    raw={n:[json.loads(line) for line in (run/"raw"/(n+".ndjson")).read_text(encoding="utf-8").splitlines()] for n in WORKERS}
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/s5_verify.py", line 96, in <listcomp>
+    raw={n:[json.loads(line) for line in (run/"raw"/(n+".ndjson")).read_text(encoding="utf-8").splitlines()] for n in WORKERS}
+  File "/usr/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.10/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+  File "/home/sonth32/Testbed_Online_Boutique/experiments/runner.py", line 424, in interrupted
+    raise KeyboardInterrupt(f"Signal {signum}")
+KeyboardInterrupt: Signal 15

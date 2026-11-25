@@ -1,0 +1,22 @@
+{
+  "archive": "dataset.tar.gz",
+  "archive_sha256": "162c83e827bdfcc342b0af1444a295c9699be35683ab8f55c210e0a69df1f894",
+  "verified_member_sha256": {
+    "labeled-windows.ndjson": "3bd640f53cdc2d19d16ae9412244e513c9e567b3e36d64127205c6ee5f1fd91b",
+    "normalized.ndjson": "7a7ab5156ff01a9bd9df499aaad67b00d41a83e08b52a740234ab04f93dac652",
+    "raw/lab-w1.ndjson": "a5862a9030dc3471fdcdd7e97b20f34d405e5617732bc0b98d302da41ea89f5f",
+    "raw/lab-w1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/lab-w2.ndjson": "6c984be4ab416d1ff9704cf11713f2f7a1c1936e31c7497b1cfd64ae6b5e9b59",
+    "raw/lab-w2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source/label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "source/runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "source/s4/client.py": "2ec872261889342f84114e3649cae49a421e2260ae7e24a0a3e2c544c14e6ecd",
+    "source/s4/locust_wrapper.py": "38d7a50a763d9ad6105f4ba027cc6aa9bf2855f0110771f63b511753af34e6f1",
+    "source/s4_runner.py": "86a357259a7011c5dce9bad40c8c45d73e2b52245b019c36915cad5fb2a7a48d",
+    "source/s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "source/s4_verify.py": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+    "source/telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "plain_files_released_after_verification": true,
+  "verified_at": "2026-11-25T18:37:01.280767+00:00"
+}

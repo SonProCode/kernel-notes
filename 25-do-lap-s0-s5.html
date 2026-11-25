@@ -110,15 +110,143 @@ PY
 <p>Sau đó mới chốt danh sách run đủ điều kiện, hợp đồng feature và cách chia train/test cho GĐ5. Dataset chạy đủ lượt vẫn chưa đồng nghĩa detector đã đạt precision/recall hay policy đã chặn được hành vi; những đánh giá đó thuộc bước sau.</p>
 <p><a href="24-soat-xet-s0-s5-doi-chung.html">Báo cáo pilot và đối chứng trước đó</a> · <a href="24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5">Bản đồ schema</a>.</p>
 <h2 id="trang-thai-batch-do-lap-ngay-26-11-2026">Trạng thái batch đo lặp ngày 26/11/2026</h2>
-<p><strong>Đã khởi chạy lúc 01:11 ngày 26/11/2026, giờ Việt Nam.</strong> Batch <code>batch-repeats-20261125T181112Z-2519845</code> chạy theo <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/repeat-protocol.json">protocol 24 lượt</a>.</p>
-<p>Ở snapshot đầu lúc 18:11:35 UTC ngày 25/11 (01:11:35 giờ Việt Nam), lượt <code>r1-s1-action</code> đang setup, <strong>0/24 lượt hoàn tất</strong>. Hai file raw của worker đã có dữ liệu, stderr rỗng và guard chưa có lý do dừng. Đây là bằng chứng đã bắt đầu thu log, chưa phải kết quả cohort.</p>
-<ul>
-<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-launch-20261126.json">Checkpoint khởi chạy và trạng thái systemd</a>.</li>
-<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-first-capture-20261126.json">Checkpoint thu log đầu tiên</a>.</li>
-<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-tests-20261126.json">121 test đạt, không skip</a> và <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-tests-20261126.log">log</a>.</li>
-</ul>
-<p>Trang này giữ snapshot khởi chạy cho đến khi tiến trình đồng bộ cuối batch xuất bản kết quả mới. Không dùng snapshot này để suy ra tiến độ trực tiếp nhiều giờ sau.</p>
-<p>Trạng thái trực tiếp được ghi trên VM trong runs/batch-repeats-*/batch.json và service boutique-repeats-20261126-v1. <a href="25-do-lap-s0-s5.html">Hướng dẫn theo dõi và dừng an toàn</a>.</p><div class="finish"><button class="button" data-complete="25-do-lap-s0-s5" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="24-soat-xet-s0-s5-doi-chung.html">← S0–S5 · Kiểm chứng và đối chứng</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<p>Trạng thái cuối: <strong>failed</strong>. Hoàn tất <strong>5/24</strong> lượt đã lên lịch.
+Batch: batch-repeats-20261125T181112Z-2519845. Protocol: gd4-repeats-20261126-v1.
+Kết thúc UTC: 2026-11-25T19:38:53.250834+00:00.</p>
+<p>Lỗi được giữ nguyên: TimeoutExpired: Command '['k3s', 'kubectl', 'get', 'nodes', '-o', 'json']' timed out after 12 seconds</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Trạng thái</th>
+<th>Bằng chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>r1-s1-action</td>
+<td>completed</td>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s1-20261125T181115Z-2520089/manifest.json">s1-20261125T181115Z-2520089</a></td>
+</tr>
+<tr>
+<td>r1-s4-control</td>
+<td>completed</td>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s4-control-20261125T182317Z-2540872/manifest.json">s0-s4-control-20261125T182317Z-2540872</a></td>
+</tr>
+<tr>
+<td>r1-s4-action</td>
+<td>completed</td>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s4-20261125T183702Z-2569785/manifest.json">s4-20261125T183702Z-2569785</a></td>
+</tr>
+<tr>
+<td>r1-s2-action</td>
+<td>completed</td>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s2-20261125T185037Z-2598301/manifest.json">s2-20261125T185037Z-2598301</a></td>
+</tr>
+<tr>
+<td>r1-s0-action</td>
+<td>completed</td>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-20261125T190326Z-2620476/manifest.json">s0-20261125T190326Z-2620476</a></td>
+</tr>
+<tr>
+<td>r1-s5-control</td>
+<td>failed</td>
+<td><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/s0-s5-control-20261125T192603Z-2658384/manifest.json">s0-s5-control-20261125T192603Z-2658384</a></td>
+</tr>
+<tr>
+<td>r1-s5-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r1-s3-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s0-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s3-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s4-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s4-control</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s1-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s5-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s5-control</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r2-s2-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s1-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s4-control</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s4-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s5-control</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s5-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s2-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s3-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+<tr>
+<td>r3-s0-action</td>
+<td>pending</td>
+<td>Chưa tạo run</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/batch-repeats-20261125T181112Z-2519845/batch.json">Batch và thứ tự thực hiện</a>.</p>
+<p><a href="25-do-lap-s0-s5.html">Hướng dẫn lịch, giới hạn và cách tự kiểm tra</a>.</p><div class="finish"><button class="button" data-complete="25-do-lap-s0-s5" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="24-soat-xet-s0-s5-doi-chung.html">← S0–S5 · Kiểm chứng và đối chứng</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
 <ul>
 <li><a href="#1-vi-sao-phai-do-nhieu-luot">1. Vì sao phải đo nhiều lượt?</a></li>
 <li><a href="#2-lich-thuc-hien">2. Lịch thực hiện</a></li>
