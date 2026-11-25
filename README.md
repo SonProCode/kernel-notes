@@ -1,6 +1,6 @@
 # Kernel Notes
 
-Blog tiếng Việt về Kubernetes, Zero Trust, di chuyển ngang và eBPF. Gồm 23 bài trong ba tuần học và phần lab thực tế, cùng một trang tra cứu nguồn.
+Blog tiếng Việt về Kubernetes, Zero Trust, di chuyển ngang và eBPF. Gồm 24 bài trong ba tuần học và phần lab thực tế, cùng một trang tra cứu nguồn.
 
 [Đọc Tuần 3 trên GitHub Pages](https://sonprocode.github.io/kernel-notes/#tuan-3)
 
@@ -25,6 +25,7 @@ Repo lưu blog, học liệu, tài liệu nguồn và các file triển khai th�
 - [Kế hoạch GĐ4 và thiết kế dữ liệu S1–S5](Testbed_Online_Boutique/experiments/README.md)
 - [Danh mục kết quả và cách mở log](Testbed_Online_Boutique/runs/README.md)
 - [Tổng kiểm tra S0–S5 và đối chứng pilot](Testbed_Online_Boutique/experiments/S0-S5-REVIEW.md)
+- [Lịch đo lặp 24 lượt và cách theo dõi trên VM](Testbed_Online_Boutique/experiments/REPEATS.md)
 - [Học liệu tuần 1–2](HocLieu_Tuan1_Tuan2/)
 - [Học liệu tuần 3](HocLieu_Tuan3/)
 - [Tài liệu tham khảo và bản PDF](TaiLieu_Tuan1_Tuan2/)
@@ -48,3 +49,4 @@ Các trang lab được build trực tiếp từ README trong thư mục Testbed
 
 - [S5 gửi dữ liệu giả và đối chiếu ba nguồn bằng chứng](https://sonprocode.github.io/kernel-notes/23-s5-gui-du-lieu-gia.html)
 - [S0–S5, kết quả hậu kiểm và đối chứng](https://sonprocode.github.io/kernel-notes/24-soat-xet-s0-s5-doi-chung.html)
+- [Đo lặp S0–S5](https://sonprocode.github.io/kernel-notes/25-do-lap-s0-s5.html)

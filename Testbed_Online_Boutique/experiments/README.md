@@ -2,6 +2,8 @@
 
 Ngày lập kế hoạch 18/11/2026, giờ Việt Nam.
 
+**Đo lặp 26/11:** [lịch 24 lượt, bộ điều phối và lệnh theo dõi](REPEATS.md), [trạng thái/kết quả](REPEATS-RESULTS.md). Không cộng số lượt lên lịch vào số lượt thực sự đã hoàn tất.
+
 **Cập nhật 25/11:** đọc [tổng kiểm tra S0–S5 và đối chứng](S0-S5-REVIEW.md) để xem 16 pilot đã được hậu kiểm, batch bổ sung sáu lượt và các việc còn thiếu trước bộ dữ liệu chính thức. [Bản đồ schema](FEATURE-SCHEMA-MAP.md) giải thích cách chuẩn bị feature và tránh nhập nhầm smoke/unknown vào tập normal.
 
 **Trang này là kế hoạch tổng thể.** Người mới thực hành đọc [USAGE.md](USAGE.md), rồi [S1](S1.md), [S2](S2.md), [S3](S3.md). [Báo cáo rà soát 22/11](REVIEW-S1-S2-S3.md) phân biệt phần đã chạy với phần dự kiến. Một số đoạn thiết kế bên dưới mô tả mốc ban đầu (ví dụ fixture token giả); S3 runtime hiện có projected token thật của actor tạm như bài S3 giải thích.

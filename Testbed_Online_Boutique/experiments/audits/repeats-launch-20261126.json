@@ -1,0 +1,12 @@
+{
+  "observed_at": "2026-11-25T18:11:16.981047+00:00",
+  "batch": "/home/sonth32/Testbed_Online_Boutique/runs/batch-repeats-20261125T181112Z-2519845",
+  "protocol_id": "gd4-repeats-20261126-v1",
+  "status": "running",
+  "current_case": "r1-s1-action",
+  "completed_cases": 0,
+  "total_cases": 24,
+  "heartbeat": "2026-11-25T18:11:16.180380+00:00",
+  "unit": "boutique-repeats-20261126-v1",
+  "systemd": "MainPID=2519845\nExecMainStartTimestamp=Wed 2026-11-25 18:11:12 UTC\nActiveState=active\nSubState=running\n"
+}

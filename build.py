@@ -33,6 +33,7 @@ ARTICLES = [
     ("22-s4-tai-noi-bo", "S4 · Tải nội bộ và đo tác động", "Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.", "GĐ4 · S4", "chart"),
     ("23-s5-gui-du-lieu-gia", "S5 · Gửi dữ liệu giả ra endpoint lab", "Đối chiếu payload 64 KiB qua client, receiver ngoài mạng Pod và log Tetragon.", "GĐ4 · S5", "network"),
     ("24-soat-xet-s0-s5-doi-chung", "S0–S5 · Kiểm chứng và đối chứng", "Đọc kết quả 16 pilot, sáu lượt bổ sung và phân biệt dữ liệu hợp lệ với kết luận thực nghiệm.", "GĐ4 · Đối chứng", "chart"),
+    ("25-do-lap-s0-s5", "Đo lặp S0–S5", "Lịch 24 lượt, kiểm tra sức khỏe lab, lưu bằng chứng và theo dõi batch chạy trên VM.", "GĐ4 · Đo lặp", "chart"),
 ]
 WEEKS = [
     (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
@@ -87,6 +88,7 @@ def layout(title, body, meta="Học bảo mật Kubernetes và eBPF từ đầu 
 </div></header><main id="main">{body}</main><footer class="shell footer"><a class="logo" href="./">{icon("layers")} Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>"""
 
 LAB_SOURCES = {
+    "25-do-lap-s0-s5": "Testbed_Online_Boutique/experiments/REPEATS.md",
     "24-soat-xet-s0-s5-doi-chung": "Testbed_Online_Boutique/experiments/S0-S5-REVIEW.md",
     "23-s5-gui-du-lieu-gia": "Testbed_Online_Boutique/experiments/S5.md",
     "22-s4-tai-noi-bo": "Testbed_Online_Boutique/experiments/S4.md",
@@ -106,6 +108,8 @@ def read(slug):
         return (CONTENT/f"{slug}.md").read_text(encoding="utf-8-sig")
     source = LAB_SOURCES[slug]
     text = (ROOT/source).read_text(encoding="utf-8-sig")
+    if slug == "25-do-lap-s0-s5":
+        text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/REPEATS-RESULTS.md").read_text(encoding="utf-8").replace("# Trạng thái", "## Trạng thái", 1)
     if slug == "24-soat-xet-s0-s5-doi-chung":
         text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/FEATURE-SCHEMA-MAP.md").read_text(encoding="utf-8").replace("# Bản đồ schema", "## Bản đồ schema", 1)
     if slug == "23-s5-gui-du-lieu-gia":
@@ -136,6 +140,8 @@ def read(slug):
             return match[0]
         location = posixpath.normpath(posixpath.join(posixpath.dirname(source), target))
         document, separator, anchor = location.partition("#")
+        if document == "Testbed_Online_Boutique/experiments/REPEATS-RESULTS.md":
+            return "](25-do-lap-s0-s5.html)"
         if document == "Testbed_Online_Boutique/experiments/FEATURE-SCHEMA-MAP.md":
             return "](24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5)"
         page = next((key for key, value in LAB_SOURCES.items() if value == document), None)

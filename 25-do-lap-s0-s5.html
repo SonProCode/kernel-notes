@@ -1,0 +1,132 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đo lặp S0–S5 · Kernel Notes</title><meta name="description" content="Lịch 24 lượt, kiểm tra sức khỏe lab, lưu bằng chứng và theo dõi batch chạy trên VM.">
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
+<body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
+<a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
+<nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
+<a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 24 · LAB THỰC TẾ · GĐ4 · Đo lặp · 8 PHÚT ĐỌC</div>
+<h1>Đo lặp S0–S5</h1><p>Lịch 24 lượt, kiểm tra sức khỏe lab, lưu bằng chứng và theo dõi batch chạy trên VM.</p></header>
+<div class="shell reading"><article class="prose"><p>Ngày 26/11/2026, giờ Việt Nam. Người dùng đã yêu cầu thực hiện đo lặp sau khi hoàn tất pilot. <strong>Lịch gồm 24 lượt dự kiến: 18 lượt chính S0–S5 và 6 đối chứng bổ sung cho S4/S5.</strong> Đây là số lượt lên lịch; chỉ đếm thành công sau khi có dữ liệu, kiểm chứng và trạng thái cuối.</p>
+<p><a href="25-do-lap-s0-s5.html">Kết quả và trạng thái xuất bản</a> được cập nhật riêng. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/repeat-protocol.json">Protocol đã chốt</a> là căn cứ xác định thứ tự, tham số và source hash. Không nhập các lượt pilot cũ vào cohort mới.</p>
+<h2 id="1-vi-sao-phai-do-nhieu-luot">1. Vì sao phải đo nhiều lượt?</h2>
+<p>Một lượt có thể chậm do CPU, bộ nhớ đệm, hành trình mua hàng hoặc trạng thái ứng dụng lúc đó. Đo lặp giúp thấy kết quả có lặp lại và dao động bao nhiêu. Ví dụ p95 S4 cao hơn S0 một lần chưa đủ chứng minh tác động ổn định; cần nhìn cả các cặp khác.</p>
+<p>Ba vòng là bước khởi đầu theo kế hoạch GĐ4, không phải bảo đảm đủ lực thống kê. 2.000 request trong cùng một lượt không thay thế 3 lượt riêng. Khi xây detector sau này, chia dữ liệu theo run, không chia ngẫu nhiên từng dòng của cùng một run.</p>
+<h2 id="2-lich-thuc-hien">2. Lịch thực hiện</h2>
+<table>
+<thead>
+<tr>
+<th>Nhóm</th>
+<th style="text-align: right;">Số lượt</th>
+<th>Cấu hình</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 nghiệp vụ</td>
+<td style="text-align: right;">3</td>
+<td>Warm-up 400 giây, đo 900 giây, Locust gốc 10 user</td>
+</tr>
+<tr>
+<td>S1</td>
+<td style="text-align: right;">3</td>
+<td>22 đích IP/cổng hiện có; timeout và giới hạn trong runner; không ép thời gian thành 120 giây nếu danh sách đã thực hiện xong</td>
+</tr>
+<tr>
+<td>S2</td>
+<td style="text-align: right;">3</td>
+<td>30 lời gọi payment, khoảng cách 2 giây</td>
+</tr>
+<tr>
+<td>S3</td>
+<td style="text-align: right;">3</td>
+<td>3 vòng shell/tool/token, tổng 18 thao tác, khoảng 90 giây</td>
+</tr>
+<tr>
+<td>S4</td>
+<td style="text-align: right;">3</td>
+<td>Tải phụ mục tiêu 10 RPS, concurrency 4, 90 giây</td>
+</tr>
+<tr>
+<td>Đối chứng S4</td>
+<td style="text-align: right;">3</td>
+<td>Cùng actor/Locust/cấu hình nền, không bật tải phụ, cửa sổ 90 giây</td>
+</tr>
+<tr>
+<td>S5</td>
+<td style="text-align: right;">3</td>
+<td>60 upload dữ liệu giả 64 KiB, 1 upload/giây</td>
+</tr>
+<tr>
+<td>Đối chứng S5</td>
+<td style="text-align: right;">3</td>
+<td>Receiver có mặt, không upload, cửa sổ 60 giây</td>
+</tr>
+</tbody>
+</table>
+<p>Với S1–S5 và hai họ đối chứng: warm-up 400 giây, pre 120 giây, recovery 120 giây. Mỗi lượt còn có setup, xác minh và đóng gói nên tổng dự kiến khoảng <strong>5–6 giờ</strong>. Lịch không rút ngắn warm-up để chạy nhanh hơn.</p>
+<p>Actor lần lượt ở w1, w2, w1 qua ba vòng; phân bố này chưa cân bằng. Locust gốc đã có nodeSelector w1; Locust tạm của S4/S5 cũng được đặt ở w1. Không có actor trong S0 nghiệp vụ. Các Pod ứng dụng và policy phải giữ cùng trạng thái trong suốt batch.</p>
+<p>Seed lịch là 20261126. Thứ tự các nhóm được xáo trước bằng seed, giữ hai phần của một cặp gần nhau. Vòng 1 và 3 chạy control trước; vòng 2 chạy action trước. Thứ tự này được công bố trước khi chạy, không điều chỉnh theo kết quả. Seed Locust là 20261127/20261128/20261129 theo vòng, chỉ áp dụng với Locust có instrument của S4/S5. Seed không cố định hoàn toàn lịch chạy đồng thời của request.</p>
+<p>S0/S1–S3 vẫn dùng Locust gốc và không có latency từng request như họ S4/S5. Các S0 dài dùng làm tham chiếu normal; không coi đó là cặp đo overhead hoàn toàn giống bộ instrument S4/S5. Chưa gộp các schema khác phiên bản thành một tập feature.</p>
+<h2 id="3-bo-dieu-phoi-lam-gi">3. Bộ điều phối làm gì?</h2>
+<p><code>repeat_batch.py</code> chạy từng case bằng runner hiện có, ghi <code>batch.json</code> theo cách thay file nguyên tử. File này có toàn bộ 24 case từ đầu: pending, running, completed hoặc failed/interrupted. Mỗi case giữ log riêng, run ID, thời điểm, return code và trạng thái dataset.</p>
+<p>Trước và sau mỗi lượt, bộ điều phối kiểm tra source hash. Trong lượt, khoảng mỗi 15 giây kiểm tra node, Pod ứng dụng, Tetragon, policy và dung lượng. Nó dừng nếu node không Ready/có áp lực tài nguyên, Pod đổi UID/image/restart/readiness, policy hay cấu hình tải nền đổi, còn dưới 6 GiB trống, hoặc frontend health check lỗi 3 lần liên tiếp. Guard sẵn có của S4/S5 vẫn hoạt động.</p>
+<p>Health check bổ sung được gửi từ control-plane tới frontend <code>/_healthz</code>, có nhật ký và áp dụng cho mọi case. Đây là traffic quan sát hợp lệ; phải tính đến nó khi diễn giải log. Một lỗi checkout nghiệp vụ riêng lẻ được lưu trong Locust/log ứng dụng, không tự xóa hoặc chạy thay lượt đó. Lỗi có thể do fixture mua hàng của demo; đọc log trước khi quy nguyên nhân cho attack.</p>
+<p><strong>Không tự retry.</strong> Khi một lượt lỗi, giữ dữ liệu đã thu, dừng các case còn lại, chạy cleanup của runner và ghi lý do. Đổi source hoặc sửa protocol để chạy tiếp phải tạo phiên bản/lịch mới. Không sửa protocol của batch đã bắt đầu.</p>
+<h2 id="4-vi-sao-co-file-nen-thay-vi-thu-muc-raw">4. Vì sao có file nén thay vì thư mục raw?</h2>
+<p>Batch dài có thể sinh nhiều GB log. Sau một lượt đã completed/validated, <code>repeat_support.py</code> đóng gói raw, source, normalized và labeled-windows vào <code>dataset.tar.gz</code>, rồi đọc lại <strong>từng file trong archive để kiểm SHA256</strong>. Chỉ khi khớp toàn bộ mới giải phóng các bản plain trùng nội dung.</p>
+<p><code>archive-integrity.json</code> giữ checksum của archive và từng thành viên. Đây là đổi cách lưu giữ bằng chứng, không bỏ log gốc. Nếu nén hoặc đối chiếu lỗi, bản plain được giữ. Không ghi đè archive có sẵn, không đóng gói lại các lượt lịch sử. Manifest, receipt, metric và report vẫn nằm ngoài archive để đọc nhanh.</p>
+<p>Cuối batch, <code>repeat_review.py</code> giải nén vào thư mục tạm, kiểm hash, replay raw/normalized/nhãn, chạy verifier từng họ và kiểm 6 cặp đối chứng. <code>cohort-review.json</code> ghi kết quả. Mean của p95 từng run chỉ là trung bình các p95, không phải p95 gộp hay khoảng tin cậy nhân quả.</p>
+<p>Một tiến trình đồng bộ hữu hạn trên máy Windows chờ đúng batch này kết thúc, tải và kiểm checksum, cập nhật Markdown rồi push GitHub/Pages. Mật khẩu SSH chỉ truyền qua stdin và giữ trong bộ nhớ, không ghi vào repo hay tham số tiến trình; host key được ghim theo phiên khởi chạy. Nếu máy Windows dừng hoặc repo đang có thay đổi chưa commit, phần xuất bản có thể chưa hoàn tất; dữ liệu batch vẫn ở VM. Tiến trình này không tự khởi chạy thí nghiệm khác, không lặp theo ngày và không gửi thông báo cho người khác.</p>
+<h2 id="5-theo-doi-tren-lab-cp">5. Theo dõi trên lab-cp</h2>
+<p>Batch chạy bằng service systemd để đóng SSH vẫn tiếp tục. <strong>Không chạy thêm loadgenerator hay runner khác trong lúc batch này đang hoạt động.</strong></p>
+<pre><code class="language-bash">cd ~/Testbed_Online_Boutique
+sudo systemctl status boutique-repeats-20261126-v1 --no-pager
+sudo journalctl -u boutique-repeats-20261126-v1 -n 30 --no-pager
+</code></pre>
+<p><code>Starting:</code> là bắt đầu một case; <code>Completed:</code> là một case đã chạy, được runner xác nhận và nén kiểm hash xong. <code>Final status: completed</code> chỉ xuất hiện sau hậu kiểm cohort. <code>failed</code>/<code>interrupted</code> cần đọc lỗi, không tính các case pending là đã chạy.</p>
+<p>Xem tiến độ chi tiết mà không thay đổi thí nghiệm:</p>
+<pre><code class="language-bash">sudo python3 - &lt;&lt;'PY'
+from pathlib import Path
+import json
+batch = max(Path('runs').glob('batch-repeats-*'))
+state = json.loads((batch/'batch.json').read_text())
+print('Batch:', batch.name)
+print('Trạng thái:', state['status'])
+print('Case hiện tại:', state.get('current_case'))
+print('Heartbeat UTC:', state.get('heartbeat'))
+print('Hoàn tất:', sum(c['status']=='completed' for c in state['cases']), '/', len(state['cases']))
+for case in state['cases']:
+    print(case['case_id'], case['status'], case.get('run_id', ''))
+PY
+</code></pre>
+<p>Heartbeat cũ không đủ kết luận đang chạy; kiểm thêm trạng thái systemd. VM tắt hoặc mất điện thì batch không tự chạy tiếp để tránh nhập nhầm một lượt bị cắt. Sau sự cố cần giữ dữ liệu và lập phương án tiếp nối có ghi nhận.</p>
+<p>Nếu cần dừng có cleanup:</p>
+<pre><code class="language-bash">sudo systemctl stop boutique-repeats-20261126-v1
+</code></pre>
+<p>Lệnh stop có thể mất thời gian vì runner phải dừng tải, kết thúc collector và xóa tài nguyên tạm. Không dùng kill -9 như cách dừng thông thường.</p>
+<h2 id="6-sau-khi-chay-xong">6. Sau khi chạy xong</h2>
+<p>Đối chiếu đủ 18 lượt chính, 6 đối chứng, 6 cặp khớp cấu hình, source và checksum, các lượt lỗi và trạng thái lab cuối. Báo cáo giữ số request/lỗi/latency từng pha và từng run. Đọc cả application-diagnostics.json khi có HTTP lỗi.</p>
+<p>Sau đó mới chốt danh sách run đủ điều kiện, hợp đồng feature và cách chia train/test cho GĐ5. Dataset chạy đủ lượt vẫn chưa đồng nghĩa detector đã đạt precision/recall hay policy đã chặn được hành vi; những đánh giá đó thuộc bước sau.</p>
+<p><a href="24-soat-xet-s0-s5-doi-chung.html">Báo cáo pilot và đối chứng trước đó</a> · <a href="24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5">Bản đồ schema</a>.</p>
+<h2 id="trang-thai-batch-do-lap-ngay-26-11-2026">Trạng thái batch đo lặp ngày 26/11/2026</h2>
+<p><strong>Đã khởi chạy lúc 01:11 ngày 26/11/2026, giờ Việt Nam.</strong> Batch <code>batch-repeats-20261125T181112Z-2519845</code> chạy theo <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/repeat-protocol.json">protocol 24 lượt</a>.</p>
+<p>Ở snapshot đầu lúc 18:11:35 UTC ngày 25/11 (01:11:35 giờ Việt Nam), lượt <code>r1-s1-action</code> đang setup, <strong>0/24 lượt hoàn tất</strong>. Hai file raw của worker đã có dữ liệu, stderr rỗng và guard chưa có lý do dừng. Đây là bằng chứng đã bắt đầu thu log, chưa phải kết quả cohort.</p>
+<ul>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-launch-20261126.json">Checkpoint khởi chạy và trạng thái systemd</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-first-capture-20261126.json">Checkpoint thu log đầu tiên</a>.</li>
+<li><a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-tests-20261126.json">121 test đạt, không skip</a> và <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-tests-20261126.log">log</a>.</li>
+</ul>
+<p>Trang này giữ snapshot khởi chạy cho đến khi tiến trình đồng bộ cuối batch xuất bản kết quả mới. Không dùng snapshot này để suy ra tiến độ trực tiếp nhiều giờ sau.</p>
+<p>Trạng thái trực tiếp được ghi trên VM trong runs/batch-repeats-*/batch.json và service boutique-repeats-20261126-v1. <a href="25-do-lap-s0-s5.html">Hướng dẫn theo dõi và dừng an toàn</a>.</p><div class="finish"><button class="button" data-complete="25-do-lap-s0-s5" aria-pressed="false">Đánh dấu đã đọc</button></div><nav class="article-nav" aria-label="Bài liền kề"><a href="24-soat-xet-s0-s5-doi-chung.html">← S0–S5 · Kiểm chứng và đối chứng</a><a href="09-tra-cuu.html">Tra cứu →</a></nav></article><aside class="toc-panel"><h2>Trong bài này</h2><div class="toc">
+<ul>
+<li><a href="#1-vi-sao-phai-do-nhieu-luot">1. Vì sao phải đo nhiều lượt?</a></li>
+<li><a href="#2-lich-thuc-hien">2. Lịch thực hiện</a></li>
+<li><a href="#3-bo-dieu-phoi-lam-gi">3. Bộ điều phối làm gì?</a></li>
+<li><a href="#4-vi-sao-co-file-nen-thay-vi-thu-muc-raw">4. Vì sao có file nén thay vì thư mục raw?</a></li>
+<li><a href="#5-theo-doi-tren-lab-cp">5. Theo dõi trên lab-cp</a></li>
+<li><a href="#6-sau-khi-chay-xong">6. Sau khi chạy xong</a></li>
+<li><a href="#trang-thai-batch-do-lap-ngay-26-11-2026">Trạng thái batch đo lặp ngày 26/11/2026</a></li>
+</ul>
+</div>
+</aside></div></main><footer class="shell footer"><a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg> Kernel<span class="mint">Notes</span></a><span>Bảo mật Kubernetes và eBPF</span><a href="09-tra-cuu.html">Tài liệu tham khảo ↗</a></footer></body></html>
