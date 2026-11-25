@@ -36,6 +36,9 @@ def get(*args):
 
 
 def run(args):
+    if args.scenario == "S5":
+        from s5_runner import run_s5
+        return run_s5(args)
     if args.scenario == "S4" or args.s4_control:
         from s4_runner import run_s4
         return run_s4(args)
@@ -361,7 +364,7 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--scenario", required=True, choices=["S0", "S1", "S2", "S3", "S4"])
+    parser.add_argument("--scenario", required=True, choices=["S0", "S1", "S2", "S3", "S4", "S5"])
     parser.add_argument("--mode", choices=["pilot", "smoke", "official"], default="pilot")
     parser.add_argument("--node", choices=["w1", "w2"], default="w1")
     parser.add_argument("--warmup", type=int, default=400)
@@ -375,11 +378,16 @@ if __name__ == "__main__":
     parser.add_argument("--s4-rate", type=int, choices=[3, 6, 10], default=3)
     parser.add_argument("--s4-duration", type=int, default=30)
     parser.add_argument("--s4-concurrency", type=int, choices=[1, 2, 3, 4], default=2)
+    parser.add_argument("--s5-calls", type=int, default=60, help="Synthetic 64 KiB uploads, 1..60 at 1 RPS")
     args = parser.parse_args()
     if args.s4_control and args.scenario != "S0":
         parser.error("--s4-control requires --scenario S0")
     if not 1 <= args.s4_duration <= 90:
         parser.error("--s4-duration must be 1..90 seconds")
+    if not 1 <= args.s5_calls <= 60:
+        parser.error("--s5-calls must be 1..60")
+    if args.scenario == "S5" and min(args.warmup, args.pre, args.recovery) < 12:
+        parser.error("S5 phases must be at least 12 seconds for guard/resource samples")
     if args.scenario == "S3" and args.s3_profile is None:
         args.s3_profile = "file-smoke" if args.mode == "smoke" else "runtime"
     if not 1 <= args.s3_rounds <= 3:

@@ -1,0 +1,42 @@
+{
+  "snapshots": [
+    {
+      "run_id": "s5-20261125T055108Z-1526279",
+      "stage": "before",
+      "policy_specs_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_names": [
+        "boutique-file-read",
+        "boutique-tcp-connect"
+      ]
+    },
+    {
+      "run_id": "s5-20261125T055108Z-1526279",
+      "stage": "after",
+      "policy_specs_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_names": [
+        "boutique-file-read",
+        "boutique-tcp-connect"
+      ]
+    },
+    {
+      "run_id": "s5-20261125T055455Z-1533348",
+      "stage": "before",
+      "policy_specs_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_names": [
+        "boutique-file-read",
+        "boutique-tcp-connect"
+      ]
+    },
+    {
+      "run_id": "s5-20261125T055455Z-1533348",
+      "stage": "after",
+      "policy_specs_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+      "policy_names": [
+        "boutique-file-read",
+        "boutique-tcp-connect"
+      ]
+    }
+  ],
+  "all_policy_specs_identical": true,
+  "scope": "Policy names/specs compared; generated Kubernetes metadata excluded."
+}

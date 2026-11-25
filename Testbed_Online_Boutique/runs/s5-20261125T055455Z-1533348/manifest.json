@@ -1,0 +1,219 @@
+{
+  "schema_version": 5,
+  "run_id": "s5-20261125T055455Z-1533348",
+  "scenario_id": "S5",
+  "mode": "pilot",
+  "status": "completed",
+  "node": "w2",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 30,
+  "pre_seconds": 30,
+  "recovery_seconds": 30,
+  "s5": {
+    "calls": 60,
+    "rate": 1,
+    "payload_bytes": 65536,
+    "fixture_id": "gd4-s5-synthetic-v1",
+    "verification_contract": 1,
+    "method": "POST",
+    "path": "/upload",
+    "request_timeout_seconds": 3,
+    "receiver_ip": "192.168.141.142",
+    "receiver_port": 18080,
+    "topology": "host_receiver_outside_pod_network",
+    "cross_host_clock_tolerance_seconds": 2
+  },
+  "temporary_resources": {
+    "actor": "gd4-s5-1533348",
+    "locust_deployment": "gd4-locust-1533348",
+    "configmap": "gd4-s5-code-1533348"
+  },
+  "source_snapshot": "source",
+  "script_sha256": {
+    "runner.py": "2623a079a84cc1480bd50c294329c2979ad8f7be93256e89c21c38f8232d506e",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "s5_runner.py": "0895965298b8530e8038dcb4c6cb4e171fc84550aedca27efae934027fe5a7be",
+    "s5_normalize.py": "d37f71f7ba36b07eef0cedf2ddc7b69a0398390b7c7e8c4c07341f87ae3c3d73",
+    "s5_verify.py": "a03ef84739ab8829af99ad0d15b608536489716ef48faffd5dd87af2303b7531",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "s4_verify.py": "d8715b4ed9cbc4a27988bff9a13515009e94d4bd1c6044d07a588fc3f7d13a72",
+    "s5/client.py": "d3d5fcea13f16648d07d64c713263aa61eb25f036ad3deea19df37d153e18e70",
+    "s5/fixture.py": "26f0a64458107b2e2f234cec96a84d5d471a48207de76c2efbb7e4e73efece3f",
+    "s5/receiver.py": "9d34c36140a8e6aaf775f97f9e43b20afb346841422e5ab250c4a936b4755413",
+    "s4/locust_wrapper.py": "b6ea6f97281b9ffce0fd03894172df5070c9857010084fcb9fa21624ab81af10",
+    "telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "code_bundle_sha256": "fca3bde896b769128bf2e9b5ff58e7f1d4095681960826a8650edd37fba13f38",
+  "frontend_probe": {
+    "service": "frontend",
+    "ip": "10.43.221.147",
+    "port": 80,
+    "target_ips": [
+      "10.42.1.12",
+      "10.43.221.147"
+    ],
+    "target_ports": [
+      80,
+      8080
+    ]
+  },
+  "targets": [
+    {
+      "ip": "192.168.141.142",
+      "port": 18080,
+      "target_ips": [
+        "192.168.141.142"
+      ],
+      "target_ports": [
+        18080
+      ]
+    }
+  ],
+  "receiver": {
+    "pid": 1533472,
+    "uid": 1000,
+    "ip": "192.168.141.142",
+    "port": 18080
+  },
+  "actor": {
+    "name": "gd4-s5-1533348",
+    "uid": "61f145ea-d881-42bd-82f9-37de753401c8",
+    "ip": "10.42.2.27",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0"
+  },
+  "capture_start": "2026-11-25T05:55:01.558625+00:00",
+  "locust": {
+    "pod": "gd4-locust-1533348-65f68458c6-zfgwv",
+    "uid": "d930e63b-697f-4347-abe6-2457d5cd8e82",
+    "image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "original_deployment_unchanged": true
+  },
+  "measurement_end": "2026-11-25T05:57:50.572458+00:00",
+  "finished": "2026-11-25T05:58:01.373934+00:00",
+  "cleanup_errors": [],
+  "guard_triggered": false,
+  "dataset_status": "validated",
+  "s5_verification": {
+    "passed": true,
+    "scope": "Synthetic exfiltration pilot; not real data theft or egress-policy enforcement",
+    "verifier_sha256": "a03ef84739ab8829af99ad0d15b608536489716ef48faffd5dd87af2303b7531",
+    "run_id": "s5-20261125T055455Z-1533348",
+    "mode": "pilot",
+    "uploads": 60,
+    "received": 60,
+    "received_payload_bytes": 3932160,
+    "operations_with_native_evidence": 60,
+    "native_event_counts": {
+      "tcp_connect_attempt": 60,
+      "tcp_send": 120
+    },
+    "kernel_send_bytes_requested": 3951120,
+    "kernel_bytes_by_operation": {
+      "upload-00000": 65852,
+      "upload-00001": 65852,
+      "upload-00002": 65852,
+      "upload-00003": 65852,
+      "upload-00004": 65852,
+      "upload-00005": 65852,
+      "upload-00006": 65852,
+      "upload-00007": 65852,
+      "upload-00008": 65852,
+      "upload-00009": 65852,
+      "upload-00010": 65852,
+      "upload-00011": 65852,
+      "upload-00012": 65852,
+      "upload-00013": 65852,
+      "upload-00014": 65852,
+      "upload-00015": 65852,
+      "upload-00016": 65852,
+      "upload-00017": 65852,
+      "upload-00018": 65852,
+      "upload-00019": 65852,
+      "upload-00020": 65852,
+      "upload-00021": 65852,
+      "upload-00022": 65852,
+      "upload-00023": 65852,
+      "upload-00024": 65852,
+      "upload-00025": 65852,
+      "upload-00026": 65852,
+      "upload-00027": 65852,
+      "upload-00028": 65852,
+      "upload-00029": 65852,
+      "upload-00030": 65852,
+      "upload-00031": 65852,
+      "upload-00032": 65852,
+      "upload-00033": 65852,
+      "upload-00034": 65852,
+      "upload-00035": 65852,
+      "upload-00036": 65852,
+      "upload-00037": 65852,
+      "upload-00038": 65852,
+      "upload-00039": 65852,
+      "upload-00040": 65852,
+      "upload-00041": 65852,
+      "upload-00042": 65852,
+      "upload-00043": 65852,
+      "upload-00044": 65852,
+      "upload-00045": 65852,
+      "upload-00046": 65852,
+      "upload-00047": 65852,
+      "upload-00048": 65852,
+      "upload-00049": 65852,
+      "upload-00050": 65852,
+      "upload-00051": 65852,
+      "upload-00052": 65852,
+      "upload-00053": 65852,
+      "upload-00054": 65852,
+      "upload-00055": 65852,
+      "upload-00056": 65852,
+      "upload-00057": 65852,
+      "upload-00058": 65852,
+      "upload-00059": 65852
+    },
+    "locust_requests": 386,
+    "locust_by_phase": {
+      "pre_attack": {
+        "requests": 62,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 62,
+        "p50_ms": 29.71806190907955,
+        "p95_ms": 84.48603795841336,
+        "max_ms": 153.40179798658937,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      },
+      "attack": {
+        "requests": 141,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 141,
+        "p50_ms": 32.5982189970091,
+        "p95_ms": 120.29041396453977,
+        "max_ms": 172.4243750795722,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      },
+      "recovery": {
+        "requests": 71,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 71,
+        "p50_ms": 33.09096198063344,
+        "p95_ms": 98.25809695757926,
+        "max_ms": 115.91619497630745,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      }
+    },
+    "normalized_events": 26972,
+    "events_by_label": {
+      "unknown": 17740,
+      "normal": 9052,
+      "attack": 180
+    },
+    "receiver_peer_ips": [
+      "192.168.141.144"
+    ],
+    "raw_normalized_and_windows_replay_match": true,
+    "errors": []
+  }
+}

@@ -370,3 +370,8 @@ Xem [rà soát sâu S4 ngày 23/11/2026](S4-REVIEW.md): sửa verifier, guard, t
 
 
 Cập nhật 25/11: [nghiệm thu lại S4](S4-ACCEPTANCE.md) đối chiếu đề cương, sửa kiểm tra đặc trưng normalized, bổ sung RPS/p99 và liệt kê điều kiện còn thiếu trước bộ official.
+
+
+## Pilot S5 ngày 25/11/2026
+
+Đã bổ sung [S5 gửi dữ liệu giả](S5.md): actor POST 64 KiB tới receiver tạm trên lab-cp:18080, đối chiếu client/receiver/raw Tetragon, schema v6 và cleanup cả Pod lẫn tiến trình host. [Kết quả và bằng chứng](S5-RESULTS.md) tách smoke, pilot hai worker và lượt SIGTERM. Tập official S0–S5 có lặp/đối chứng tiếp tục theo kế hoạch sau khi khóa cấu hình.

@@ -14,11 +14,11 @@ def find_owned_run(root, scenario, started, pid):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--scenario", choices=["S0", "S2", "S3", "S4"], default="S0")
+    parser.add_argument("--scenario", choices=["S0", "S2", "S3", "S4", "S5"], default="S0")
     parser.add_argument("--at-phase", choices=["warmup", "attack"], default="warmup")
     args = parser.parse_args()
-    if args.at_phase == "attack" and args.scenario != "S4":
-        parser.error("Attack-phase cleanup test is supported for S4")
+    if args.at_phase == "attack" and args.scenario not in ("S4","S5"):
+        parser.error("Attack-phase cleanup test is supported for S4/S5")
     root = Path(__file__).resolve().parents[1]
     started = {p.name for p in (root / "runs").iterdir() if p.is_dir()}
     log = root / "runs" / ("cleanup-check-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ".log")
@@ -28,6 +28,8 @@ def main():
                    "--warmup", "5" if args.at_phase == "attack" else "300", "--measurement", "1"]
         if args.scenario == "S4":
             command += ["--pre", "5", "--recovery", "5", "--s4-duration", "90"]
+        if args.scenario == "S5":
+            command += ["--warmup","12" if args.at_phase=="attack" else "300","--pre","12","--recovery","12","--s5-calls","60"]
         if args.scenario == "S3":
             command += ["--s3-profile", "runtime", "--s3-rounds", "1"]
         process = subprocess.Popen(command, stdout=stream, stderr=subprocess.STDOUT)
@@ -59,8 +61,8 @@ def main():
     manifest = json.loads((run / "manifest.json").read_text())
     assert replicas == "0", replicas
     assert manifest["status"] == "interrupted", manifest
-    if args.scenario in ("S2","S3", "S4"):
-        for kind in (("pods", "deployments", "configmaps") if args.scenario == "S4" else ("pods", "serviceaccounts")):
+    if args.scenario in ("S2","S3", "S4","S5"):
+        for kind in (("pods", "deployments", "configmaps") if args.scenario in ("S4","S5") else ("pods", "serviceaccounts")):
             deadline = time.monotonic() + 60
             while True:
                 response = json.loads(subprocess.check_output(
@@ -71,6 +73,11 @@ def main():
                 if time.monotonic() >= deadline:
                     raise AssertionError(f"Resources remain after cleanup: {kind}")
                 time.sleep(2)
+
+    if args.scenario == "S5":
+        cleanup=json.loads((run/"cleanup.json").read_text())
+        if not (cleanup["passed"] and cleanup["receiver_process_stopped"] and cleanup["receiver_port_closed"]):
+            raise RuntimeError("S5 receiver cleanup incomplete")
 
     print("SIGTERM cleanup verified", run.name, "loadgenerator=0", "status=interrupted")
 

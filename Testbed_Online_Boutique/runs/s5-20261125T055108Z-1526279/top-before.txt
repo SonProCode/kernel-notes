@@ -1,0 +1,4 @@
+NAME     CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+lab-cp   440m         11%      2500Mi          64%         
+lab-w1   487m         12%      2386Mi          61%         
+lab-w2   201m         5%       2039Mi          52%         

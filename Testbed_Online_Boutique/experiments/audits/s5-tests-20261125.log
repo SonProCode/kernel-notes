@@ -1,0 +1,33 @@
+test_fixed_synthetic_size_and_determinism (test_s5.FixtureTests) ... ok
+test_unbounded_or_arbitrary_identity_rejected (test_s5.FixtureTests) ... ok
+test_chunked_framing_rejected (test_s5.ReceiverTests) ... ok
+test_duplicate_operation_rejected_without_second_receive (test_s5.ReceiverTests) ... ok
+test_nonsynthetic_body_rejected (test_s5.ReceiverTests) ... ok
+test_oversized_body_rejected (test_s5.ReceiverTests) ... ok
+test_real_client_obtains_ack_and_leaves_no_pid_file (test_s5.ReceiverTests) ... ok
+test_valid_upload_ack_matches_receiver_and_only_metadata_is_retained (test_s5.ReceiverTests) ... ok
+test_wrong_checksum_rejected (test_s5.ReceiverTests) ... ok
+test_wrong_endpoint_rejected (test_s5.ReceiverTests) ... ok
+test_wrong_run_rejected (test_s5.ReceiverTests) ... ok
+test_background_feature_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+test_client_ack_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+test_duplicate_operation (test_s5_integrity.S5IntegrityTests) ... ok
+test_external_target_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+test_live_receiver_after_cleanup_rejected (test_s5_integrity.S5IntegrityTests) ... ok
+test_loss_counter_increased (test_s5_integrity.S5IntegrityTests) ... ok
+test_missing_guard_phase (test_s5_integrity.S5IntegrityTests) ... ok
+test_missing_receiver_receipt (test_s5_integrity.S5IntegrityTests) ... ok
+test_native_socket_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+test_nonfinite_resources (test_s5_integrity.S5IntegrityTests) ... ok
+test_official_short_run_rejected (test_s5_integrity.S5IntegrityTests) ... ok
+test_real_smoke_passes (test_s5_integrity.S5IntegrityTests) ... ok
+test_receiver_payload_size_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+test_receiver_root_identity_rejected (test_s5_integrity.S5IntegrityTests) ... ok
+test_source_hash_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+test_stale_scrape (test_s5_integrity.S5IntegrityTests) ... ok
+test_window_label_tampered (test_s5_integrity.S5IntegrityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 33.731s
+
+OK

@@ -63,3 +63,8 @@ Các smoke hồi quy contract v2 và lượt failed_validation/interrupted đư�
 ## Nghiệm thu S4 ngày 25/11/2026
 
 [Report chi tiết](../experiments/S4-ACCEPTANCE.md) kiểm tra lại bằng chứng bằng verifier đã sửa, replay nhãn từng cửa sổ và bổ sung throughput/p99 theo pha. Các run hồi quy mới được giữ riêng theo source hash, không cộng vào cohort pilot ngày 23/11. Ngày UTC trong tên thư mục có thể là 24/11, tương ứng sáng 25/11 giờ Việt Nam.
+
+
+## Pilot S5 ngày 25/11/2026
+
+Các run s5-* có actor/receiver receipt, raw và source snapshot. [Hướng dẫn S5](../experiments/S5.md) giải thích topology receiver ngoài mạng Pod, SNAT và số byte; [bảng kết quả](../experiments/S5-RESULTS.md) chỉ cộng payload của các pilot hoàn tất. Lượt interrupted giữ riêng để chứng minh cleanup và không cộng vào cohort.

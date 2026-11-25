@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="680" viewBox="0 0 1080 680" role="img" aria-labelledby="title desc">
+<title id="title">Pilot S5: Pod gửi dữ liệu giả tới receiver lab</title><desc id="desc">Actor trên một worker gửi 64 KiB mỗi giây tới receiver trên host lab-cp. Client, receiver và Tetragon cung cấp ba nguồn bằng chứng.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10" fill="#197a72"/></marker><style>text{font-family:Arial,sans-serif;fill:#163335}.title{font-size:27px;font-weight:700}.head{font-size:20px;font-weight:700}.body{font-size:17px}.small{font-size:15px}.box{fill:#fff;stroke:#b4cecb;stroke-width:2}.arrow{fill:none;stroke:#197a72;stroke-width:3;marker-end:url(#arrow)}.dash{fill:none;stroke:#547b93;stroke-width:2;stroke-dasharray:7 6}</style></defs>
+<rect width="1080" height="680" rx="20" fill="#eef7f6"/>
+<text x="40" y="49" class="title">S5 · Gửi dữ liệu giả ra endpoint lab</text>
+<text x="40" y="78" class="body">Chạy từng worker một · 60 payload × 64 KiB · đối chiếu ba nguồn bằng chứng</text>
+<rect x="35" y="112" width="570" height="340" rx="15" fill="#e1f1ee" stroke="#79a9a3" stroke-width="2"/>
+<text x="57" y="146" class="head">Kubernetes · namespace boutique</text>
+<rect x="58" y="170" width="245" height="105" rx="12" class="box"/>
+<text x="77" y="200" class="head">Worker w1 hoặc w2</text><text x="77" y="229" class="body">Actor S5 · user 10000</text><text x="77" y="254" class="small">Sinh payload giả trong RAM</text>
+<rect x="332" y="170" width="245" height="105" rx="12" class="box"/>
+<text x="350" y="200" class="head">Traffic người mua</text><text x="350" y="229" class="body">Locust → frontend</text><text x="350" y="254" class="small">10 users · hành trình gốc</text>
+<rect x="58" y="321" width="519" height="103" rx="12" class="box"/>
+<text x="78" y="352" class="head">Tetragon trên cả hai worker</text><text x="78" y="382" class="body">tcp_connect / tcp_sendmsg · Pod UID / PID / socket</text><text x="78" y="407" class="small">bytes_requested là tham số hook; body nhận đo riêng</text>
+<rect x="690" y="155" width="350" height="193" rx="15" class="box"/>
+<text x="713" y="190" class="head">VM lab-cp · receiver tạm</text><text x="713" y="223" class="body">192.168.141.142:18080</text><text x="713" y="252" class="body">Ngoài mạng Pod · UID 1000</text><text x="713" y="281" class="body">Kiểm 64 KiB + SHA-256 + ID</text><text x="713" y="315" class="small">Chỉ lưu metadata · không lưu body</text>
+<path d="M303 222H317V157H660V222H686" class="arrow"/><text x="618" y="147" class="small">POST /upload</text>
+<path d="M180 276V317" class="dash"/>
+<text x="706" y="382" class="small">SNAT: receiver có thể thấy IP worker</text><text x="706" y="407" class="small">Đây là endpoint riêng trong lab</text>
+<rect x="35" y="493" width="1005" height="145" rx="15" class="box"/>
+<text x="60" y="527" class="head">Verifier · nhận đủ payload và truy vết được từng thao tác</text>
+<text x="60" y="563" class="body">Client receipt</text><text x="365" y="563" class="body">Receiver receipt</text><text x="715" y="563" class="body">Raw Tetragon</text>
+<text x="60" y="590" class="small">operation_id · hash · bytes · ACK</text><text x="365" y="590" class="small">hash · bytes nhận · peer IP/port</text><text x="715" y="590" class="small">UID · PID · port · thời gian</text>
+<text x="60" y="619" class="small">→ normalized v6 và nhãn cửa sổ 10 giây · guard / freshness / cleanup cùng được kiểm tra</text>
+<path d="M58 222H46V472H180V489" class="dash"/><path d="M318 425V489" class="dash"/><path d="M1040 252H1050V475H865V489" class="dash"/>
+</svg>

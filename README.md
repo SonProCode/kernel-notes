@@ -44,3 +44,5 @@ Bản tổng hợp được đưa lên ngày 18/11/2026, giờ Việt Nam. Log c
 - [S2 và hướng dẫn double check](https://sonprocode.github.io/kernel-notes/18-s2-goi-api-trai-luong.html)
 
 Các trang lab được build trực tiếp từ README trong thư mục Testbed_Online_Boutique để cập nhật hướng dẫn và kết quả khi chạy lại python build.py.
+
+- [S5 gửi dữ liệu giả và đối chiếu ba nguồn bằng chứng](https://sonprocode.github.io/kernel-notes/23-s5-gui-du-lieu-gia.html)
