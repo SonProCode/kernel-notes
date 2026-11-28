@@ -136,7 +136,8 @@ def review(batch):
     if [c["case_id"] for c in record["cases"]] != [c["case_id"] for c in plan["cases"]]:
         errors.append("Case schedule differs")
     for case, expected in zip(record["cases"],plan["cases"]):
-        item = {"case_id":case["case_id"], "run_id":case.get("run_id")}
+        item = {"case_id":case["case_id"], "run_id":case.get("run_id"),
+                "source_batch":case.get("source_batch",batch.name),"carried_forward":bool(case.get("carried_forward"))}
         try:
             if case["args"] != expected["args"] or case["status"] != "completed":
                 raise ValueError("Incomplete or changed case")
@@ -184,13 +185,16 @@ def review(batch):
                 "mean_of_run_p95_ms":statistics.mean(values),"min_run_p95_ms":min(values),
                 "max_run_p95_ms":max(values),"note":"Descriptive across runs; not pooled p95 or a causal confidence interval"}
     return {"checked_at":now(),"protocol_id":plan["protocol_id"],"passed":not errors,
+            "carried_forward_cases":sum(bool(c.get("carried_forward")) for c in record["cases"]),
+            "new_cases_executed":sum(c["status"]=="completed" and not c.get("carried_forward") for c in record["cases"]),
             "errors":errors,"cases":cases,"pairs":pairs,"descriptive_statistics":statistics_by_family,
             "review_source_sha256":source_digest(Path(__file__)),
             "scope":"Repeated labelled cohort and matched configurations; detector, mitigation and overhead effectiveness not certified",
             "limitations":["Three repetitions, actor placement w1/w2/w1 is unbalanced",
                 "S0/S1-S3 use original Locust without per-request latency; matched performance pairs are S4/S5",
                 "PRNG seed does not make concurrent HTTP journeys identical",
-                "Normal HTTP errors are retained and must be interpreted with diagnostics"]}
+                "Normal HTTP errors are retained and must be interpreted with diagnostics",
+                *(["Continuation spans a stopped batch and a revised observer; source batches are retained, not a single uninterrupted acquisition"] if plan.get("carry_forward") else [])]}
 
 
 def main():

@@ -37,7 +37,7 @@ state=json.loads((batch/'batch.json').read_text())
 out=Path(tempfile.mkdtemp(prefix='repeats-export-',dir='/tmp'))
 target=out/'runs';target.mkdir()
 shutil.copytree(batch,target/batch.name)
-for run_id in dict.fromkeys(c['run_id'] for c in state['cases'] if c.get('run_id')):
+for run_id in dict.fromkeys(c['run_id'] for c in state['cases'] if c.get('run_id') and not c.get('carried_forward')):
  if not re.fullmatch(r'(s[0-5]|s0-s[45]-control)-[0-9]{8}T[0-9]{6}Z-[0-9]+',run_id):raise ValueError('Invalid run ID')
  source=(runs/run_id).resolve()
  if source.parent!=runs:raise ValueError('Escaped run')
@@ -63,6 +63,8 @@ def render(state, review):
           f"Kết thúc UTC: {state.get('finished','chưa có')}.",""]
     if state.get("error"):
         text.extend(["Lỗi được giữ nguyên: "+state["error"],""])
+    if state.get("carried_forward_cases"):
+        text.extend([f"Trong số lượt hoàn tất có **{state['carried_forward_cases']} lượt kế thừa đã hậu kiểm từ batch cũ**; số lượt mới hoàn tất là {sum(c['status']=='completed' and not c.get('carried_forward') for c in state['cases'])}. Batch cũ và lượt lỗi không bị ghi lại hoặc đổi trạng thái.",""])
     if review:
         text.extend([f"Hậu kiểm cohort: **{'đạt' if review['passed'] else 'chưa đạt'}**. Đây là kiểm chứng dữ liệu và cấu hình, không phải kết quả precision/recall hoặc giảm thiểu.",""])
         for error in review.get("errors",[]):
@@ -134,7 +136,9 @@ def main():
     lab=repo/"Testbed_Online_Boutique";batch_name=Path(args.batch).name
     incoming=staging/"runs"/batch_name
     exported=json.loads((incoming/"batch.json").read_text())
-    if hashlib.sha256((lab/"experiments/repeat-protocol.json").read_bytes()).hexdigest()!=exported["protocol_sha256"]:
+    protocol_name=json.loads((incoming/"protocol.json").read_text(encoding="utf-8")).get("repository_protocol","repeat-protocol.json")
+    if not re.fullmatch(r"repeat-protocol(?:-v[0-9]+)?\.json",protocol_name):raise ValueError("Invalid repository protocol name")
+    if hashlib.sha256((lab/"experiments"/protocol_name).read_bytes()).hexdigest()!=exported["protocol_sha256"]:
         raise RuntimeError("Current repository protocol differs; export retained at "+str(staging))
     for source in (staging/"runs").iterdir():
         destination=lab/"runs"/source.name

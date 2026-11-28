@@ -15,9 +15,10 @@ RUNS=Path(__file__).resolve().parents[1]/'runs'
 class BusinessControlTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        candidates=[p.parent for p in RUNS.glob('s0-*/manifest.json') if json.loads(p.read_text(encoding='utf-8')).get('normal_profile')=='business_reference']
-        if not candidates:raise unittest.SkipTest('New business S0 archive required')
-        cls.temp=tempfile.TemporaryDirectory();cls.root=Path(cls.temp.name);unpack_copy(candidates[-1],cls.root)
+        # A regression fixture must not change when an official 900-second run is added.
+        fixture=RUNS/'s0-20261125T113929Z-1995886'
+        if not (fixture/'manifest.json').exists():raise unittest.SkipTest('Bundled 120-second business S0 fixture required')
+        cls.temp=tempfile.TemporaryDirectory();cls.root=Path(cls.temp.name);unpack_copy(fixture,cls.root)
         cls.saved={p.name:p.read_bytes() for p in cls.root.iterdir() if p.is_file()}
     @classmethod
     def tearDownClass(cls):cls.temp.cleanup()

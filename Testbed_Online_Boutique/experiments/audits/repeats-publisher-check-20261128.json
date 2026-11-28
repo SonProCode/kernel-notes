@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": [
+    "continuation counts disclose inherited versus new runs",
+    "export skips already-published inherited run directories",
+    "export code compiles"
+  ],
+  "source_sha256": "bf74aea568d98f78f1bc4950dce0d668524b81efd147ef3a83b06d1280300ae8"
+}

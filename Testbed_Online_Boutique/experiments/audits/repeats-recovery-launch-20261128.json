@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-11-28T03:52:47.455086+00:00",
+  "batch": "/home/sonth32/Testbed_Online_Boutique/runs/batch-repeats-20261128T035224Z-2912209",
+  "protocol_id": "gd4-repeats-20261128-v2",
+  "status": "running",
+  "current_case": "r1-s5-control",
+  "completed_cases": 5,
+  "total_cases": 24,
+  "carried_forward_cases": 5,
+  "new_cases_planned": 19,
+  "new_completed_cases": 0,
+  "heartbeat": "2026-11-28T03:52:30.733821+00:00",
+  "unit": "boutique-repeats-20261128-v2",
+  "systemd": "MainPID=2912209\nActiveState=active\nSubState=running\n"
+}

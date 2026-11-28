@@ -1,5 +1,6 @@
 """S5 acceptance: client + receiver + raw kernel evidence, labels and cleanup."""
 import argparse
+from array import array
 from collections import Counter
 from datetime import timedelta
 import hashlib
@@ -16,6 +17,32 @@ from s5_normalize import normalize_s5
 
 sys.path.insert(0,str(Path(__file__).resolve().parent/"s5"))
 from fixture import FIXTURE_ID, PAYLOAD_BYTES, RECEIVER_IP, RECEIVER_PORT, operation_id, payload
+
+
+class RawEventFile:
+    """Keep byte offsets instead of retaining every decoded kernel event in RAM."""
+    def __init__(self,path):
+        self.path=Path(path)
+        self.offsets=array('Q')
+        with self.path.open('rb') as source:
+            offset=0
+            for line in source:
+                self.offsets.append(offset)
+                offset+=len(line)
+
+    def __getitem__(self,index):
+        offset=self.offsets[index]
+        with self.path.open('rb') as source:
+            source.seek(offset)
+            return json.loads(source.readline())
+
+    def __iter__(self):
+        with self.path.open(encoding='utf-8') as source:
+            for line in source:
+                yield json.loads(line)
+
+    def __len__(self):
+        return len(self.offsets)
 
 
 def verify_s5(run):
@@ -93,7 +120,7 @@ def verify_s5(run):
         by_op={r["operation_id"]:[] for r in receipts}
         native_counts=Counter();native_bytes=Counter()
         references=set()
-        raw={n:[json.loads(line) for line in (run/"raw"/(n+".ndjson")).read_text(encoding="utf-8").splitlines()] for n in WORKERS}
+        raw={n:RawEventFile(run/"raw"/(n+".ndjson")) for n in WORKERS}
         if control:
             lo,hi=bounds[target_phase]
             unexpected=0

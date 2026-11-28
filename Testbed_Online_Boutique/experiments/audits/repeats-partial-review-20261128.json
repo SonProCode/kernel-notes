@@ -1,0 +1,2593 @@
+{
+  "checked_at": "2026-11-28T03:43:28.074427+00:00",
+  "batch": "batch-repeats-20261125T181112Z-2519845",
+  "historical_batch_status": "failed",
+  "completed_cases_reviewed": 5,
+  "completed_cases_passed": 5,
+  "original_evidence_unchanged": true,
+  "passed": true,
+  "cohort_complete": false,
+  "cases": [
+    {
+      "case_id": "r1-s1-action",
+      "run_id": "s1-20261125T181115Z-2520089",
+      "batch_status": "completed",
+      "counted_as_completed": true,
+      "passed": true,
+      "errors": [],
+      "proof": {
+        "expected_operations": 22,
+        "receipts": 22,
+        "operations_with_native_event": 22,
+        "native_records_verified": 22,
+        "receipt_targets_valid": true,
+        "native_records_valid": true,
+        "unmatched_operations": [],
+        "outcomes": {
+          "connected": 11,
+          "timeout": 11
+        },
+        "capture_checks_passed": true,
+        "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+        "passed": true,
+        "loss_metrics": {
+          "available": true,
+          "passed": true,
+          "counter_deltas": {
+            "tetragon_events_export_failed_total@lab-w1": 0.0,
+            "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+            "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+            "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+            "tetragon_events_export_failed_total@lab-w2": 0.0,
+            "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+            "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+            "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+          },
+          "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+        }
+      },
+      "source_bundle": "9b4df9d6b16c8eca454b50dfe868a2b2f4b12a8163c211496e3cf8e260d390ea"
+    },
+    {
+      "case_id": "r1-s4-control",
+      "run_id": "s0-s4-control-20261125T182317Z-2540872",
+      "batch_status": "completed",
+      "counted_as_completed": true,
+      "passed": true,
+      "errors": [],
+      "proof": {
+        "passed": true,
+        "profile": "control",
+        "configured_rate": 0,
+        "input_integrity_passed": true,
+        "input_integrity_errors": [],
+        "native_integrity_passed": true,
+        "native_integrity_errors": [],
+        "derived_quality_counts_match": true,
+        "verification_contract": 2,
+        "per_run_cleanup_evidence": true,
+        "legacy_evidence_limits": [],
+        "http_operations": 0,
+        "operations_with_native_event": 0,
+        "native_records_verified": 0,
+        "request_checks_passed": true,
+        "locust_log_complete": true,
+        "locust_requests": 1681,
+        "locust_phase_samples_present": true,
+        "locust_by_phase": {
+          "setup": {
+            "requests": 28,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 28,
+            "p50_ms": 41.493303957395256,
+            "p95_ms": 84.72756098490208,
+            "max_ms": 90.18196794204414,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 17.410529,
+            "achieved_rps": 1.608222242988711
+          },
+          "warmup": {
+            "requests": 920,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 920,
+            "p50_ms": 29.609714983962476,
+            "p95_ms": 101.56279697548598,
+            "max_ms": 189.1232569469139,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 400.000779,
+            "achieved_rps": 2.2999955207587233
+          },
+          "pre_attack": {
+            "requests": 268,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 268,
+            "p50_ms": 27.80777506995946,
+            "p95_ms": 97.00200601946563,
+            "max_ms": 194.555621012114,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 120.000516,
+            "achieved_rps": 2.233323730041294
+          },
+          "measurement": {
+            "requests": 203,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 203,
+            "p50_ms": 29.808529070578516,
+            "p95_ms": 92.41623803973198,
+            "max_ms": 173.15265408251435,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 90.000609,
+            "achieved_rps": 2.255540293066239
+          },
+          "recovery": {
+            "requests": 257,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 257,
+            "p50_ms": 28.562383027747273,
+            "p95_ms": 106.66133102495223,
+            "max_ms": 269.03783599846065,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 120.000409,
+            "achieved_rps": 2.141659367177657
+          },
+          "finalize": {
+            "requests": 5,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 5,
+            "p50_ms": 26.57233807258308,
+            "p95_ms": 36.146799102425575,
+            "max_ms": 36.146799102425575,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 0,
+            "achieved_rps": null
+          }
+        },
+        "locust_by_route": [
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 34.59782502613962,
+            "p95_ms": 90.18196794204414,
+            "max_ms": 90.18196794204414,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 3,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 3,
+            "p50_ms": 58.5941260214895,
+            "p95_ms": 64.30634402204305,
+            "max_ms": 64.30634402204305,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 2,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 2,
+            "p50_ms": 29.036346008069813,
+            "p95_ms": 82.72371906787157,
+            "max_ms": 82.72371906787157,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 2,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 2,
+            "p50_ms": 38.214444066397846,
+            "p95_ms": 84.72756098490208,
+            "max_ms": 84.72756098490208,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 71.92918995860964,
+            "p95_ms": 71.92918995860964,
+            "max_ms": 71.92918995860964,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 3,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 3,
+            "p50_ms": 34.930911962874234,
+            "p95_ms": 81.26724103931338,
+            "max_ms": 81.26724103931338,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 79.78345500305295,
+            "p95_ms": 79.78345500305295,
+            "max_ms": 79.78345500305295,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 4,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 4,
+            "p50_ms": 24.875674047507346,
+            "p95_ms": 70.17293700482696,
+            "max_ms": 70.17293700482696,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 25.291180005297065,
+            "p95_ms": 25.291180005297065,
+            "max_ms": 25.291180005297065,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 61.960606020875275,
+            "p95_ms": 61.960606020875275,
+            "max_ms": 61.960606020875275,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 87,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 87,
+            "p50_ms": 37.08123101387173,
+            "p95_ms": 131.70262600760907,
+            "max_ms": 188.14732099417597,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 52,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 52,
+            "p50_ms": 25.083136977627873,
+            "p95_ms": 42.393693001940846,
+            "max_ms": 110.83571193739772,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 63,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 63,
+            "p50_ms": 25.40446410421282,
+            "p95_ms": 67.94094294309616,
+            "max_ms": 91.30012197420001,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 50,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 50,
+            "p50_ms": 24.888891028240323,
+            "p95_ms": 71.96274294983596,
+            "max_ms": 84.4608600018546,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 118,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 118,
+            "p50_ms": 29.191677924245596,
+            "p95_ms": 84.01916292496026,
+            "max_ms": 134.30937810335308,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 67,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 67,
+            "p50_ms": 25.851479033008218,
+            "p95_ms": 94.98877602163702,
+            "max_ms": 104.2515350272879,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 49,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 49,
+            "p50_ms": 26.064560981467366,
+            "p95_ms": 43.983368086628616,
+            "max_ms": 113.8878510100767,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 131,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 131,
+            "p50_ms": 56.489741895347834,
+            "p95_ms": 124.49790199752897,
+            "max_ms": 189.1232569469139,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 47,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 47,
+            "p50_ms": 53.489065961912274,
+            "p95_ms": 114.53544104006141,
+            "max_ms": 165.2366640046239,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 63,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 63,
+            "p50_ms": 25.593569967895746,
+            "p95_ms": 58.425729046575725,
+            "max_ms": 125.85298903286457,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 53,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 53,
+            "p50_ms": 25.16840398311615,
+            "p95_ms": 64.76040603592992,
+            "max_ms": 148.24254193808883,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 43,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 43,
+            "p50_ms": 25.285486946813762,
+            "p95_ms": 72.32413499150425,
+            "max_ms": 102.18623792752624,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/",
+            "requests": 46,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 46,
+            "p50_ms": 34.5507999882102,
+            "p95_ms": 101.9704770296812,
+            "max_ms": 109.10109500400722,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 51,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 51,
+            "p50_ms": 24.132124963216484,
+            "p95_ms": 40.03730206750333,
+            "max_ms": 112.2377950232476,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 24.875635048374534,
+            "p95_ms": 74.38448898028582,
+            "max_ms": 74.38448898028582,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 16,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 16,
+            "p50_ms": 24.22928996384144,
+            "p95_ms": 154.94767692871392,
+            "max_ms": 154.94767692871392,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 15,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 15,
+            "p50_ms": 24.747755960561335,
+            "p95_ms": 64.03762300033122,
+            "max_ms": 64.03762300033122,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 34,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 34,
+            "p50_ms": 28.19788095075637,
+            "p95_ms": 92.47424802742898,
+            "max_ms": 97.00200601946563,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 19,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 19,
+            "p50_ms": 25.041316985152662,
+            "p95_ms": 38.226408069022,
+            "max_ms": 38.226408069022,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 15,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 15,
+            "p50_ms": 24.823505897074938,
+            "p95_ms": 53.662840044125915,
+            "max_ms": 53.662840044125915,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 16,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 16,
+            "p50_ms": 34.01294501964003,
+            "p95_ms": 104.0576200466603,
+            "max_ms": 104.0576200466603,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 22,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 22,
+            "p50_ms": 26.45364496856928,
+            "p95_ms": 37.315976922400296,
+            "max_ms": 89.44385906215757,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 40,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 40,
+            "p50_ms": 72.33304798137397,
+            "p95_ms": 109.9435860523954,
+            "max_ms": 170.76964303851128,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 46.21293698437512,
+            "p95_ms": 106.6134589491412,
+            "max_ms": 106.6134589491412,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 23,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 23,
+            "p50_ms": 23.988896049559116,
+            "p95_ms": 35.34276701975614,
+            "max_ms": 45.21687200758606,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 16,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 16,
+            "p50_ms": 24.970372091047466,
+            "p95_ms": 35.70599702652544,
+            "max_ms": 35.70599702652544,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 9,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 9,
+            "p50_ms": 71.95828901603818,
+            "p95_ms": 194.555621012114,
+            "max_ms": 194.555621012114,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 18,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 18,
+            "p50_ms": 25.10543097741902,
+            "p95_ms": 42.65600896906108,
+            "max_ms": 42.65600896906108,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 8,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 8,
+            "p50_ms": 22.345500998198986,
+            "p95_ms": 43.06205303873867,
+            "max_ms": 43.06205303873867,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 30.83701094146818,
+            "p95_ms": 58.95850295200944,
+            "max_ms": 58.95850295200944,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 24.27757706027478,
+            "p95_ms": 32.57916099391878,
+            "max_ms": 32.57916099391878,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 23,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 23,
+            "p50_ms": 36.21501196175814,
+            "p95_ms": 92.41623803973198,
+            "max_ms": 173.15265408251435,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 9,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 9,
+            "p50_ms": 25.015902938321233,
+            "p95_ms": 33.92044804058969,
+            "max_ms": 33.92044804058969,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 12,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 12,
+            "p50_ms": 26.894745999015868,
+            "p95_ms": 35.92538402881473,
+            "max_ms": 35.92538402881473,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 24.530599010176957,
+            "p95_ms": 44.58579490892589,
+            "max_ms": 44.58579490892589,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 16,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 16,
+            "p50_ms": 29.139835969544947,
+            "p95_ms": 108.18688303697854,
+            "max_ms": 108.18688303697854,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 24,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 24,
+            "p50_ms": 53.3545829821378,
+            "p95_ms": 105.5032490985468,
+            "max_ms": 107.61400801129639,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 24,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 24,
+            "p50_ms": 34.29352503735572,
+            "p95_ms": 97.73942700121552,
+            "max_ms": 101.86102904845029,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 24.156664963811636,
+            "p95_ms": 86.8992320029065,
+            "max_ms": 86.8992320029065,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 8,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 8,
+            "p50_ms": 49.12445496302098,
+            "p95_ms": 99.47956108953804,
+            "max_ms": 99.47956108953804,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 21,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 21,
+            "p50_ms": 24.578940006904304,
+            "p95_ms": 28.236904996447265,
+            "max_ms": 96.88525798264891,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "measurement",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 13,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 13,
+            "p50_ms": 24.948148988187313,
+            "p95_ms": 31.861152034252882,
+            "max_ms": 31.861152034252882,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 24,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 24,
+            "p50_ms": 24.69590399414301,
+            "p95_ms": 51.40686093363911,
+            "max_ms": 99.12059304770082,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 12,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 12,
+            "p50_ms": 25.19538893830031,
+            "p95_ms": 78.14265100751072,
+            "max_ms": 78.14265100751072,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 41,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 41,
+            "p50_ms": 26.947872014716268,
+            "p95_ms": 70.73292904533446,
+            "max_ms": 114.83018496073782,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 13,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 13,
+            "p50_ms": 25.1388109754771,
+            "p95_ms": 73.31604196224362,
+            "max_ms": 73.31604196224362,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 23,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 23,
+            "p50_ms": 28.810419025830925,
+            "p95_ms": 67.15390598401427,
+            "max_ms": 96.19064605794847,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 25,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 25,
+            "p50_ms": 66.5587589610368,
+            "p95_ms": 205.366569920443,
+            "max_ms": 269.03783599846065,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 15,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 15,
+            "p50_ms": 77.71120697725564,
+            "p95_ms": 201.29007601644844,
+            "max_ms": 201.29007601644844,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 13,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 13,
+            "p50_ms": 28.016981086693704,
+            "p95_ms": 66.47724204231054,
+            "max_ms": 66.47724204231054,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 24,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 24,
+            "p50_ms": 34.83599901665002,
+            "p95_ms": 129.46179194841534,
+            "max_ms": 199.76111501455307,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 17,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 17,
+            "p50_ms": 27.404756983742118,
+            "p95_ms": 131.84838101733476,
+            "max_ms": 131.84838101733476,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 18,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 18,
+            "p50_ms": 25.181480101309717,
+            "p95_ms": 94.67499505262822,
+            "max_ms": 94.67499505262822,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 13,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 13,
+            "p50_ms": 26.293028029613197,
+            "p95_ms": 36.146813072264194,
+            "max_ms": 36.146813072264194,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 12,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 12,
+            "p50_ms": 25.665154098533094,
+            "p95_ms": 28.278033016249537,
+            "max_ms": 28.278033016249537,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/",
+            "requests": 7,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 7,
+            "p50_ms": 29.607859905809164,
+            "p95_ms": 43.608368025161326,
+            "max_ms": 43.608368025161326,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "finalize",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 2,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 2,
+            "p50_ms": 26.57233807258308,
+            "p95_ms": 30.494460021145642,
+            "max_ms": 30.494460021145642,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "finalize",
+            "method": "GET",
+            "path": "/",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 36.146799102425575,
+            "p95_ms": 36.146799102425575,
+            "max_ms": 36.146799102425575,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "finalize",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 25.98080295138061,
+            "p95_ms": 25.98080295138061,
+            "max_ms": 25.98080295138061,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "finalize",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 24.66291096061468,
+            "p95_ms": 24.66291096061468,
+            "max_ms": 24.66291096061468,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          }
+        ],
+        "client": null,
+        "guard_samples": 119,
+        "guard_checks_passed": true,
+        "metric_checks_passed": true,
+        "loss_counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "resource_series_present": true,
+        "resources_by_phase": {
+          "frontend_cpu_cores": {
+            "setup": {
+              "samples": 4,
+              "mean": 0.0038902134936653903,
+              "max": 0.010096643878185162
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 0.029384368621636587,
+              "max": 0.03492025183630609
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 0.03047130789881418,
+              "max": 0.03383372590072593
+            },
+            "measurement": {
+              "samples": 18,
+              "mean": 0.030084382266494417,
+              "max": 0.033453805736714984
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 0.028310609631708655,
+              "max": 0.033915628734026725
+            }
+          },
+          "frontend_memory_bytes": {
+            "setup": {
+              "samples": 4,
+              "mean": 14454784.0,
+              "max": 14454784.0
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 14497945.6,
+              "max": 14626816.0
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 14495061.333333334,
+              "max": 14508032.0
+            },
+            "measurement": {
+              "samples": 18,
+              "mean": 14521230.222222222,
+              "max": 14655488.0
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 14499498.666666666,
+              "max": 14520320.0
+            }
+          },
+          "boutique_cpu_cores": {
+            "setup": {
+              "samples": 4,
+              "mean": 0.024051907045879416,
+              "max": 0.03790571445155427
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 0.1550036324643212,
+              "max": 0.20066727607769227
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 0.1587429722348139,
+              "max": 0.17738606249060043
+            },
+            "measurement": {
+              "samples": 18,
+              "mean": 0.15360378694567423,
+              "max": 0.16752567370093385
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 0.1497820589648164,
+              "max": 0.1700227488003358
+            }
+          },
+          "boutique_memory_bytes": {
+            "setup": {
+              "samples": 4,
+              "mean": 378245120.0,
+              "max": 383352832.0
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 426241433.6,
+              "max": 435163136.0
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 428494165.3333333,
+              "max": 429019136.0
+            },
+            "measurement": {
+              "samples": 18,
+              "mean": 428698737.7777778,
+              "max": 429400064.0
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 430789632.0,
+              "max": 440946688.0
+            }
+          }
+        },
+        "capture_checks_passed": true,
+        "locust_capture_stderr_empty": true,
+        "cleanup_errors": [],
+        "verifier_sha256": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+        "scope": "Functional bounded-load pilot and observed impact; no detector or rate-limiting effectiveness claim"
+      },
+      "source_bundle": "77a49887d18daa33614f8de64d0cab4613ac25bce6c27b16cd700e36aa374ae8"
+    },
+    {
+      "case_id": "r1-s4-action",
+      "run_id": "s4-20261125T183702Z-2569785",
+      "batch_status": "completed",
+      "counted_as_completed": true,
+      "passed": true,
+      "errors": [],
+      "proof": {
+        "passed": true,
+        "profile": "bounded_http",
+        "configured_rate": 10,
+        "input_integrity_passed": true,
+        "input_integrity_errors": [],
+        "native_integrity_passed": true,
+        "native_integrity_errors": [],
+        "derived_quality_counts_match": true,
+        "verification_contract": 2,
+        "per_run_cleanup_evidence": true,
+        "legacy_evidence_limits": [],
+        "http_operations": 893,
+        "operations_with_native_event": 893,
+        "native_records_verified": 1786,
+        "request_checks_passed": true,
+        "locust_log_complete": true,
+        "locust_requests": 1687,
+        "locust_phase_samples_present": true,
+        "locust_by_phase": {
+          "setup": {
+            "requests": 29,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 29,
+            "p50_ms": 36.99486202094704,
+            "p95_ms": 110.23913405369967,
+            "max_ms": 119.98206097632647,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 17.412476,
+            "achieved_rps": 1.6654725037381242
+          },
+          "warmup": {
+            "requests": 911,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 911,
+            "p50_ms": 28.957435046322644,
+            "p95_ms": 102.97952103428543,
+            "max_ms": 282.00753999408334,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 400.001233,
+            "achieved_rps": 2.2774929796278904
+          },
+          "pre_attack": {
+            "requests": 270,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 270,
+            "p50_ms": 28.07686396408826,
+            "p95_ms": 83.20954802911729,
+            "max_ms": 193.09546996373683,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 120.0006,
+            "achieved_rps": 2.2499887500562497
+          },
+          "attack": {
+            "requests": 214,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 214,
+            "p50_ms": 145.1203980250284,
+            "p95_ms": 377.68615095410496,
+            "max_ms": 473.4950109850615,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 91.403869,
+            "achieved_rps": 2.341257567554389
+          },
+          "recovery": {
+            "requests": 261,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 261,
+            "p50_ms": 28.60787697136402,
+            "p95_ms": 91.31527796853334,
+            "max_ms": 171.9508629757911,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 120.000308,
+            "achieved_rps": 2.1749944175143283
+          },
+          "finalize": {
+            "requests": 2,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 2,
+            "p50_ms": 30.144323012791574,
+            "p95_ms": 106.0237189522013,
+            "max_ms": 106.0237189522013,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile",
+            "phase_seconds": 0,
+            "achieved_rps": null
+          }
+        },
+        "locust_by_route": [
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 37.59979200549424,
+            "p95_ms": 119.98206097632647,
+            "max_ms": 119.98206097632647,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 3,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 3,
+            "p50_ms": 29.60349596105516,
+            "p95_ms": 33.92032301053405,
+            "max_ms": 33.92032301053405,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 2,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 2,
+            "p50_ms": 32.30019798502326,
+            "p95_ms": 110.23913405369967,
+            "max_ms": 110.23913405369967,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 2,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 2,
+            "p50_ms": 79.16367298457772,
+            "p95_ms": 81.70398999936879,
+            "max_ms": 81.70398999936879,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 60.72694400791079,
+            "p95_ms": 60.72694400791079,
+            "max_ms": 60.72694400791079,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 4,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 4,
+            "p50_ms": 31.894410960376263,
+            "p95_ms": 61.790306004695594,
+            "max_ms": 61.790306004695594,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 55.41038198862225,
+            "p95_ms": 55.41038198862225,
+            "max_ms": 55.41038198862225,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 4,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 4,
+            "p50_ms": 28.1768279382959,
+            "p95_ms": 47.75254800915718,
+            "max_ms": 47.75254800915718,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 26.529373019002378,
+            "p95_ms": 26.529373019002378,
+            "max_ms": 26.529373019002378,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "setup",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 31.197641044855118,
+            "p95_ms": 31.197641044855118,
+            "max_ms": 31.197641044855118,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 57,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 57,
+            "p50_ms": 25.6888959556818,
+            "p95_ms": 84.19896906707436,
+            "max_ms": 127.9140249826014,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 63,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 63,
+            "p50_ms": 26.261763065122068,
+            "p95_ms": 36.605612956918776,
+            "max_ms": 160.67571099847555,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 58,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 58,
+            "p50_ms": 24.914175970479846,
+            "p95_ms": 52.72421007975936,
+            "max_ms": 99.17784598655999,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 119,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 119,
+            "p50_ms": 27.455608011223376,
+            "p95_ms": 79.83819697983563,
+            "max_ms": 182.59836791548878,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 62,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 62,
+            "p50_ms": 25.155922048725188,
+            "p95_ms": 36.12943191546947,
+            "max_ms": 76.94755599368364,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 77,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 77,
+            "p50_ms": 36.25843906775117,
+            "p95_ms": 116.22849793639034,
+            "max_ms": 233.21319103706628,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 45,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 45,
+            "p50_ms": 25.797796086408198,
+            "p95_ms": 42.74501302279532,
+            "max_ms": 150.33340896479785,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 123,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 123,
+            "p50_ms": 66.28274999093264,
+            "p95_ms": 132.8579819528386,
+            "max_ms": 268.90724897384644,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 47,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 47,
+            "p50_ms": 54.979608044959605,
+            "p95_ms": 128.62247799057513,
+            "max_ms": 282.00753999408334,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 67,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 67,
+            "p50_ms": 25.200434029102325,
+            "p95_ms": 63.48691403400153,
+            "max_ms": 98.52005401626229,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 57,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 57,
+            "p50_ms": 24.452546960674226,
+            "p95_ms": 35.082750022411346,
+            "max_ms": 174.14020095020533,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 35,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 35,
+            "p50_ms": 25.26300901081413,
+            "p95_ms": 41.17456206586212,
+            "max_ms": 55.291329976171255,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/",
+            "requests": 50,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 50,
+            "p50_ms": 34.07622792292386,
+            "p95_ms": 109.42297102883458,
+            "max_ms": 150.2901529893279,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "warmup",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 51,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 51,
+            "p50_ms": 25.45300603378564,
+            "p95_ms": 68.56881699059159,
+            "max_ms": 119.68519899528474,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 20,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 20,
+            "p50_ms": 25.652799988165498,
+            "p95_ms": 34.24652700778097,
+            "max_ms": 40.76454194728285,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 36,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 36,
+            "p50_ms": 61.10736995469779,
+            "p95_ms": 141.42456999979913,
+            "max_ms": 193.09546996373683,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 36.125848069787025,
+            "p95_ms": 165.07331503089517,
+            "max_ms": 165.07331503089517,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 19,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 19,
+            "p50_ms": 23.716459050774574,
+            "p95_ms": 49.347068066708744,
+            "max_ms": 49.347068066708744,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 26.425380958244205,
+            "p95_ms": 76.21859107166529,
+            "max_ms": 76.21859107166529,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 41,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 41,
+            "p50_ms": 28.032667003571987,
+            "p95_ms": 78.08668294455856,
+            "max_ms": 123.4176600119099,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 15,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 15,
+            "p50_ms": 23.19364110007882,
+            "p95_ms": 43.99569297675043,
+            "max_ms": 43.99569297675043,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 17,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 17,
+            "p50_ms": 25.46786202583462,
+            "p95_ms": 67.66692898236215,
+            "max_ms": 67.66692898236215,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 16,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 16,
+            "p50_ms": 24.253392009995878,
+            "p95_ms": 52.48727404978126,
+            "max_ms": 52.48727404978126,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 17,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 17,
+            "p50_ms": 33.821918070316315,
+            "p95_ms": 178.93125000409782,
+            "max_ms": 178.93125000409782,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 22,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 22,
+            "p50_ms": 24.75044596940279,
+            "p95_ms": 35.08970607072115,
+            "max_ms": 92.68106799572706,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 15,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 15,
+            "p50_ms": 25.6570759229362,
+            "p95_ms": 112.69064899533987,
+            "max_ms": 112.69064899533987,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 49.0308339940384,
+            "p95_ms": 96.17642196826637,
+            "max_ms": 96.17642196826637,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "pre_attack",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 16,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 16,
+            "p50_ms": 24.38231708947569,
+            "p95_ms": 65.14900003094226,
+            "max_ms": 65.14900003094226,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 70.50271506886929,
+            "p95_ms": 215.83986503537744,
+            "max_ms": 215.83986503537744,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 23,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 23,
+            "p50_ms": 212.44456199929118,
+            "p95_ms": 405.51583701744676,
+            "max_ms": 414.20358093455434,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 70.58149401564151,
+            "p95_ms": 249.6223330963403,
+            "max_ms": 249.6223330963403,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 101.5496039763093,
+            "p95_ms": 228.27890003100038,
+            "max_ms": 228.27890003100038,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 105.52442201878875,
+            "p95_ms": 412.62931504752487,
+            "max_ms": 412.62931504752487,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/",
+            "requests": 7,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 7,
+            "p50_ms": 171.64086597040296,
+            "p95_ms": 223.63763907924294,
+            "max_ms": 223.63763907924294,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 82.05311594065279,
+            "p95_ms": 286.0814870800823,
+            "max_ms": 286.0814870800823,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 33,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 33,
+            "p50_ms": 279.72436894197017,
+            "p95_ms": 402.3068540263921,
+            "max_ms": 437.32160003855824,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 24,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 24,
+            "p50_ms": 148.83222104981542,
+            "p95_ms": 358.97972504608333,
+            "max_ms": 473.4950109850615,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 10,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 10,
+            "p50_ms": 115.7897460507229,
+            "p95_ms": 154.5446979580447,
+            "max_ms": 154.5446979580447,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 22,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 22,
+            "p50_ms": 118.32424905151129,
+            "p95_ms": 230.97432602662593,
+            "max_ms": 288.3300370303914,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 12,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 12,
+            "p50_ms": 237.94886807445437,
+            "p95_ms": 297.43966297246516,
+            "max_ms": 297.43966297246516,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 17,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 17,
+            "p50_ms": 106.15521704312414,
+            "p95_ms": 259.323731996119,
+            "max_ms": 259.323731996119,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "attack",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 7,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 7,
+            "p50_ms": 105.11973302345723,
+            "p95_ms": 228.0526669928804,
+            "max_ms": 228.0526669928804,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/1YMWWN1N4O",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 24.407975957728922,
+            "p95_ms": 32.57111401762813,
+            "max_ms": 32.57111401762813,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "POST",
+            "path": "/cart",
+            "requests": 27,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 27,
+            "p50_ms": 77.56936899386346,
+            "p95_ms": 118.85296704713255,
+            "max_ms": 171.9508629757911,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "POST",
+            "path": "/cart/checkout",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 71.92615303210914,
+            "p95_ms": 84.96637304779142,
+            "max_ms": 84.96637304779142,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/9SIQT8TOJO",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 23.545534000732005,
+            "p95_ms": 111.2175959860906,
+            "max_ms": 111.2175959860906,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "POST",
+            "path": "/setCurrency",
+            "requests": 25,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 25,
+            "p50_ms": 34.55143503379077,
+            "p95_ms": 63.41197295114398,
+            "max_ms": 119.88244706299156,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/OLJCESPC7Z",
+            "requests": 15,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 15,
+            "p50_ms": 25.61101200990379,
+            "p95_ms": 64.42828103899956,
+            "max_ms": 64.42828103899956,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/L9ECAV7KIM",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 23.98535399697721,
+            "p95_ms": 30.55217198561877,
+            "max_ms": 30.55217198561877,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/",
+            "requests": 11,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 11,
+            "p50_ms": 33.37108809500933,
+            "p95_ms": 94.36528093647212,
+            "max_ms": 94.36528093647212,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/0PUK6V6EV0",
+            "requests": 17,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 17,
+            "p50_ms": 24.94266303256154,
+            "p95_ms": 40.65289197023958,
+            "max_ms": 40.65289197023958,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/2ZYFJ3GM2N",
+            "requests": 24,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 24,
+            "p50_ms": 25.996652082540095,
+            "p95_ms": 69.41102189011872,
+            "max_ms": 94.0532780950889,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/LS4PSXUNUM",
+            "requests": 18,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 18,
+            "p50_ms": 25.847078068181872,
+            "p95_ms": 34.0524329803884,
+            "max_ms": 34.0524329803884,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 43,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 43,
+            "p50_ms": 30.333020957186818,
+            "p95_ms": 56.581555982120335,
+            "max_ms": 71.43417501356453,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 25.39927896577865,
+            "p95_ms": 34.16051797103137,
+            "max_ms": 34.16051797103137,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "recovery",
+            "method": "GET",
+            "path": "/product/6E92ZMYYFZ",
+            "requests": 14,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 14,
+            "p50_ms": 25.29596199747175,
+            "p95_ms": 32.38168207462877,
+            "max_ms": 32.38168207462877,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "finalize",
+            "method": "GET",
+            "path": "/product/66VCHSJNUP",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 30.144323012791574,
+            "p95_ms": 30.144323012791574,
+            "max_ms": 30.144323012791574,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          {
+            "phase": "finalize",
+            "method": "GET",
+            "path": "/cart",
+            "requests": 1,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 1,
+            "p50_ms": 106.0237189522013,
+            "p95_ms": 106.0237189522013,
+            "max_ms": 106.0237189522013,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          }
+        ],
+        "client": {
+          "scheduled": 900,
+          "submitted": 893,
+          "skipped_busy": 7,
+          "skipped_late": 0,
+          "started": "2026-11-25T18:46:02.986726+00:00",
+          "ended": "2026-11-25T18:47:33.015189+00:00",
+          "elapsed_seconds": 90.02846760698594,
+          "configured_rate": 10,
+          "duration_seconds": 90,
+          "concurrency": 4,
+          "interrupted": false,
+          "connection_mode": "one_new_tcp_connection_per_request",
+          "observed_peak_concurrency": 4,
+          "achieved_rps_over_configured_window": 9.922222222222222,
+          "http_summary": {
+            "requests": 893,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 893,
+            "p50_ms": 134.07600298523903,
+            "p95_ms": 360.590688069351,
+            "max_ms": 476.25767800491303,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          }
+        },
+        "guard_samples": 119,
+        "guard_checks_passed": true,
+        "metric_checks_passed": true,
+        "loss_counter_deltas": {
+          "tetragon_events_export_failed_total@lab-w1": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+          "tetragon_events_export_failed_total@lab-w2": 0.0,
+          "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+          "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+        },
+        "resource_series_present": true,
+        "resources_by_phase": {
+          "frontend_cpu_cores": {
+            "setup": {
+              "samples": 4,
+              "mean": 0.002390511918729075,
+              "max": 0.004884779516357784
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 0.028526421427286418,
+              "max": 0.03469484829330122
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 0.03179213261711893,
+              "max": 0.03541250264662326
+            },
+            "attack": {
+              "samples": 18,
+              "mean": 0.1322130252366439,
+              "max": 0.19088981182227366
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 0.07083698917350884,
+              "max": 0.18864355375161945
+            }
+          },
+          "frontend_memory_bytes": {
+            "setup": {
+              "samples": 4,
+              "mean": 14493696.0,
+              "max": 14503936.0
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 14568908.8,
+              "max": 15065088.0
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 14571349.333333334,
+              "max": 14696448.0
+            },
+            "attack": {
+              "samples": 18,
+              "mean": 14670961.777777778,
+              "max": 14827520.0
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 14463488.0,
+              "max": 14618624.0
+            }
+          },
+          "boutique_cpu_cores": {
+            "setup": {
+              "samples": 4,
+              "mean": 0.015390476588377621,
+              "max": 0.022049542594211935
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 0.15005635431066816,
+              "max": 0.17206548107542852
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 0.15918446608437933,
+              "max": 0.17681096104050553
+            },
+            "attack": {
+              "samples": 18,
+              "mean": 0.44435283719320523,
+              "max": 0.6084267732960301
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 0.26784794494634373,
+              "max": 0.5960283755791989
+            }
+          },
+          "boutique_memory_bytes": {
+            "setup": {
+              "samples": 4,
+              "mean": 376748032.0,
+              "max": 377815040.0
+            },
+            "warmup": {
+              "samples": 80,
+              "mean": 426673510.4,
+              "max": 439443456.0
+            },
+            "pre_attack": {
+              "samples": 24,
+              "mean": 430687744.0,
+              "max": 438439936.0
+            },
+            "attack": {
+              "samples": 18,
+              "mean": 446729557.3333333,
+              "max": 459640832.0
+            },
+            "recovery": {
+              "samples": 24,
+              "mean": 430990506.6666667,
+              "max": 446148608.0
+            }
+          }
+        },
+        "capture_checks_passed": true,
+        "locust_capture_stderr_empty": true,
+        "cleanup_errors": [],
+        "verifier_sha256": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+        "scope": "Functional bounded-load pilot and observed impact; no detector or rate-limiting effectiveness claim"
+      },
+      "source_bundle": "77a49887d18daa33614f8de64d0cab4613ac25bce6c27b16cd700e36aa374ae8"
+    },
+    {
+      "case_id": "r1-s2-action",
+      "run_id": "s2-20261125T185037Z-2598301",
+      "batch_status": "completed",
+      "counted_as_completed": true,
+      "passed": true,
+      "errors": [],
+      "proof": {
+        "expected_calls": 30,
+        "receipts": 30,
+        "api_successes": 30,
+        "unique_transaction_ids": 30,
+        "rpc_operations_with_network_event": 30,
+        "uniquely_correlated_server_calls": 30,
+        "uncorrelated_operations": [],
+        "ambiguous_operations": [],
+        "clock_tolerance_seconds": 2,
+        "verifier_sha256": "3a1a4f7b9611ebce79747ddd189a204500e79c6202ae603b847c8a7a71619ad9",
+        "passed": true,
+        "independent_native_audit": {
+          "operations": 30,
+          "native_records": 34
+        },
+        "identity_audit": {
+          "run_id": "s2-20261125T185037Z-2598301",
+          "mode": "official",
+          "actor_service_account": "gd4-2598301",
+          "legitimate_service_account": "checkoutservice",
+          "expected_callers_in_captured_matrix": [
+            "checkoutservice"
+          ],
+          "source_hashes_verified": 10,
+          "raw_network_events_verified": 34,
+          "rpc_operations_verified": 30,
+          "warmup_seconds": 400,
+          "pre_seconds": 120,
+          "recovery_seconds": 120,
+          "functional_pilot_checks_passed": true,
+          "research_scope": "S2 GĐ4 pilot; detector and mitigation effectiveness are assessed in later phases"
+        },
+        "loss_metrics": {
+          "available": true,
+          "passed": true,
+          "counter_deltas": {
+            "tetragon_events_export_failed_total@lab-w1": 0.0,
+            "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+            "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+            "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+            "tetragon_events_export_failed_total@lab-w2": 0.0,
+            "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+            "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+            "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+          },
+          "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+        }
+      },
+      "source_bundle": "457eea510624f2ca2f4c03607f131f323193165335755d281f72c99c5ec3205a"
+    },
+    {
+      "case_id": "r1-s0-action",
+      "run_id": "s0-20261125T190326Z-2620476",
+      "batch_status": "completed",
+      "counted_as_completed": true,
+      "passed": true,
+      "errors": [],
+      "proof": {
+        "passed": true,
+        "errors": [],
+        "measurement_seconds": 900.001101,
+        "events_by_node": {
+          "lab-w1": 77366,
+          "lab-w2": 66378
+        },
+        "events_by_label": {
+          "normal": 143744
+        },
+        "service_graph": {
+          "edges": [
+            {
+              "source": "cartservice",
+              "destination": "redis-cart",
+              "tcp_send_events": 2708
+            },
+            {
+              "source": "checkoutservice",
+              "destination": "cartservice",
+              "tcp_send_events": 402
+            },
+            {
+              "source": "checkoutservice",
+              "destination": "currencyservice",
+              "tcp_send_events": 648
+            },
+            {
+              "source": "checkoutservice",
+              "destination": "emailservice",
+              "tcp_send_events": 272
+            },
+            {
+              "source": "checkoutservice",
+              "destination": "paymentservice",
+              "tcp_send_events": 202
+            },
+            {
+              "source": "checkoutservice",
+              "destination": "productcatalogservice",
+              "tcp_send_events": 508
+            },
+            {
+              "source": "checkoutservice",
+              "destination": "shippingservice",
+              "tcp_send_events": 504
+            },
+            {
+              "source": "frontend",
+              "destination": "adservice",
+              "tcp_send_events": 2748
+            },
+            {
+              "source": "frontend",
+              "destination": "cartservice",
+              "tcp_send_events": 4399
+            },
+            {
+              "source": "frontend",
+              "destination": "checkoutservice",
+              "tcp_send_events": 301
+            },
+            {
+              "source": "frontend",
+              "destination": "currencyservice",
+              "tcp_send_events": 13991
+            },
+            {
+              "source": "frontend",
+              "destination": "productcatalogservice",
+              "tcp_send_events": 23551
+            },
+            {
+              "source": "frontend",
+              "destination": "recommendationservice",
+              "tcp_send_events": 3648
+            },
+            {
+              "source": "frontend",
+              "destination": "shippingservice",
+              "tcp_send_events": 1430
+            },
+            {
+              "source": "loadgenerator",
+              "destination": "frontend",
+              "tcp_send_events": 2468
+            },
+            {
+              "source": "recommendationservice",
+              "destination": "productcatalogservice",
+              "tcp_send_events": 3653
+            }
+          ],
+          "unresolved_or_reverse_direction_sends": 82308,
+          "meaning": "Socket direction candidates; counts are TCP sends, not HTTP/gRPC request counts."
+        },
+        "checkout": {
+          "requests": 142,
+          "failures": 1,
+          "scope": "Last cumulative Locust table includes warm-up"
+        },
+        "metrics": {
+          "available": true,
+          "passed": true,
+          "counter_deltas": {
+            "tetragon_events_export_failed_total@lab-w1": 0.0,
+            "tetragon_export_ratelimit_events_dropped_total@lab-w1": 0.0,
+            "tetragon_observer_ringbuf_events_lost_total@lab-w1": 0.0,
+            "tetragon_observer_ringbuf_queue_events_lost_total@lab-w1": 0.0,
+            "tetragon_events_export_failed_total@lab-w2": 0.0,
+            "tetragon_export_ratelimit_events_dropped_total@lab-w2": 0.0,
+            "tetragon_observer_ringbuf_events_lost_total@lab-w2": 0.0,
+            "tetragon_observer_ringbuf_queue_events_lost_total@lab-w2": 0.0
+          },
+          "meaning": "Two scrape snapshots and eight observed counter series; not proof of zero loss at every layer"
+        },
+        "scope": "Business normal reference; application errors retained, no request-level S0 latency claim"
+      },
+      "source_bundle": "800ca232951a013ef5e5fc139c19e836b046bba514c04a28ef913cd973aedc2d"
+    },
+    {
+      "case_id": "r1-s5-control",
+      "run_id": "s0-s5-control-20261125T192603Z-2658384",
+      "batch_status": "failed",
+      "counted_as_completed": false,
+      "posthoc_verification": {
+        "passed": true,
+        "scope": "S0 receiver-present no-upload control; normal traffic and observer probes only",
+        "verifier_sha256": "c363ba7755b6de5c58a86091392ff8f6397d8a65008280762be6d2a4ebbb3b3d",
+        "run_id": "s0-s5-control-20261125T192603Z-2658384",
+        "mode": "official",
+        "profile": "control",
+        "scenario_id": "S0",
+        "uploads": 0,
+        "received": 0,
+        "received_payload_bytes": 0,
+        "operations_with_native_evidence": 0,
+        "native_event_counts": {},
+        "kernel_send_bytes_requested": 0,
+        "kernel_bytes_by_operation": {},
+        "locust_requests": 1608,
+        "locust_by_phase": {
+          "pre_attack": {
+            "requests": 271,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 271,
+            "p50_ms": 27.87523507140577,
+            "p95_ms": 95.44827893842012,
+            "max_ms": 208.83498096372932,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          "measurement": {
+            "requests": 133,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 133,
+            "p50_ms": 28.72245805338025,
+            "p95_ms": 97.58713492192328,
+            "max_ms": 125.0693709589541,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          },
+          "recovery": {
+            "requests": 262,
+            "failures": 0,
+            "failure_ratio": 0.0,
+            "latency_sample_count": 262,
+            "p50_ms": 28.216795064508915,
+            "p95_ms": 84.40106292255223,
+            "max_ms": 149.27392802201211,
+            "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+          }
+        },
+        "normalized_events": 113768,
+        "events_by_label": {
+          "unknown": 66633,
+          "normal": 47135
+        },
+        "receiver_peer_ips": [],
+        "raw_normalized_and_windows_replay_match": true,
+        "errors": []
+      },
+      "disposition": "Historical stopped case retained; posthoc proof never changes original status"
+    }
+  ],
+  "analysis_sha256": "3e712db719ea00202df49fd8eb31b750d9e93c4c20c1af2b44005d75cb478cb8",
+  "scope": "Partial batch evidence audit; not certification of the planned 24-run cohort"
+}

@@ -37,3 +37,13 @@ Lỗi được giữ nguyên: TimeoutExpired: Command '['k3s', 'kubectl', 'get',
 [Batch và thứ tự thực hiện](../runs/batch-repeats-20261125T181112Z-2519845/batch.json).
 
 [Hướng dẫn lịch, giới hạn và cách tự kiểm tra](REPEATS.md).
+
+## Cập nhật hậu kiểm và tiếp nối 28/11/2026
+
+5/5 case completed đã được hậu kiểm đạt và dữ liệu gốc không đổi. S5 control cũng qua kiểm tra hậu kỳ với verifier đọc theo dòng, nhưng lịch sử v1 vẫn là failed, không được sửa thành 6/24.
+
+Bản tiếp nối `gd4-repeats-20261128-v2` đã khởi chạy: batch `batch-repeats-20261128T035224Z-2912209`, unit `boutique-repeats-20261128-v2`. Ở checkpoint 03:52:47 UTC ngày 28/11, **5/24 là các lượt kế thừa đã xác nhận; 0 lượt mới hoàn tất; còn 19 lượt phải thực hiện**. Case hiện tại là r1-s5-control, được chạy lại bằng run ID mới.
+
+[Checkpoint v2](audits/repeats-recovery-launch-20261128.json) · [Hậu kiểm 5 case](audits/repeats-partial-review-20261128.json) · [Giải thích chi tiết và cách tái hiện](REPEATS-RECOVERY.md).
+
+Đây là snapshot khi cập nhật tài liệu, không phải màn hình tiến độ trực tiếp. Chỉ khi có report cuối mới được kết luận đủ các vòng lặp.

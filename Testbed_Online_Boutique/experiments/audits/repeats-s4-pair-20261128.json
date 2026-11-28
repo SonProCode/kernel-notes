@@ -1,0 +1,50 @@
+{
+  "control_run": "s0-s4-control-20261125T182317Z-2540872",
+  "intervention_run": "s4-20261125T183702Z-2569785",
+  "family": "S4",
+  "configurations_match": true,
+  "mismatched_fields": [],
+  "is_proper_no_intervention_control": true,
+  "passed": true,
+  "fingerprint": {
+    "family": "S4",
+    "source_bundle": "77a49887d18daa33614f8de64d0cab4613ac25bce6c27b16cd700e36aa374ae8",
+    "actor_node": "lab-w1",
+    "actor_image": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+    "locust_node": "lab-w1",
+    "locust_image": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "locust_original_sha256": "476beb8b4e8ab5fe46d511515cd915b27ef3c7e1d818d482c2301ac2813dd9f3",
+    "locust_version": "2.43.0",
+    "seed": 20261127,
+    "seed_observed": 20261127,
+    "users": 10,
+    "spawn_rate": 1,
+    "warmup": 400,
+    "pre": 120,
+    "recovery": 120,
+    "configured_measurement_seconds": 90,
+    "policy_sha256": "b303b039e54250526cd4428666d0e47424b1f9a4007ea36f99c3d8ed41573f3b",
+    "application_placement_and_images_sha256": "0ed257efd65ad958286824aa6c3942b42c90b96b7e9576f4859c7f628d20e3d4",
+    "targets": [
+      {
+        "service": "frontend",
+        "ip": "10.43.221.147",
+        "port": 80,
+        "target_ips": [
+          "10.42.1.12",
+          "10.43.221.147"
+        ],
+        "target_ports": [
+          80,
+          8080
+        ]
+      }
+    ],
+    "actor_spec_sha256": "d0ff2cb7349d06c346901c9f77187073fc1e189b14f2cbccea9b54514cdc6a9b",
+    "locust_spec_sha256": "230ced78b1e602b9f7936e26e9380a617c212f9d225eb61e68e75fbc8ccfc9b1",
+    "admin_enabled": false,
+    "admin_receipt_present": false
+  },
+  "limit": "Same declared configuration and placement; timing/routes still vary. One pair is descriptive, not causal/statistical proof.",
+  "analysis_source_sha256": "852a4fe0303a676637240c11784d3e411c66ce6d1dd460178e5a4bfd96e3e9ab"
+}

@@ -2,6 +2,8 @@
 
 Ngày 26/11/2026, giờ Việt Nam. Người dùng đã yêu cầu thực hiện đo lặp sau khi hoàn tất pilot. **Lịch gồm 24 lượt dự kiến: 18 lượt chính S0–S5 và 6 đối chứng bổ sung cho S4/S5.** Đây là số lượt lên lịch; chỉ đếm thành công sau khi có dữ liệu, kiểm chứng và trạng thái cuối.
 
+**Cập nhật 28/11:** v1 đã dừng sau 5/24 case. Đọc [hậu kiểm, bản tiếp nối và hướng dẫn tái hiện từ đầu](REPEATS-RECOVERY.md) trước khi dùng các lệnh theo dõi v1 bên dưới. Tài liệu phân biệt 5 case kế thừa đã xác nhận và 19 case còn phải chạy, không gọi batch v1 là thành công.
+
 [Kết quả và trạng thái xuất bản](REPEATS-RESULTS.md) được cập nhật riêng. [Protocol đã chốt](repeat-protocol.json) là căn cứ xác định thứ tự, tham số và source hash. Không nhập các lượt pilot cũ vào cohort mới.
 
 ## 1. Vì sao phải đo nhiều lượt?

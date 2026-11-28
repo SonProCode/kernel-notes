@@ -1,5 +1,7 @@
 # Các lượt đo Online Boutique
 
+**Cập nhật 28/11:** batch đo lặp v1 dừng sau 5/24 case. [Hậu kiểm và hướng dẫn tái hiện](../experiments/REPEATS-RECOVERY.md) xác nhận 5 case đạt, giữ nguyên lượt S5 control chưa validated và mô tả bản tiếp nối 5 case kế thừa + 19 case mới. Không đọc số lượt lên lịch như số lượt đã thực hiện.
+
 ## Hậu kiểm S0–S5 và batch đối chứng 25/11/2026
 
 [Báo cáo tổng cho người mới](../experiments/S0-S5-REVIEW.md) giải thích 16 pilot, dữ liệu loại trừ và sáu lượt bổ sung. Batch [batch-controls-20261125T113929Z-1995885](batch-controls-20261125T113929Z-1995885/batch.json) có protocol/source hash và log điều phối. Các run mới giữ manifest/receipt/report ở ngoài; raw/source/normalized nằm trong dataset.tar.gz của từng run.

@@ -110,6 +110,7 @@ def read(slug):
     text = (ROOT/source).read_text(encoding="utf-8-sig")
     if slug == "25-do-lap-s0-s5":
         text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/REPEATS-RESULTS.md").read_text(encoding="utf-8").replace("# Trạng thái", "## Trạng thái", 1)
+        text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/REPEATS-RECOVERY.md").read_text(encoding="utf-8").replace("# Hậu kiểm", "## Hậu kiểm", 1)
     if slug == "24-soat-xet-s0-s5-doi-chung":
         text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/FEATURE-SCHEMA-MAP.md").read_text(encoding="utf-8").replace("# Bản đồ schema", "## Bản đồ schema", 1)
     if slug == "23-s5-gui-du-lieu-gia":
@@ -142,6 +143,8 @@ def read(slug):
         document, separator, anchor = location.partition("#")
         if document == "Testbed_Online_Boutique/experiments/REPEATS-RESULTS.md":
             return "](25-do-lap-s0-s5.html)"
+        if document == "Testbed_Online_Boutique/experiments/REPEATS-RECOVERY.md":
+            return "](25-do-lap-s0-s5.html#hau-kiem-batch-loi-va-cach-tai-hien-do-lap)"
         if document == "Testbed_Online_Boutique/experiments/FEATURE-SCHEMA-MAP.md":
             return "](24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5)"
         page = next((key for key, value in LAB_SOURCES.items() if value == document), None)

@@ -57,6 +57,61 @@ def snapshot():
             "disk_free_bytes": shutil.disk_usage(ROOT.parent).free}
 
 
+def read_snapshot():
+    """Retry one timed-out read; never substitute cached health or hide both failures."""
+    timeouts=[]
+    for attempt in (1,2):
+        try:
+            current=snapshot()
+            current["read_timeouts"]=timeouts
+            return current
+        except subprocess.TimeoutExpired as error:
+            timeouts.append({"attempt":attempt,"time":now(),"command":error.cmd,"timeout_seconds":error.timeout})
+            if attempt==2:
+                raise
+            time.sleep(1)
+
+
+def carry_forward(plan,initial):
+    cases=[{**case,"status":"pending"} for case in plan["cases"]]
+    carry=plan.get("carry_forward")
+    if not carry:
+        return cases
+    batch=(ROOT.parent/"runs"/carry["batch"]).resolve()
+    if batch.parent!=(ROOT.parent/"runs").resolve():
+        raise ValueError("Escaped source batch")
+    audit_path=(ROOT/carry["audit_path"]).resolve()
+    if not audit_path.is_relative_to((ROOT/"audits").resolve()) or source_digest(audit_path)!=carry["audit_sha256"]:
+        raise ValueError("Carry-forward audit checksum mismatch")
+    audit=json.loads(audit_path.read_text(encoding="utf-8"))
+    if not audit["passed"] or not audit["original_evidence_unchanged"] or audit["batch"]!=batch.name:
+        raise ValueError("Source cases have not passed independent partial audit")
+    old=json.loads((batch/"batch.json").read_text(encoding="utf-8"))
+    previous=json.loads((batch/"environment-after.json").read_text(encoding="utf-8"))
+    differences=health_errors(initial,previous,plan["minimum_disk_free_bytes"])
+    if differences:
+        raise ValueError("Environment differs from source batch: "+"; ".join(differences))
+    accepted={c["case_id"]:c for c in audit["cases"] if c.get("counted_as_completed") and c.get("passed")}
+    indexed={c["case_id"]:c for c in old["cases"]}
+    for case_id in carry["case_ids"]:
+        target=next(c for c in cases if c["case_id"]==case_id)
+        source=indexed[case_id]
+        if case_id not in accepted or source["status"]!="completed" or source["run_id"]!=accepted[case_id]["run_id"] or source["args"]!=target["args"]:
+            raise ValueError("Carry-forward case is incomplete, unaudited or changed: "+case_id)
+        run=ROOT.parent/"runs"/source["run_id"]
+        manifest=json.loads((run/"manifest.json").read_text(encoding="utf-8"))
+        if manifest.get("dataset_status")!="validated" or source_digest(run/"dataset.tar.gz")!=source["archive"]:
+            raise ValueError("Carried run is not intact: "+case_id)
+        for name,value in manifest["script_sha256"].items():
+            plan_name="../telemetry/normalize.py" if name=="telemetry/normalize.py" else name
+            if plan["source_sha256"].get(plan_name)!=value:
+                raise ValueError("Carried runtime source differs: "+case_id+"/"+name)
+        for key in ("run_id","return_code","archive","started","finished","dataset_status","run_status"):
+            if key in source:target[key]=source[key]
+        target.update(status="completed",source_batch=batch.name,carried_forward=True)
+    return cases
+
+
 def health_errors(current, initial, disk_min):
     errors = []
     if len(current["nodes"]) != 3:
@@ -72,7 +127,8 @@ def health_errors(current, initial, disk_min):
         errors.append("Disk below protocol minimum")
     if initial:
         for field in ("application_pods", "agents", "loadgenerator_spec", "policies"):
-            if current[field] != initial[field]:
+            # Live tuples and the same values restored as JSON lists are equivalent.
+            if json.dumps(current[field],sort_keys=True) != json.dumps(initial[field],sort_keys=True):
                 errors.append("Environment changed: " + field)
     return errors
 
@@ -106,7 +162,7 @@ def main():
     out.mkdir(mode=0o700)
     shutil.copyfile(args.protocol, out/"protocol.json")
     shutil.copyfile(__file__, out/"coordinator.py")
-    initial = snapshot()
+    initial = read_snapshot()
     save(out/"environment-before.json", initial)
     errors = health_errors(initial, None, plan["minimum_disk_free_bytes"])
     if initial["loadgenerator_replicas"] or initial["temporary_pods"]:
@@ -114,7 +170,9 @@ def main():
     state = {"protocol_id": plan["protocol_id"], "status": "preflight",
              "protocol_sha256": source_digest(out/"protocol.json"),
              "coordinator_sha256": source_digest(out/"coordinator.py"), "started": now(),
-             "cases": [{**case, "status": "pending"} for case in plan["cases"]]}
+             "cases": carry_forward(plan,initial)}
+    state["carried_forward_cases"]=sum(bool(c.get("carried_forward")) for c in state["cases"])
+    state["new_cases_planned"]=len(state["cases"])-state["carried_forward_cases"]
     save(out/"batch.json", state)
     print("Batch:", out, flush=True)
     child = None
@@ -125,6 +183,8 @@ def main():
         save(out/"batch.json", state)
         frontend = k("-n", "boutique", "get", "service", "frontend")["spec"]["clusterIP"]
         for case in state["cases"]:
+            if case.get("carried_forward"):
+                continue
             if STOP:
                 raise KeyboardInterrupt("Batch stop requested")
             check_sources(ROOT, plan["source_sha256"])
@@ -134,7 +194,7 @@ def main():
                 if STOP or time.monotonic() > deadline:
                     raise RuntimeError("Experiment Pods remain between cases")
                 time.sleep(2)
-            current = snapshot()
+            current = read_snapshot()
             errors = health_errors(current, initial, plan["minimum_disk_free_bytes"])
             if errors:
                 raise RuntimeError("; ".join(errors))
@@ -153,7 +213,7 @@ def main():
                             raise KeyboardInterrupt("Batch stop requested")
                         if time.monotonic()-begin > case["timeout_seconds"]:
                             raise RuntimeError("Case deadline exceeded")
-                        current = snapshot()
+                        current = read_snapshot()
                         errors = health_errors(current, initial, plan["minimum_disk_free_bytes"])
                         try:
                             with urllib.request.build_opener(urllib.request.ProxyHandler({})).open("http://"+frontend+":80/_healthz", timeout=3) as response:
@@ -203,8 +263,15 @@ def main():
             print("Completed:", case["case_id"], case["run_id"], flush=True)
         state["status"] = "reviewing"
         save(out/"batch.json", state)
-        result = subprocess.run([sys.executable, str(ROOT/"repeat_review.py"), str(out)], timeout=3600)
-        if result.returncode:
+        child=subprocess.Popen([sys.executable, str(ROOT/"repeat_review.py"), str(out)],start_new_session=True)
+        review_deadline=time.monotonic()+3600
+        while child.poll() is None:
+            if STOP:
+                raise KeyboardInterrupt("Stopped during final cohort review")
+            if time.monotonic()>review_deadline:
+                raise RuntimeError("Cohort review deadline exceeded")
+            time.sleep(1)
+        if child.returncode:
             raise RuntimeError("Final cohort review failed; retain runs")
         state["status"] = "completed"
     except BaseException as error:
@@ -224,7 +291,7 @@ def main():
     finally:
         state["finished"] = now()
         try:
-            final = snapshot()
+            final = read_snapshot()
             save(out/"environment-after.json", final)
             state["final_environment_errors"] = health_errors(final, initial, plan["minimum_disk_free_bytes"])
             if final["temporary_pods"] or final["loadgenerator_replicas"]:
