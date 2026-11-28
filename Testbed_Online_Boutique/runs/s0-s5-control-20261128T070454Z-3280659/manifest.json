@@ -1,0 +1,160 @@
+{
+  "schema_version": 5,
+  "run_id": "s0-s5-control-20261128T070454Z-3280659",
+  "scenario_id": "S0",
+  "mode": "official",
+  "locust_seed": 20261129,
+  "status": "completed",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "normal_admin": {
+    "enabled": false,
+    "purpose": null
+  },
+  "warmup_seconds": 400,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "s5": {
+    "calls": 60,
+    "rate": 0,
+    "profile": "control",
+    "payload_bytes": 65536,
+    "fixture_id": "gd4-s5-synthetic-v1",
+    "verification_contract": 1,
+    "method": "POST",
+    "path": "/upload",
+    "request_timeout_seconds": 3,
+    "receiver_ip": "192.168.141.142",
+    "receiver_port": 18080,
+    "topology": "host_receiver_outside_pod_network",
+    "cross_host_clock_tolerance_seconds": 2
+  },
+  "temporary_resources": {
+    "actor": "gd4-s5-3280659",
+    "locust_deployment": "gd4-locust-3280659",
+    "configmap": "gd4-s5-code-3280659"
+  },
+  "source_snapshot": "source",
+  "script_sha256": {
+    "runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "s5_runner.py": "3a0d5c6614d245f23ff647228b331cad8601fbc26d0bcc5079eb68710d498db7",
+    "s5_normalize.py": "2d3940f1dcd5a27a2f1017bc0f8117cb359b4b2bb49ac30a6b68cc2b7f76d744",
+    "s5_verify.py": "c363ba7755b6de5c58a86091392ff8f6397d8a65008280762be6d2a4ebbb3b3d",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "s4_verify.py": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+    "s5/client.py": "a86e28266edd9ba4931d3b5699763698b96a197a019012d40c01bd7783135d57",
+    "s5/fixture.py": "f4a32f9d516ceb887c547014c3ed081ee82022a689778274088ff1f2c8a6e808",
+    "s5/receiver.py": "b248544282716ebee5545c390fb101d57dce7c44dbf8d7b6d9c1ace3fc5c156d",
+    "s4/locust_wrapper.py": "38d7a50a763d9ad6105f4ba027cc6aa9bf2855f0110771f63b511753af34e6f1",
+    "telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "code_bundle_sha256": "da60090e8f5c67f30e76dfdfb2ba3548ef0f4cffea74185408abdd026aae0e17",
+  "frontend_probe": {
+    "service": "frontend",
+    "ip": "10.43.221.147",
+    "port": 80,
+    "target_ips": [
+      "10.42.1.12",
+      "10.43.221.147"
+    ],
+    "target_ports": [
+      80,
+      8080
+    ]
+  },
+  "targets": [
+    {
+      "ip": "192.168.141.142",
+      "port": 18080,
+      "target_ips": [
+        "192.168.141.142"
+      ],
+      "target_ports": [
+        18080
+      ]
+    }
+  ],
+  "receiver": {
+    "pid": 3280854,
+    "uid": 1000,
+    "ip": "192.168.141.142",
+    "port": 18080
+  },
+  "actor": {
+    "name": "gd4-s5-3280659",
+    "uid": "3b6200ff-47ed-4a55-916b-f8b533b71e0a",
+    "ip": "10.42.1.146",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0"
+  },
+  "capture_start": "2026-11-28T07:04:57.465856+00:00",
+  "locust": {
+    "pod": "gd4-locust-3280659-6b58b85f77-d8bz4",
+    "uid": "6012d25b-bb16-45f5-9d5c-112eae7c8f63",
+    "image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "original_deployment_unchanged": true
+  },
+  "measurement_end": "2026-11-28T07:16:54.001825+00:00",
+  "finished": "2026-11-28T07:17:03.229404+00:00",
+  "cleanup_errors": [],
+  "guard_triggered": false,
+  "dataset_status": "validated",
+  "s5_verification": {
+    "passed": true,
+    "scope": "S0 receiver-present no-upload control; normal traffic and observer probes only",
+    "verifier_sha256": "c363ba7755b6de5c58a86091392ff8f6397d8a65008280762be6d2a4ebbb3b3d",
+    "run_id": "s0-s5-control-20261128T070454Z-3280659",
+    "mode": "official",
+    "profile": "control",
+    "scenario_id": "S0",
+    "uploads": 0,
+    "received": 0,
+    "received_payload_bytes": 0,
+    "operations_with_native_evidence": 0,
+    "native_event_counts": {},
+    "kernel_send_bytes_requested": 0,
+    "kernel_bytes_by_operation": {},
+    "locust_requests": 1577,
+    "locust_by_phase": {
+      "pre_attack": {
+        "requests": 273,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 273,
+        "p50_ms": 27.66344789415598,
+        "p95_ms": 92.8378610406071,
+        "max_ms": 193.4782189782709,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      },
+      "measurement": {
+        "requests": 135,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 135,
+        "p50_ms": 28.434416046366096,
+        "p95_ms": 127.45639402419329,
+        "max_ms": 188.3491559419781,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      },
+      "recovery": {
+        "requests": 267,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 267,
+        "p50_ms": 28.919660951942205,
+        "p95_ms": 97.17813204042614,
+        "max_ms": 167.84836607985198,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      }
+    },
+    "normalized_events": 111466,
+    "events_by_label": {
+      "unknown": 64141,
+      "normal": 47325
+    },
+    "receiver_peer_ips": [],
+    "raw_normalized_and_windows_replay_match": true,
+    "errors": []
+  }
+}

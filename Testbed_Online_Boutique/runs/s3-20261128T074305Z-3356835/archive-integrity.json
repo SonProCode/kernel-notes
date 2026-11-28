@@ -1,0 +1,22 @@
+{
+  "archive": "dataset.tar.gz",
+  "archive_sha256": "eafcd9c2fa52ccf19b18236aa9e115e852b88dcbb3819b7aac86912d21c5c6a3",
+  "verified_member_sha256": {
+    "labeled-windows.ndjson": "d77fa097df677dafa9660817412157cff80b0e4c4886660abbdf959b0ccb9fae",
+    "normalized.ndjson": "ebd7e6a7ea10715bf0843dd173015f24bd9cd4c6bb4004f8d18a7a410a19c0ef",
+    "raw/lab-w1.ndjson": "cc060137514afb03dc5d5c493068891196e4bc70f3e7d5ff6c6460185c322ed5",
+    "raw/lab-w1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/lab-w2.ndjson": "e84be7d2437b7a6a2c8f60f4009ed775a13d99e803b0f08a55141cc9160a99fd",
+    "raw/lab-w2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source/actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "source/label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "source/policies/observe-files.yaml": "bfdd235d59e83112460854d7844d26d6b1aeaf0db44f8b9b82ab7d7eaefb72f8",
+    "source/runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "source/s3/client.py": "c6d105e6512973da9f016865e3df44cbe46bb2b0b2887e0577fc5309d1a31758",
+    "source/s3/tools-provenance.json": "3a4c4931d03a0985052a2a33977463452696202deacea13a3e7041cb1f8a69b2",
+    "source/s3_support.py": "ef3797aca0dd727d8e67aada057a46187e19565f885f10ba2f4974a30ed228d1",
+    "source/s3_verify.py": "58c21d9af809a55b679ea14610d9d6bd8ff51999da20f2135c17e656a46d3c84"
+  },
+  "plain_files_released_after_verification": true,
+  "verified_at": "2026-11-28T07:56:01.972551+00:00"
+}

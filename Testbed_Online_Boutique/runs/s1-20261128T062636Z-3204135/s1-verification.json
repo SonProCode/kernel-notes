@@ -1,0 +1,16 @@
+{
+  "expected_operations": 22,
+  "receipts": 22,
+  "operations_with_native_event": 22,
+  "native_records_verified": 22,
+  "receipt_targets_valid": true,
+  "native_records_valid": true,
+  "unmatched_operations": [],
+  "outcomes": {
+    "connected": 11,
+    "timeout": 11
+  },
+  "capture_checks_passed": true,
+  "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+  "passed": true
+}

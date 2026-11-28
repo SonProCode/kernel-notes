@@ -1,0 +1,26 @@
+{
+  "archive": "dataset.tar.gz",
+  "archive_sha256": "ecb60cf07719d6bd8df2888fdf57e80aa3aec8246e3dbbe0f2d3a198799c3dfe",
+  "verified_member_sha256": {
+    "labeled-windows.ndjson": "c8cd0af18898b1f353780fc4cde8814cf3e217f5e44e4ac39c153bef11275b3a",
+    "normalized.ndjson": "ab2a3c8f802e004500ba3fedc91a2d5b23272b8ccb78b4cbf14f740cdc2251b2",
+    "raw/lab-w1.ndjson": "cce14ce5574e83ae6e45c587f163c137f9cf62cf4f89d331e9e3052cd394726a",
+    "raw/lab-w1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/lab-w2.ndjson": "2c81e404820dd0850cf21320146d40ce33d00acf262c75b05de3588442c44aaa",
+    "raw/lab-w2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source/label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "source/runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "source/s4/locust_wrapper.py": "38d7a50a763d9ad6105f4ba027cc6aa9bf2855f0110771f63b511753af34e6f1",
+    "source/s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "source/s4_verify.py": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+    "source/s5/client.py": "a86e28266edd9ba4931d3b5699763698b96a197a019012d40c01bd7783135d57",
+    "source/s5/fixture.py": "f4a32f9d516ceb887c547014c3ed081ee82022a689778274088ff1f2c8a6e808",
+    "source/s5/receiver.py": "b248544282716ebee5545c390fb101d57dce7c44dbf8d7b6d9c1ace3fc5c156d",
+    "source/s5_normalize.py": "2d3940f1dcd5a27a2f1017bc0f8117cb359b4b2bb49ac30a6b68cc2b7f76d744",
+    "source/s5_runner.py": "3a0d5c6614d245f23ff647228b331cad8601fbc26d0bcc5079eb68710d498db7",
+    "source/s5_verify.py": "c363ba7755b6de5c58a86091392ff8f6397d8a65008280762be6d2a4ebbb3b3d",
+    "source/telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "plain_files_released_after_verification": true,
+  "verified_at": "2026-11-28T07:30:19.487530+00:00"
+}

@@ -1,0 +1,27 @@
+{
+  "events_by_type": {
+    "tcp_send": 105937,
+    "process_exec": 211,
+    "process_exit": 216,
+    "tcp_connect_attempt": 115
+  },
+  "events_by_label": {
+    "unknown": 60494,
+    "normal": 45985
+  },
+  "events_by_node": {
+    "lab-w1": 56897,
+    "lab-w2": 49582
+  },
+  "quality": {},
+  "operations": 0,
+  "operations_with_matched_event": 0,
+  "event_types_by_operation": {},
+  "unmatched_operations": [],
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "capture_checks_passed": true
+}

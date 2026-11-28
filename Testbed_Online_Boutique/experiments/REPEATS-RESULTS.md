@@ -1,10 +1,12 @@
 # Trạng thái batch đo lặp ngày 26/11/2026
 
-Trạng thái cuối: **failed**. Hoàn tất **5/24** lượt đã lên lịch.
-Batch: batch-repeats-20261125T181112Z-2519845. Protocol: gd4-repeats-20261126-v1.
-Kết thúc UTC: 2026-11-25T19:38:53.250834+00:00.
+Trạng thái cuối: **completed**. Hoàn tất **24/24** lượt đã lên lịch.
+Batch: batch-repeats-20261128T035224Z-2912209. Protocol: gd4-repeats-20261128-v2.
+Kết thúc UTC: 2026-11-28T08:27:15.922578+00:00.
 
-Lỗi được giữ nguyên: TimeoutExpired: Command '['k3s', 'kubectl', 'get', 'nodes', '-o', 'json']' timed out after 12 seconds
+Trong số lượt hoàn tất có **5 lượt kế thừa đã hậu kiểm từ batch cũ**; số lượt mới hoàn tất là 19. Batch cũ và lượt lỗi không bị ghi lại hoặc đổi trạng thái.
+
+Hậu kiểm cohort: **đạt**. Đây là kiểm chứng dữ liệu và cấu hình, không phải kết quả precision/recall hoặc giảm thiểu.
 
 
 | Case | Trạng thái | Bằng chứng |
@@ -14,36 +16,34 @@ Lỗi được giữ nguyên: TimeoutExpired: Command '['k3s', 'kubectl', 'get',
 | r1-s4-action | completed | [s4-20261125T183702Z-2569785](../runs/s4-20261125T183702Z-2569785/manifest.json) |
 | r1-s2-action | completed | [s2-20261125T185037Z-2598301](../runs/s2-20261125T185037Z-2598301/manifest.json) |
 | r1-s0-action | completed | [s0-20261125T190326Z-2620476](../runs/s0-20261125T190326Z-2620476/manifest.json) |
-| r1-s5-control | failed | [s0-s5-control-20261125T192603Z-2658384](../runs/s0-s5-control-20261125T192603Z-2658384/manifest.json) |
-| r1-s5-action | pending | Chưa tạo run |
-| r1-s3-action | pending | Chưa tạo run |
-| r2-s0-action | pending | Chưa tạo run |
-| r2-s3-action | pending | Chưa tạo run |
-| r2-s4-action | pending | Chưa tạo run |
-| r2-s4-control | pending | Chưa tạo run |
-| r2-s1-action | pending | Chưa tạo run |
-| r2-s5-action | pending | Chưa tạo run |
-| r2-s5-control | pending | Chưa tạo run |
-| r2-s2-action | pending | Chưa tạo run |
-| r3-s1-action | pending | Chưa tạo run |
-| r3-s4-control | pending | Chưa tạo run |
-| r3-s4-action | pending | Chưa tạo run |
-| r3-s5-control | pending | Chưa tạo run |
-| r3-s5-action | pending | Chưa tạo run |
-| r3-s2-action | pending | Chưa tạo run |
-| r3-s3-action | pending | Chưa tạo run |
-| r3-s0-action | pending | Chưa tạo run |
+| r1-s5-control | completed | [s0-s5-control-20261128T035230Z-2912483](../runs/s0-s5-control-20261128T035230Z-2912483/manifest.json) |
+| r1-s5-action | completed | [s5-20261128T040558Z-2939902](../runs/s5-20261128T040558Z-2939902/manifest.json) |
+| r1-s3-action | completed | [s3-20261128T041858Z-2966962](../runs/s3-20261128T041858Z-2966962/manifest.json) |
+| r2-s0-action | completed | [s0-20261128T043218Z-2989790](../runs/s0-20261128T043218Z-2989790/manifest.json) |
+| r2-s3-action | completed | [s3-20261128T045511Z-3028084](../runs/s3-20261128T045511Z-3028084/manifest.json) |
+| r2-s4-action | completed | [s4-20261128T050844Z-3051251](../runs/s4-20261128T050844Z-3051251/manifest.json) |
+| r2-s4-control | completed | [s0-s4-control-20261128T052217Z-3079434](../runs/s0-s4-control-20261128T052217Z-3079434/manifest.json) |
+| r2-s1-action | completed | [s1-20261128T053537Z-3107221](../runs/s1-20261128T053537Z-3107221/manifest.json) |
+| r2-s5-action | completed | [s5-20261128T054735Z-3127763](../runs/s5-20261128T054735Z-3127763/manifest.json) |
+| r2-s5-control | completed | [s0-s5-control-20261128T060058Z-3155443](../runs/s0-s5-control-20261128T060058Z-3155443/manifest.json) |
+| r2-s2-action | completed | [s2-20261128T061349Z-3182015](../runs/s2-20261128T061349Z-3182015/manifest.json) |
+| r3-s1-action | completed | [s1-20261128T062636Z-3204135](../runs/s1-20261128T062636Z-3204135/manifest.json) |
+| r3-s4-control | completed | [s0-s4-control-20261128T063827Z-3224548](../runs/s0-s4-control-20261128T063827Z-3224548/manifest.json) |
+| r3-s4-action | completed | [s4-20261128T065136Z-3252515](../runs/s4-20261128T065136Z-3252515/manifest.json) |
+| r3-s5-control | completed | [s0-s5-control-20261128T070454Z-3280659](../runs/s0-s5-control-20261128T070454Z-3280659/manifest.json) |
+| r3-s5-action | completed | [s5-20261128T071737Z-3307619](../runs/s5-20261128T071737Z-3307619/manifest.json) |
+| r3-s2-action | completed | [s2-20261128T073020Z-3334713](../runs/s2-20261128T073020Z-3334713/manifest.json) |
+| r3-s3-action | completed | [s3-20261128T074305Z-3356835](../runs/s3-20261128T074305Z-3356835/manifest.json) |
+| r3-s0-action | completed | [s0-20261128T075615Z-3379497](../runs/s0-20261128T075615Z-3379497/manifest.json) |
 
-[Batch và thứ tự thực hiện](../runs/batch-repeats-20261125T181112Z-2519845/batch.json).
+[Batch và thứ tự thực hiện](../runs/batch-repeats-20261128T035224Z-2912209/batch.json).
+
+[Report hậu kiểm đầy đủ](../runs/batch-repeats-20261128T035224Z-2912209/cohort-review.json).
+
+Các lỗi ứng dụng, lượt chưa đạt và dữ liệu unknown được giữ để phân tích. Không cộng pilot cũ vào cohort này.
+
+S4: p95 từng run (ms) = 377.69, 454.46, 385.75. Đây là mô tả giữa các run, không phải p95 gộp.
+
+S5: p95 từng run (ms) = 186.02, 178.66, 94.07. Đây là mô tả giữa các run, không phải p95 gộp.
 
 [Hướng dẫn lịch, giới hạn và cách tự kiểm tra](REPEATS.md).
-
-## Cập nhật hậu kiểm và tiếp nối 28/11/2026
-
-5/5 case completed đã được hậu kiểm đạt và dữ liệu gốc không đổi. S5 control cũng qua kiểm tra hậu kỳ với verifier đọc theo dòng, nhưng lịch sử v1 vẫn là failed, không được sửa thành 6/24.
-
-Bản tiếp nối `gd4-repeats-20261128-v2` đã khởi chạy: batch `batch-repeats-20261128T035224Z-2912209`, unit `boutique-repeats-20261128-v2`. Ở checkpoint 03:52:47 UTC ngày 28/11, **5/24 là các lượt kế thừa đã xác nhận; 0 lượt mới hoàn tất; còn 19 lượt phải thực hiện**. Case hiện tại là r1-s5-control, được chạy lại bằng run ID mới.
-
-[Checkpoint v2](audits/repeats-recovery-launch-20261128.json) · [Hậu kiểm 5 case](audits/repeats-partial-review-20261128.json) · [Giải thích chi tiết và cách tái hiện](REPEATS-RECOVERY.md).
-
-Đây là snapshot khi cập nhật tài liệu, không phải màn hình tiến độ trực tiếp. Chỉ khi có report cuối mới được kết luận đủ các vòng lặp.

@@ -1,0 +1,18 @@
+{
+  "archive": "dataset.tar.gz",
+  "archive_sha256": "5811c66cf9ac191d6c70c7264164c8043ca741967f712e442e205f8895ea27eb",
+  "verified_member_sha256": {
+    "labeled-windows.ndjson": "b94e67713efca8b0e53501558f7f9fdb3534c91cff4fe31ba15e6aa1d6603480",
+    "normalized.ndjson": "0683222798a3a5a6bb6d258f76cb8bc9d885831fb608b9a121bf6d9c997471f9",
+    "raw/lab-w1.ndjson": "2e39848e7239346dac6a1063b8f1f0abaa63e326b77b7292b2caba5b2ae70208",
+    "raw/lab-w1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/lab-w2.ndjson": "4de189daef2001c77473d878308e325caf2feaa9304ac48c366a4ece09ac9e1d",
+    "raw/lab-w2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source/actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "source/label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "source/runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "source/telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "plain_files_released_after_verification": true,
+  "verified_at": "2026-11-28T08:18:49.179556+00:00"
+}

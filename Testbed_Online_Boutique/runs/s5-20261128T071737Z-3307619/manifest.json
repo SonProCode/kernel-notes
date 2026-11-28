@@ -1,0 +1,227 @@
+{
+  "schema_version": 5,
+  "run_id": "s5-20261128T071737Z-3307619",
+  "scenario_id": "S5",
+  "mode": "official",
+  "locust_seed": 20261129,
+  "status": "completed",
+  "node": "w1",
+  "users": 10,
+  "spawn_rate": 1,
+  "normal_admin": {
+    "enabled": false,
+    "purpose": null
+  },
+  "warmup_seconds": 400,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "s5": {
+    "calls": 60,
+    "rate": 1,
+    "profile": "upload",
+    "payload_bytes": 65536,
+    "fixture_id": "gd4-s5-synthetic-v1",
+    "verification_contract": 1,
+    "method": "POST",
+    "path": "/upload",
+    "request_timeout_seconds": 3,
+    "receiver_ip": "192.168.141.142",
+    "receiver_port": 18080,
+    "topology": "host_receiver_outside_pod_network",
+    "cross_host_clock_tolerance_seconds": 2
+  },
+  "temporary_resources": {
+    "actor": "gd4-s5-3307619",
+    "locust_deployment": "gd4-locust-3307619",
+    "configmap": "gd4-s5-code-3307619"
+  },
+  "source_snapshot": "source",
+  "script_sha256": {
+    "runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "s5_runner.py": "3a0d5c6614d245f23ff647228b331cad8601fbc26d0bcc5079eb68710d498db7",
+    "s5_normalize.py": "2d3940f1dcd5a27a2f1017bc0f8117cb359b4b2bb49ac30a6b68cc2b7f76d744",
+    "s5_verify.py": "c363ba7755b6de5c58a86091392ff8f6397d8a65008280762be6d2a4ebbb3b3d",
+    "s4_support.py": "9705b602708ecc7f65077826e946f6d745cce329edd2da44bae58882603bbfd5",
+    "s4_verify.py": "721152a725e9e5732b7dc0fa50a3f7b1c71ebf2b068342468aa254be579abb2c",
+    "s5/client.py": "a86e28266edd9ba4931d3b5699763698b96a197a019012d40c01bd7783135d57",
+    "s5/fixture.py": "f4a32f9d516ceb887c547014c3ed081ee82022a689778274088ff1f2c8a6e808",
+    "s5/receiver.py": "b248544282716ebee5545c390fb101d57dce7c44dbf8d7b6d9c1ace3fc5c156d",
+    "s4/locust_wrapper.py": "38d7a50a763d9ad6105f4ba027cc6aa9bf2855f0110771f63b511753af34e6f1",
+    "telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "code_bundle_sha256": "da60090e8f5c67f30e76dfdfb2ba3548ef0f4cffea74185408abdd026aae0e17",
+  "frontend_probe": {
+    "service": "frontend",
+    "ip": "10.43.221.147",
+    "port": 80,
+    "target_ips": [
+      "10.42.1.12",
+      "10.43.221.147"
+    ],
+    "target_ports": [
+      80,
+      8080
+    ]
+  },
+  "targets": [
+    {
+      "ip": "192.168.141.142",
+      "port": 18080,
+      "target_ips": [
+        "192.168.141.142"
+      ],
+      "target_ports": [
+        18080
+      ]
+    }
+  ],
+  "receiver": {
+    "pid": 3307805,
+    "uid": 1000,
+    "ip": "192.168.141.142",
+    "port": 18080
+  },
+  "actor": {
+    "name": "gd4-s5-3307619",
+    "uid": "30609976-12f2-4ee9-a14a-6e04949225c0",
+    "ip": "10.42.1.148",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0"
+  },
+  "capture_start": "2026-11-28T07:17:40.796246+00:00",
+  "locust": {
+    "pod": "gd4-locust-3307619-846f7d57b4-t6f6w",
+    "uid": "bd67371f-94cc-4670-bc33-2c71f8df230e",
+    "image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "original_deployment_unchanged": true
+  },
+  "measurement_end": "2026-11-28T07:29:39.532768+00:00",
+  "finished": "2026-11-28T07:29:48.596272+00:00",
+  "cleanup_errors": [],
+  "guard_triggered": false,
+  "dataset_status": "validated",
+  "s5_verification": {
+    "passed": true,
+    "scope": "Synthetic exfiltration pilot; not real data theft or egress-policy enforcement",
+    "verifier_sha256": "c363ba7755b6de5c58a86091392ff8f6397d8a65008280762be6d2a4ebbb3b3d",
+    "run_id": "s5-20261128T071737Z-3307619",
+    "mode": "official",
+    "profile": "upload",
+    "scenario_id": "S5",
+    "uploads": 60,
+    "received": 60,
+    "received_payload_bytes": 3932160,
+    "operations_with_native_evidence": 60,
+    "native_event_counts": {
+      "tcp_connect_attempt": 60,
+      "tcp_send": 120
+    },
+    "kernel_send_bytes_requested": 3951120,
+    "kernel_bytes_by_operation": {
+      "upload-00000": 65852,
+      "upload-00001": 65852,
+      "upload-00002": 65852,
+      "upload-00003": 65852,
+      "upload-00004": 65852,
+      "upload-00005": 65852,
+      "upload-00006": 65852,
+      "upload-00007": 65852,
+      "upload-00008": 65852,
+      "upload-00009": 65852,
+      "upload-00010": 65852,
+      "upload-00011": 65852,
+      "upload-00012": 65852,
+      "upload-00013": 65852,
+      "upload-00014": 65852,
+      "upload-00015": 65852,
+      "upload-00016": 65852,
+      "upload-00017": 65852,
+      "upload-00018": 65852,
+      "upload-00019": 65852,
+      "upload-00020": 65852,
+      "upload-00021": 65852,
+      "upload-00022": 65852,
+      "upload-00023": 65852,
+      "upload-00024": 65852,
+      "upload-00025": 65852,
+      "upload-00026": 65852,
+      "upload-00027": 65852,
+      "upload-00028": 65852,
+      "upload-00029": 65852,
+      "upload-00030": 65852,
+      "upload-00031": 65852,
+      "upload-00032": 65852,
+      "upload-00033": 65852,
+      "upload-00034": 65852,
+      "upload-00035": 65852,
+      "upload-00036": 65852,
+      "upload-00037": 65852,
+      "upload-00038": 65852,
+      "upload-00039": 65852,
+      "upload-00040": 65852,
+      "upload-00041": 65852,
+      "upload-00042": 65852,
+      "upload-00043": 65852,
+      "upload-00044": 65852,
+      "upload-00045": 65852,
+      "upload-00046": 65852,
+      "upload-00047": 65852,
+      "upload-00048": 65852,
+      "upload-00049": 65852,
+      "upload-00050": 65852,
+      "upload-00051": 65852,
+      "upload-00052": 65852,
+      "upload-00053": 65852,
+      "upload-00054": 65852,
+      "upload-00055": 65852,
+      "upload-00056": 65852,
+      "upload-00057": 65852,
+      "upload-00058": 65852,
+      "upload-00059": 65852
+    },
+    "locust_requests": 1588,
+    "locust_by_phase": {
+      "pre_attack": {
+        "requests": 270,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 270,
+        "p50_ms": 27.71983086131513,
+        "p95_ms": 102.28240885771811,
+        "max_ms": 193.630944006145,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      },
+      "attack": {
+        "requests": 138,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 138,
+        "p50_ms": 27.501601027324796,
+        "p95_ms": 94.06838403083384,
+        "max_ms": 166.52162815444171,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      },
+      "recovery": {
+        "requests": 265,
+        "failures": 0,
+        "failure_ratio": 0.0,
+        "latency_sample_count": 265,
+        "p50_ms": 27.452694019302726,
+        "p95_ms": 94.17386306449771,
+        "max_ms": 202.7476520743221,
+        "latency_population": "HTTP 200 and no client exception; nearest-rank percentile"
+      }
+    },
+    "normalized_events": 113129,
+    "events_by_label": {
+      "unknown": 75871,
+      "normal": 37078,
+      "attack": 180
+    },
+    "receiver_peer_ips": [
+      "192.168.141.143"
+    ],
+    "raw_normalized_and_windows_replay_match": true,
+    "errors": []
+  }
+}

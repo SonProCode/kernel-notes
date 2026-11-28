@@ -1,0 +1,132 @@
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s2-20261128T061349Z-3182015
+setup
+warmup
+pre_attack
+attack
+recovery
+finalize
+{
+  "events_by_type": {
+    "tcp_send": 107775,
+    "process_exec": 8,
+    "process_exit": 10,
+    "tcp_connect_attempt": 11
+  },
+  "events_by_label": {
+    "unknown": 72214,
+    "normal": 35555,
+    "attack": 35
+  },
+  "events_by_node": {
+    "lab-w1": 57769,
+    "lab-w2": 50035
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 30,
+  "operations_with_matched_event": 30,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "charge-0000": [
+      "tcp_send"
+    ],
+    "charge-0001": [
+      "tcp_send"
+    ],
+    "charge-0002": [
+      "tcp_send"
+    ],
+    "charge-0003": [
+      "tcp_send"
+    ],
+    "charge-0004": [
+      "tcp_send"
+    ],
+    "charge-0005": [
+      "tcp_send"
+    ],
+    "charge-0006": [
+      "tcp_send"
+    ],
+    "charge-0007": [
+      "tcp_send"
+    ],
+    "charge-0008": [
+      "tcp_send"
+    ],
+    "charge-0009": [
+      "tcp_send"
+    ],
+    "charge-0010": [
+      "tcp_send"
+    ],
+    "charge-0011": [
+      "tcp_send"
+    ],
+    "charge-0012": [
+      "tcp_send"
+    ],
+    "charge-0013": [
+      "tcp_send"
+    ],
+    "charge-0014": [
+      "tcp_send"
+    ],
+    "charge-0015": [
+      "tcp_send"
+    ],
+    "charge-0016": [
+      "tcp_send"
+    ],
+    "charge-0017": [
+      "tcp_send"
+    ],
+    "charge-0018": [
+      "tcp_send"
+    ],
+    "charge-0019": [
+      "tcp_send"
+    ],
+    "charge-0020": [
+      "tcp_send"
+    ],
+    "charge-0021": [
+      "tcp_send"
+    ],
+    "charge-0022": [
+      "tcp_send"
+    ],
+    "charge-0023": [
+      "tcp_send"
+    ],
+    "charge-0024": [
+      "tcp_send"
+    ],
+    "charge-0025": [
+      "tcp_send"
+    ],
+    "charge-0026": [
+      "tcp_send"
+    ],
+    "charge-0027": [
+      "tcp_send"
+    ],
+    "charge-0028": [
+      "tcp_send"
+    ],
+    "charge-0029": [
+      "tcp_send"
+    ]
+  },
+  "api_successes": 30,
+  "grpc_status_counts": {
+    "OK": 30
+  },
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s2-20261128T061349Z-3182015

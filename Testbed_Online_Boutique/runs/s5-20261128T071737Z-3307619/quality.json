@@ -1,0 +1,269 @@
+{
+  "events_by_type": {
+    "process_exec": 242,
+    "process_exit": 246,
+    "tcp_connect_attempt": 186,
+    "tcp_send": 112455
+  },
+  "events_by_label": {
+    "unknown": 75871,
+    "normal": 37078,
+    "attack": 180
+  },
+  "events_by_node": {
+    "lab-w1": 61259,
+    "lab-w2": 51870
+  },
+  "quality": {},
+  "operations": 60,
+  "operations_with_matched_event": 60,
+  "event_types_by_operation": {
+    "upload-00000": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00001": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00002": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00003": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00004": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00005": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00006": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00007": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00008": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00009": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00010": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00011": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00012": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00013": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00014": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00015": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00016": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00017": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00018": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00019": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00020": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00021": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00022": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00023": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00024": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00025": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00026": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00027": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00028": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00029": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00030": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00031": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00032": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00033": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00034": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00035": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00036": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00037": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00038": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00039": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00040": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00041": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00042": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00043": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00044": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00045": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00046": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00047": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00048": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00049": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00050": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00051": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00052": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00053": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00054": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00055": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00056": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00057": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00058": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "upload-00059": [
+      "tcp_connect_attempt",
+      "tcp_send"
+    ]
+  },
+  "unmatched_operations": [],
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "capture_checks_passed": true
+}

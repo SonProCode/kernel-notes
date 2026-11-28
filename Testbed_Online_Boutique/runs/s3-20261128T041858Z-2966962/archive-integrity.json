@@ -1,0 +1,22 @@
+{
+  "archive": "dataset.tar.gz",
+  "archive_sha256": "f2328095b722b8856cac64d3aca1517c6dffd0582b54b3c373fe60fbe234b009",
+  "verified_member_sha256": {
+    "labeled-windows.ndjson": "96e80e1ca73cacb099abac7e45d38e917621954d0f2d4a7147638f6af7bc1581",
+    "normalized.ndjson": "d095b09242b40ddc89955774e55ee0fff0e6d46e347fa1ea260e3befa7df1a4a",
+    "raw/lab-w1.ndjson": "2700c289264af725ad2790cc599d9403d0ac83926770b2b382c65848fe0dcc30",
+    "raw/lab-w1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw/lab-w2.ndjson": "b28c8753f72a300506a68b8513e9316e2a7c5e88ec6637ed9e7a3b0c921bebca",
+    "raw/lab-w2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source/actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "source/label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "source/policies/observe-files.yaml": "bfdd235d59e83112460854d7844d26d6b1aeaf0db44f8b9b82ab7d7eaefb72f8",
+    "source/runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "source/s3/client.py": "c6d105e6512973da9f016865e3df44cbe46bb2b0b2887e0577fc5309d1a31758",
+    "source/s3/tools-provenance.json": "3a4c4931d03a0985052a2a33977463452696202deacea13a3e7041cb1f8a69b2",
+    "source/s3_support.py": "ef3797aca0dd727d8e67aada057a46187e19565f885f10ba2f4974a30ed228d1",
+    "source/s3_verify.py": "58c21d9af809a55b679ea14610d9d6bd8ff51999da20f2135c17e656a46d3c84"
+  },
+  "plain_files_released_after_verification": true,
+  "verified_at": "2026-11-28T04:32:14.385506+00:00"
+}

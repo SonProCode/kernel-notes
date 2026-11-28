@@ -1,0 +1,42 @@
+{
+  "schema_version": 3,
+  "run_id": "s0-20261128T043218Z-2989790",
+  "scenario_id": "S0",
+  "mode": "official",
+  "status": "completed",
+  "node": "w2",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 400,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "measurement_seconds": 900,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "telemetry/normalize.py": "420edb48cd1643c07c848223537e3b5cadbba61c90a1724fc25036e3abb483ac"
+  },
+  "git_commit": null,
+  "source_snapshot": "source",
+  "normal_profile": "business_reference",
+  "code_bundle_sha256": "800ca232951a013ef5e5fc139c19e836b046bba514c04a28ef913cd973aedc2d",
+  "capture_start": "2026-11-28T04:32:19.825554+00:00",
+  "normal_workload": {
+    "pod": "loadgenerator-78dfdbf5b9-dhtn6",
+    "uid": "41aae9f1-70bc-4d71-b06a-2854d5a18c4b",
+    "node": "lab-w1",
+    "image_id": "us-central1-docker.pkg.dev/online-boutique-ci/microservices-demo/loadgenerator@sha256:f86f07c0da48bc00e7843e060b6811b56b1ad8a184d3962f5e80e15f42370cc8",
+    "users": 10,
+    "spawn_rate": 1
+  },
+  "measurement_end": "2026-11-28T04:54:19.822075+00:00",
+  "finished": "2026-11-28T04:54:24.475509+00:00",
+  "dataset_status": "validated",
+  "matched_operations": 0
+}

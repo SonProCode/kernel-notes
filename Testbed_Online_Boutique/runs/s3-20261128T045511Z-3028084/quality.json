@@ -1,0 +1,105 @@
+{
+  "events_by_type": {
+    "tcp_send": 116500,
+    "process_exec": 29,
+    "process_exit": 31,
+    "tcp_connect_attempt": 22,
+    "file_read_permission": 6
+  },
+  "events_by_label": {
+    "unknown": 80523,
+    "normal": 36026,
+    "attack": 39
+  },
+  "events_by_node": {
+    "lab-w1": 62720,
+    "lab-w2": 53868
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 18,
+  "operations_with_matched_event": 18,
+  "unmatched_operations": [],
+  "event_types_by_operation": {
+    "r0-shell": [
+      "process_exec"
+    ],
+    "r0-curl": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r0-wget": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r0-nc": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r0-nmap": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r0-token": [
+      "file_read_permission"
+    ],
+    "r1-shell": [
+      "process_exec"
+    ],
+    "r1-curl": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r1-wget": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r1-nc": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r1-nmap": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r1-token": [
+      "file_read_permission"
+    ],
+    "r2-shell": [
+      "process_exec"
+    ],
+    "r2-curl": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r2-wget": [
+      "process_exec",
+      "tcp_connect_attempt",
+      "tcp_send"
+    ],
+    "r2-nc": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r2-nmap": [
+      "process_exec",
+      "tcp_connect_attempt"
+    ],
+    "r2-token": [
+      "file_read_permission"
+    ]
+  },
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}

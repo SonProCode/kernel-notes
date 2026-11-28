@@ -1,0 +1,168 @@
+{
+  "schema_version": 3,
+  "run_id": "s1-20261128T053537Z-3107221",
+  "scenario_id": "S1",
+  "mode": "official",
+  "status": "completed",
+  "node": "w2",
+  "users": 10,
+  "spawn_rate": 1,
+  "warmup_seconds": 400,
+  "pre_seconds": 120,
+  "recovery_seconds": 120,
+  "measurement_seconds": 900,
+  "limits": {
+    "max_targets": 40,
+    "connection_timeout_seconds": 1,
+    "max_attempts_per_second": 5
+  },
+  "script_sha256": {
+    "runner.py": "1a9bd627c78b092d20c057a1747d2b640d8e733f36b2466456ec494f6ccd9c75",
+    "actor.py": "6ecf45435e908c30b70a93ed489e41e430d79b7134422c316b9079f45172520e",
+    "label.py": "ed59a91b0ea72a8ce9ad5befaefe205f378929b96762f22c535d4315321d8d90",
+    "s1_verify.py": "fddb3ae89f8f897ec9599e696da0128ff467ff115f1c41409271fb5c01618801"
+  },
+  "git_commit": null,
+  "source_snapshot": "source",
+  "code_bundle_sha256": "9b4df9d6b16c8eca454b50dfe868a2b2f4b12a8163c211496e3cf8e260d390ea",
+  "actor": {
+    "name": "gd4-3107221",
+    "uid": "3229af47-bdd3-407e-ae9d-30cdc832eb59",
+    "ip": "10.42.2.34",
+    "image_id": "docker.io/library/python@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+    "service_account": "default"
+  },
+  "targets": [
+    {
+      "service": "adservice",
+      "ip": "10.43.236.91",
+      "port": 9555
+    },
+    {
+      "service": "adservice",
+      "ip": "10.43.236.91",
+      "port": 65000
+    },
+    {
+      "service": "cartservice",
+      "ip": "10.43.68.59",
+      "port": 7070
+    },
+    {
+      "service": "cartservice",
+      "ip": "10.43.68.59",
+      "port": 65000
+    },
+    {
+      "service": "checkoutservice",
+      "ip": "10.43.219.137",
+      "port": 5050
+    },
+    {
+      "service": "checkoutservice",
+      "ip": "10.43.219.137",
+      "port": 65000
+    },
+    {
+      "service": "currencyservice",
+      "ip": "10.43.91.211",
+      "port": 7000
+    },
+    {
+      "service": "currencyservice",
+      "ip": "10.43.91.211",
+      "port": 65000
+    },
+    {
+      "service": "emailservice",
+      "ip": "10.43.3.113",
+      "port": 5000
+    },
+    {
+      "service": "emailservice",
+      "ip": "10.43.3.113",
+      "port": 65000
+    },
+    {
+      "service": "frontend",
+      "ip": "10.43.221.147",
+      "port": 80
+    },
+    {
+      "service": "frontend",
+      "ip": "10.43.221.147",
+      "port": 65000
+    },
+    {
+      "service": "paymentservice",
+      "ip": "10.43.35.94",
+      "port": 50051
+    },
+    {
+      "service": "paymentservice",
+      "ip": "10.43.35.94",
+      "port": 65000
+    },
+    {
+      "service": "productcatalogservice",
+      "ip": "10.43.212.12",
+      "port": 3550
+    },
+    {
+      "service": "productcatalogservice",
+      "ip": "10.43.212.12",
+      "port": 65000
+    },
+    {
+      "service": "recommendationservice",
+      "ip": "10.43.117.45",
+      "port": 8080
+    },
+    {
+      "service": "recommendationservice",
+      "ip": "10.43.117.45",
+      "port": 65000
+    },
+    {
+      "service": "redis-cart",
+      "ip": "10.43.128.12",
+      "port": 6379
+    },
+    {
+      "service": "redis-cart",
+      "ip": "10.43.128.12",
+      "port": 65000
+    },
+    {
+      "service": "shippingservice",
+      "ip": "10.43.90.9",
+      "port": 50051
+    },
+    {
+      "service": "shippingservice",
+      "ip": "10.43.90.9",
+      "port": 65000
+    }
+  ],
+  "capture_start": "2026-11-28T05:35:41.690731+00:00",
+  "measurement_end": "2026-11-28T05:46:56.598330+00:00",
+  "finished": "2026-11-28T05:47:01.275398+00:00",
+  "s1_verification": {
+    "expected_operations": 22,
+    "receipts": 22,
+    "operations_with_native_event": 22,
+    "native_records_verified": 22,
+    "receipt_targets_valid": true,
+    "native_records_valid": true,
+    "unmatched_operations": [],
+    "outcomes": {
+      "connected": 11,
+      "timeout": 11
+    },
+    "capture_checks_passed": true,
+    "meaning": "Coverage of executed TCP attempts; not detector recall or proof of application requests",
+    "passed": true
+  },
+  "dataset_status": "validated",
+  "matched_operations": 22
+}

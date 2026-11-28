@@ -1,0 +1,36 @@
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s0-20261128T075615Z-3379497
+setup
+warmup
+measurement
+finalize
+{
+  "events_by_type": {
+    "tcp_send": 204369,
+    "process_exec": 6,
+    "process_exit": 10,
+    "tcp_connect_attempt": 10
+  },
+  "events_by_label": {
+    "unknown": 63961,
+    "normal": 140434
+  },
+  "events_by_node": {
+    "lab-w1": 110139,
+    "lab-w2": 94256
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 0,
+  "operations_with_matched_event": 0,
+  "unmatched_operations": [],
+  "event_types_by_operation": {},
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s0-20261128T075615Z-3379497

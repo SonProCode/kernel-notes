@@ -1,0 +1,2 @@
+{"kind": "receiver_ready", "timestamp": "2026-11-28T03:52:31.341828+00:00", "pid": 2912688, "uid": 1000, "bind_ip": "192.168.141.142", "port": 18080, "run_id": "s0-s5-control-20261128T035230Z-2912483", "max_calls": 60, "ttl_seconds": 1800}
+{"kind": "receiver_stopped", "timestamp": "2026-11-28T04:04:55.739571+00:00", "received": 0}

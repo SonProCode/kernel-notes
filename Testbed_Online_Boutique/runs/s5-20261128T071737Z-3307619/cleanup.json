@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-11-28T07:29:48.595389+00:00",
+  "remaining": {
+    "pods": 0,
+    "deployments": 0,
+    "configmaps": 0
+  },
+  "original_loadgenerator_unchanged": true,
+  "receiver_process_stopped": true,
+  "receiver_port_closed": true,
+  "passed": true
+}

@@ -1,0 +1,38 @@
+Run: /home/sonth32/Testbed_Online_Boutique/runs/s0-s4-control-20261128T063827Z-3224548
+setup
+warmup
+pre_attack
+measurement
+recovery
+finalize
+{
+  "events_by_type": {
+    "process_exec": 246,
+    "tcp_send": 121890,
+    "process_exit": 250,
+    "tcp_connect_attempt": 130
+  },
+  "events_by_label": {
+    "unknown": 66427,
+    "normal": 56089
+  },
+  "events_by_node": {
+    "lab-w1": 66444,
+    "lab-w2": 56072
+  },
+  "quality": {},
+  "agent_state_unchanged": true,
+  "collector_stderr": {
+    "lab-w1": "",
+    "lab-w2": ""
+  },
+  "operations": 0,
+  "operations_with_matched_event": 0,
+  "unmatched_operations": [],
+  "event_types_by_operation": {},
+  "api_successes": 0,
+  "grpc_status_counts": {},
+  "prometheus_snapshots_present": true,
+  "capture_checks_passed": true
+}
+Completed: /home/sonth32/Testbed_Online_Boutique/runs/s0-s4-control-20261128T063827Z-3224548
