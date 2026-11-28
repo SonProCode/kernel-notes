@@ -1,13 +1,14 @@
 <!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Đo lặp S0–S5 · Kernel Notes</title><meta name="description" content="Lịch 24 lượt, kiểm tra sức khỏe lab, lưu bằng chứng và theo dõi batch chạy trên VM.">
+<title>Kết quả đo lặp S0–S5 · Kernel Notes</title><meta name="description" content="24 case qua hậu kiểm, sáu cặp đối chứng và hướng dẫn đọc dữ liệu, latency, nhãn.">
 <link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="assets/site.css"><script defer src="assets/site.js"></script></head>
 <body><a class="skip" href="#main">Đến nội dung</a><header class="top"><div class="shell bar">
 <a class="logo" href="./"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-5 10 5-10 5L2 8Z M2 12l10 5 10-5 M2 16l10 5 10-5"/></svg><span>Kernel<span class="mint">Notes</span></span></a>
 <nav aria-label="Điều hướng chính"><a href="./#lo-trinh">Lộ trình</a><a href="09-tra-cuu.html">Tra cứu</a><a href="./#tuan-4">Lab thực tế</a></nav>
 <a class="nav-cta" href="./#lo-trinh">Đọc bài <span aria-hidden="true">↗</span></a>
-</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 24 · LAB THỰC TẾ · GĐ4 · Đo lặp · 18 PHÚT ĐỌC</div>
-<h1>Đo lặp S0–S5</h1><p>Lịch 24 lượt, kiểm tra sức khỏe lab, lưu bằng chứng và theo dõi batch chạy trên VM.</p></header>
-<div class="shell reading"><article class="prose"><p>Ngày 26/11/2026, giờ Việt Nam. Người dùng đã yêu cầu thực hiện đo lặp sau khi hoàn tất pilot. <strong>Lịch gồm 24 lượt dự kiến: 18 lượt chính S0–S5 và 6 đối chứng bổ sung cho S4/S5.</strong> Đây là số lượt lên lịch; chỉ đếm thành công sau khi có dữ liệu, kiểm chứng và trạng thái cuối.</p>
+</div></header><main id="main"><div class="read-progress" aria-hidden="true"></div><header class="shell article-head"><a class="back" href="./#tuan-4">← Lộ trình học</a><div class="eyebrow">BÀI 24 · LAB THỰC TẾ · GĐ4 · Đo lặp · 23 PHÚT ĐỌC</div>
+<h1>Kết quả đo lặp S0–S5</h1><p>24 case qua hậu kiểm, sáu cặp đối chứng và hướng dẫn đọc dữ liệu, latency, nhãn.</p></header>
+<div class="shell reading"><article class="prose"><p><strong>Đã hoàn tất 24/24 case lúc 15:27 ngày 28/11/2026</strong>, gồm 5 case kế thừa đã xác nhận và 19 case chạy mới. <a href="25-do-lap-s0-s5.html#ket-qua-do-lap-s0s5-ngay-28-11-2026">Đọc kết quả tổng hợp, so sánh latency và kiểm kê nhãn</a>. Các phần phía dưới giữ lịch, cách theo dõi và cách dừng để tham khảo khi tái hiện một batch khác.</p>
+<p>Ngày 26/11/2026, giờ Việt Nam. Người dùng đã yêu cầu thực hiện đo lặp sau khi hoàn tất pilot. <strong>Lịch gồm 24 lượt dự kiến: 18 lượt chính S0–S5 và 6 đối chứng bổ sung cho S4/S5.</strong> Đây là số lượt lên lịch; chỉ đếm thành công sau khi có dữ liệu, kiểm chứng và trạng thái cuối.</p>
 <p><strong>Cập nhật 28/11:</strong> v1 đã dừng sau 5/24 case. Đọc <a href="25-do-lap-s0-s5.html#hau-kiem-batch-loi-va-cach-tai-hien-do-lap">hậu kiểm, bản tiếp nối và hướng dẫn tái hiện từ đầu</a> trước khi dùng các lệnh theo dõi v1 bên dưới. Tài liệu phân biệt 5 case kế thừa đã xác nhận và 19 case còn phải chạy, không gọi batch v1 là thành công.</p>
 <p><a href="25-do-lap-s0-s5.html">Kết quả và trạng thái xuất bản</a> được cập nhật riêng. <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/repeat-protocol.json">Protocol đã chốt</a> là căn cứ xác định thứ tự, tham số và source hash. Không nhập các lượt pilot cũ vào cohort mới.</p>
 <h2 id="1-vi-sao-phai-do-nhieu-luot">1. Vì sao phải đo nhiều lượt?</h2>
@@ -111,6 +112,7 @@ PY
 <p>Sau đó mới chốt danh sách run đủ điều kiện, hợp đồng feature và cách chia train/test cho GĐ5. Dataset chạy đủ lượt vẫn chưa đồng nghĩa detector đã đạt precision/recall hay policy đã chặn được hành vi; những đánh giá đó thuộc bước sau.</p>
 <p><a href="24-soat-xet-s0-s5-doi-chung.html">Báo cáo pilot và đối chứng trước đó</a> · <a href="24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5">Bản đồ schema</a>.</p>
 <h2 id="trang-thai-batch-do-lap-ngay-26-11-2026">Trạng thái batch đo lặp ngày 26/11/2026</h2>
+<p><a href="25-do-lap-s0-s5.html#ket-qua-do-lap-s0s5-ngay-28-11-2026">Bản tổng hợp kết quả và giải thích số liệu cho người mới</a>.</p>
 <p>Trạng thái cuối: <strong>completed</strong>. Hoàn tất <strong>24/24</strong> lượt đã lên lịch.
 Batch: batch-repeats-20261128T035224Z-2912209. Protocol: gd4-repeats-20261128-v2.
 Kết thúc UTC: 2026-11-28T08:27:15.922578+00:00.</p>
@@ -253,6 +255,131 @@ Kết thúc UTC: 2026-11-28T08:27:15.922578+00:00.</p>
 <p>S4: p95 từng run (ms) = 377.69, 454.46, 385.75. Đây là mô tả giữa các run, không phải p95 gộp.</p>
 <p>S5: p95 từng run (ms) = 186.02, 178.66, 94.07. Đây là mô tả giữa các run, không phải p95 gộp.</p>
 <p><a href="25-do-lap-s0-s5.html">Hướng dẫn lịch, giới hạn và cách tự kiểm tra</a>.</p>
+<h2 id="ket-qua-do-lap-s0s5-ngay-28-11-2026">Kết quả đo lặp S0–S5 ngày 28/11/2026</h2>
+<p><strong>Đã hoàn tất lúc 15:27:15 ngày 28/11, giờ Việt Nam</strong> (08:27:15 UTC). Batch <code>batch-repeats-20261128T035224Z-2912209</code> có status completed; cả 24 case và 6 cặp đối chứng qua hậu kiểm. Đây là 5 case đã hậu kiểm kế thừa từ batch v1 và 19 case chạy mới, không phải 24 lượt thu mới liên tục.</p>
+<p>Nguồn số liệu: <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/batch-repeats-20261128T035224Z-2912209/batch.json">batch.json</a>, <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/runs/batch-repeats-20261128T035224Z-2912209/cohort-review.json">cohort-review.json</a> và <a href="https://github.com/SonProCode/kernel-notes/blob/main/Testbed_Online_Boutique/experiments/audits/repeats-final-inventory-20261128.json">kiểm kê cuối</a>. Checksum của cả 24 archive đã được kiểm lại khi lập bản tổng hợp này.</p>
+<h2 id="1-da-chay-duoc-nhung-gi">1. Đã chạy được những gì?</h2>
+<table>
+<thead>
+<tr>
+<th>Nhóm</th>
+<th style="text-align: right;">Lượt chính</th>
+<th>Kết quả thực đo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 nghiệp vụ</td>
+<td style="text-align: right;">3</td>
+<td>Mỗi lượt đo 900 giây, tổng 45 phút measurement, ngoài warm-up</td>
+</tr>
+<tr>
+<td>S1 thăm dò</td>
+<td style="text-align: right;">3</td>
+<td>66 lần thử TCP, mỗi lượt 22; đối chiếu được với native event. Có cả cổng mở và lần thử không kết nối được</td>
+</tr>
+<tr>
+<td>S2 gọi payment trái luồng</td>
+<td style="text-align: right;">3</td>
+<td>90 lời gọi API, mỗi lượt 30; client/server/native evidence đạt</td>
+</tr>
+<tr>
+<td>S3 runtime abuse</td>
+<td style="text-align: right;">3</td>
+<td>54 thao tác, mỗi lượt 18; đủ chuỗi shell, công cụ mạng và đọc token theo verifier</td>
+</tr>
+<tr>
+<td>S4 tải phụ</td>
+<td style="text-align: right;">3</td>
+<td>Thực gửi 893 + 849 + 864 = <strong>2.606 request</strong>, đối chiếu được native evidence</td>
+</tr>
+<tr>
+<td>S5 gửi payload giả</td>
+<td style="text-align: right;">3</td>
+<td><strong>180/180 upload</strong> được nhận; tổng <strong>11.796.480 byte = 11,25 MiB</strong> payload giả</td>
+</tr>
+<tr>
+<td>Đối chứng S4/S5</td>
+<td style="text-align: right;">6</td>
+<td>3 đối chứng S4 và 3 đối chứng S5; <strong>6/6 cặp khớp cấu hình</strong></td>
+</tr>
+</tbody>
+</table>
+<p>18 lượt chính + 6 đối chứng = 24 case. Không cộng batch pilot, lượt v1 bị dừng hoặc lần hậu kiểm lại vào tổng này. S1 là số lần <strong>thử</strong> kết nối, không phải số lần kết nối thành công. Các con số thao tác/request/upload cũng không phải số dòng log Tetragon.</p>
+<p>S4 đặt mục tiêu 900 slot mỗi lượt nhưng giới hạn concurrency và scheduler khiến một số slot không được gửi: tổng 2.700 slot, 2.606 request thực gửi. Slot bỏ qua không phải request đã gửi rồi nhận lỗi HTTP. Không báo rate cấu hình 10 RPS như thể mọi lượt đều đạt đúng 10 RPS.</p>
+<h2 id="2-website-co-cham-khi-chay-s4-khong">2. Website có chậm khi chạy S4 không?</h2>
+<p>P95 dưới đây là latency request HTTP của <strong>người mua Locust</strong>, lấy từ từng pha tương ứng, chỉ trên HTTP 200 không có exception. Nó không phải latency của client tạo tải phụ và không phải thời gian kernel event.</p>
+<table>
+<thead>
+<tr>
+<th>Vòng</th>
+<th style="text-align: right;">P95 đối chứng S4 (ms)</th>
+<th style="text-align: right;">P95 trong S4 (ms)</th>
+<th style="text-align: right;">P95 hồi phục sau S4 (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">92,42</td>
+<td style="text-align: right;">377,69</td>
+<td style="text-align: right;">91,32</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">182,08</td>
+<td style="text-align: right;">454,46</td>
+<td style="text-align: right;">154,35</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">98,02</td>
+<td style="text-align: right;">385,75</td>
+<td style="text-align: right;">95,23</td>
+</tr>
+</tbody>
+</table>
+<p>Trong cả ba cặp, p95 khi có tải S4 cao hơn đối chứng; sau khi dừng tải, p95 giảm xuống. Đây là quan sát lặp lại trong lab này. Ba cặp, phân bố actor w1/w2/w1 và lần tiếp nối sau gián đoạn chưa đủ để suy thành kết luận nhân quả tổng quát hay một mức suy giảm có khoảng tin cậy.</p>
+<p>Với S5, p95 đối chứng / khi upload lần lượt khoảng 199,55 / 186,02 ms; 93,63 / 178,66 ms; 127,46 / 94,07 ms. Chưa thấy mức tăng latency nhất quán ở cả ba cặp. Kết quả cốt lõi của S5 là chứng minh đường gửi/nhận dữ liệu giả bằng client, receiver và native event, không bắt buộc phải gây chậm như S4.</p>
+<h2 id="3-co-bao-nhieu-du-lieu-va-nhan">3. Có bao nhiêu dữ liệu và nhãn?</h2>
+<p>Tổng kiểm kê từ quality đã qua replay: <strong>3.085.301 bản ghi normalized</strong>, bao gồm setup, warm-up, measurement/action và recovery của 24 case.</p>
+<table>
+<thead>
+<tr>
+<th>Nhãn</th>
+<th style="text-align: right;">Số bản ghi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>normal</td>
+<td style="text-align: right;">1.274.208</td>
+</tr>
+<tr>
+<td>attack</td>
+<td style="text-align: right;">6.038</td>
+</tr>
+<tr>
+<td>unknown</td>
+<td style="text-align: right;">1.805.055</td>
+</tr>
+</tbody>
+</table>
+<p>Unknown được giữ khi quy tắc hiện hành chưa đủ căn cứ gán normal hoặc attack, đặc biệt ở setup/warm-up và các sự kiện nền trong pha action. Không tự đổi unknown thành normal để tăng số mẫu, cũng không coi mọi sự kiện trong một lượt S4 là attack.</p>
+<p>Các bản ghi vẫn thuộc schema v4/v5/v6 theo từng họ. Bảng trên là kiểm kê số dòng theo nhãn, không chứng nhận rằng chúng đã được hợp nhất thành một bộ feature dùng trực tiếp cho mô hình. Khi học/đánh giá cần chuẩn hóa trường, chọn đơn vị mẫu và tách train/test theo run. Tỷ lệ nhãn mất cân bằng cũng khiến accuracy đơn lẻ dễ gây hiểu nhầm.</p>
+<h2 id="4-co-loi-hoac-han-che-gi-can-giu-lai">4. Có lỗi hoặc hạn chế gì cần giữ lại?</h2>
+<ul>
+<li>Batch v1 từng dừng ở bước kiểm chứng S5 control. Nó vẫn có trạng thái failed, không bị viết lại. <a href="25-do-lap-s0-s5.html#hau-kiem-batch-loi-va-cach-tai-hien-do-lap">Báo cáo sự cố và cách tái hiện</a> giải thích bản tiếp nối và verifier đọc tiết kiệm RAM.</li>
+<li>Bảng Locust tích lũy cuối của S0 vòng 1 có 142 checkout, 1 lỗi; vòng 2 có 120/0 và vòng 3 có 135/0. Các bảng này bao gồm warm-up, không phải số checkout riêng của cửa sổ 900 giây. Không tuyên bố mọi request trong toàn bộ thí nghiệm đều thành công.</li>
+<li>Bản tiếp nối có thay đổi observer/verifier và khoảng gián đoạn giữa hai batch; mỗi run giữ source/batch để truy vết.</li>
+<li>Source/ảnh/vị trí và cấu hình từng cặp S4/S5 khớp theo kiểm tra fingerprint; seed không làm hành trình HTTP đồng thời giống hoàn toàn giữa hai lượt.</li>
+<li>Kết quả trên chứng minh đường mô phỏng, nhãn và bằng chứng qua các kiểm tra đã định nghĩa. Chưa có điểm precision/recall của detector hay hiệu quả chặn của policy.</li>
+</ul>
+<h2 id="5-lab-sau-khi-ket-thuc">5. Lab sau khi kết thúc</h2>
+<p>Checkpoint cuối ghi 3 node Ready, không có lỗi môi trường cuối; loadgenerator gốc trở về 0 và không còn Pod thí nghiệm. Receiver tạm được cleanup theo kiểm tra từng lượt S5. Đây là trạng thái tại thời điểm kết thúc batch, không phải giám sát liên tục sau đó.</p>
+<p>Source, manifest, timeline, receipt, metric, raw và checksum đã được xuất bản cùng kết quả. Raw/source/normalized nằm trong dataset.tar.gz của từng run; metadata và report nằm ngoài để đọc nhanh.</p>
+<h2 id="6-buoc-tiep-theo">6. Bước tiếp theo</h2>
+<p>Phần <strong>đo lặp và kiểm chứng tái hiện đã xong</strong>. Tiếp theo là chốt danh sách run và hợp đồng feature, xử lý unknown theo căn cứ, chia tập theo run rồi mới xây/đánh giá detector GĐ5. Bài <a href="24-soat-xet-s0-s5-doi-chung.html#ban-do-schema-truoc-khi-phan-tich-s0s5">bản đồ schema</a> và <a href="25-do-lap-s0-s5.html#hau-kiem-batch-loi-va-cach-tai-hien-do-lap">hướng dẫn tái hiện từ đầu</a> là điểm bắt đầu.</p>
 <h2 id="hau-kiem-batch-loi-va-cach-tai-hien-do-lap">Hậu kiểm batch lỗi và cách tái hiện đo lặp</h2>
 <p>Cập nhật 28/11/2026 theo ngày của phiên làm việc. Tên run và thời gian sự kiện bên dưới giữ nguyên UTC do VM ghi, không đổi thành ngày cập nhật tài liệu.</p>
 <h2 id="1-batch-vua-roi-co-thanh-cong-khong">1. Batch vừa rồi có thành công không?</h2>
@@ -404,6 +531,13 @@ sudo systemctl stop boutique-repeats-v3
 <li><a href="#5-theo-doi-tren-lab-cp">5. Theo dõi trên lab-cp</a></li>
 <li><a href="#6-sau-khi-chay-xong">6. Sau khi chạy xong</a></li>
 <li><a href="#trang-thai-batch-do-lap-ngay-26-11-2026">Trạng thái batch đo lặp ngày 26/11/2026</a></li>
+<li><a href="#ket-qua-do-lap-s0s5-ngay-28-11-2026">Kết quả đo lặp S0–S5 ngày 28/11/2026</a></li>
+<li><a href="#1-da-chay-duoc-nhung-gi">1. Đã chạy được những gì?</a></li>
+<li><a href="#2-website-co-cham-khi-chay-s4-khong">2. Website có chậm khi chạy S4 không?</a></li>
+<li><a href="#3-co-bao-nhieu-du-lieu-va-nhan">3. Có bao nhiêu dữ liệu và nhãn?</a></li>
+<li><a href="#4-co-loi-hoac-han-che-gi-can-giu-lai">4. Có lỗi hoặc hạn chế gì cần giữ lại?</a></li>
+<li><a href="#5-lab-sau-khi-ket-thuc">5. Lab sau khi kết thúc</a></li>
+<li><a href="#6-buoc-tiep-theo">6. Bước tiếp theo</a></li>
 <li><a href="#hau-kiem-batch-loi-va-cach-tai-hien-do-lap">Hậu kiểm batch lỗi và cách tái hiện đo lặp</a></li>
 <li><a href="#1-batch-vua-roi-co-thanh-cong-khong">1. Batch vừa rồi có thành công không?</a></li>
 <li><a href="#2-vi-sao-dung">2. Vì sao dừng?</a></li>

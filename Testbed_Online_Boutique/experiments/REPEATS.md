@@ -1,5 +1,7 @@
 # Đo lặp S0–S5 theo lịch đã chốt
 
+**Đã hoàn tất 24/24 case lúc 15:27 ngày 28/11/2026**, gồm 5 case kế thừa đã xác nhận và 19 case chạy mới. [Đọc kết quả tổng hợp, so sánh latency và kiểm kê nhãn](REPEATS-FINAL.md). Các phần phía dưới giữ lịch, cách theo dõi và cách dừng để tham khảo khi tái hiện một batch khác.
+
 Ngày 26/11/2026, giờ Việt Nam. Người dùng đã yêu cầu thực hiện đo lặp sau khi hoàn tất pilot. **Lịch gồm 24 lượt dự kiến: 18 lượt chính S0–S5 và 6 đối chứng bổ sung cho S4/S5.** Đây là số lượt lên lịch; chỉ đếm thành công sau khi có dữ liệu, kiểm chứng và trạng thái cuối.
 
 **Cập nhật 28/11:** v1 đã dừng sau 5/24 case. Đọc [hậu kiểm, bản tiếp nối và hướng dẫn tái hiện từ đầu](REPEATS-RECOVERY.md) trước khi dùng các lệnh theo dõi v1 bên dưới. Tài liệu phân biệt 5 case kế thừa đã xác nhận và 19 case còn phải chạy, không gọi batch v1 là thành công.

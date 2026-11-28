@@ -33,7 +33,7 @@ ARTICLES = [
     ("22-s4-tai-noi-bo", "S4 · Tải nội bộ và đo tác động", "Tạo tải HTTP nhẹ, đo request latency của người mua và kiểm tra hồi phục cùng telemetry.", "GĐ4 · S4", "chart"),
     ("23-s5-gui-du-lieu-gia", "S5 · Gửi dữ liệu giả ra endpoint lab", "Đối chiếu payload 64 KiB qua client, receiver ngoài mạng Pod và log Tetragon.", "GĐ4 · S5", "network"),
     ("24-soat-xet-s0-s5-doi-chung", "S0–S5 · Kiểm chứng và đối chứng", "Đọc kết quả 16 pilot, sáu lượt bổ sung và phân biệt dữ liệu hợp lệ với kết luận thực nghiệm.", "GĐ4 · Đối chứng", "chart"),
-    ("25-do-lap-s0-s5", "Đo lặp S0–S5", "Lịch 24 lượt, kiểm tra sức khỏe lab, lưu bằng chứng và theo dõi batch chạy trên VM.", "GĐ4 · Đo lặp", "chart"),
+    ("25-do-lap-s0-s5", "Kết quả đo lặp S0–S5", "24 case qua hậu kiểm, sáu cặp đối chứng và hướng dẫn đọc dữ liệu, latency, nhãn.", "GĐ4 · Đo lặp", "chart"),
 ]
 WEEKS = [
     (0, 3, "Nền tảng bảo mật", "Hiểu hệ thống, danh tính và đường đi của một cuộc tấn công."),
@@ -110,6 +110,7 @@ def read(slug):
     text = (ROOT/source).read_text(encoding="utf-8-sig")
     if slug == "25-do-lap-s0-s5":
         text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/REPEATS-RESULTS.md").read_text(encoding="utf-8").replace("# Trạng thái", "## Trạng thái", 1)
+        text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/REPEATS-FINAL.md").read_text(encoding="utf-8").replace("# Kết quả", "## Kết quả", 1)
         text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/REPEATS-RECOVERY.md").read_text(encoding="utf-8").replace("# Hậu kiểm", "## Hậu kiểm", 1)
     if slug == "24-soat-xet-s0-s5-doi-chung":
         text += "\n\n" + (ROOT/"Testbed_Online_Boutique/experiments/FEATURE-SCHEMA-MAP.md").read_text(encoding="utf-8").replace("# Bản đồ schema", "## Bản đồ schema", 1)
@@ -143,6 +144,8 @@ def read(slug):
         document, separator, anchor = location.partition("#")
         if document == "Testbed_Online_Boutique/experiments/REPEATS-RESULTS.md":
             return "](25-do-lap-s0-s5.html)"
+        if document == "Testbed_Online_Boutique/experiments/REPEATS-FINAL.md":
+            return "](25-do-lap-s0-s5.html#ket-qua-do-lap-s0s5-ngay-28-11-2026)"
         if document == "Testbed_Online_Boutique/experiments/REPEATS-RECOVERY.md":
             return "](25-do-lap-s0-s5.html#hau-kiem-batch-loi-va-cach-tai-hien-do-lap)"
         if document == "Testbed_Online_Boutique/experiments/FEATURE-SCHEMA-MAP.md":

@@ -1,0 +1,252 @@
+{
+  "batch": "batch-repeats-20261128T035224Z-2912209",
+  "completed": true,
+  "logical_cases": 24,
+  "inherited_cases": 5,
+  "new_cases": 19,
+  "all_cases_reviewed_passed": true,
+  "matched_pairs": 6,
+  "finished_utc": "2026-11-28T08:27:15.922578+00:00",
+  "archive_sha256_rechecked": true,
+  "event_counts": {
+    "tcp_send": 3074828,
+    "tcp_connect_attempt": 4501,
+    "process_exec": 2936,
+    "process_exit": 3018,
+    "file_read_permission": 18
+  },
+  "label_counts": {
+    "unknown": 1805055,
+    "normal": 1274208,
+    "attack": 6038
+  },
+  "total_normalized_events_all_phases": 3085301,
+  "performance_pairs": {
+    "S4-r1": {
+      "control_p95_ms": 92.41623803973198,
+      "action_p95_ms": 377.68615095410496,
+      "recovery_p95_ms": 91.31527796853334
+    },
+    "S4-r2": {
+      "control_p95_ms": 182.07924696616828,
+      "action_p95_ms": 454.4635359197855,
+      "recovery_p95_ms": 154.3534470256418
+    },
+    "S4-r3": {
+      "control_p95_ms": 98.01779384724796,
+      "action_p95_ms": 385.75252098962665,
+      "recovery_p95_ms": 95.23287788033485
+    },
+    "S5-r1": {
+      "control_p95_ms": 199.55309899523854,
+      "action_p95_ms": 186.02200411260128,
+      "recovery_p95_ms": 200.66345809027553
+    },
+    "S5-r2": {
+      "control_p95_ms": 93.63185404799879,
+      "action_p95_ms": 178.66493109613657,
+      "recovery_p95_ms": 296.6818958520889
+    },
+    "S5-r3": {
+      "control_p95_ms": 127.45639402419329,
+      "action_p95_ms": 94.06838403083384,
+      "recovery_p95_ms": 94.17386306449771
+    }
+  },
+  "cases": [
+    {
+      "case_id": "r1-s1-action",
+      "run_id": "s1-20261125T181115Z-2520089",
+      "family": "S1",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261125T181112Z-2519845",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s4-control",
+      "run_id": "s0-s4-control-20261125T182317Z-2540872",
+      "family": "S4",
+      "variant": "control",
+      "source_batch": "batch-repeats-20261125T181112Z-2519845",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s4-action",
+      "run_id": "s4-20261125T183702Z-2569785",
+      "family": "S4",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261125T181112Z-2519845",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s2-action",
+      "run_id": "s2-20261125T185037Z-2598301",
+      "family": "S2",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261125T181112Z-2519845",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s0-action",
+      "run_id": "s0-20261125T190326Z-2620476",
+      "family": "S0",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261125T181112Z-2519845",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s5-control",
+      "run_id": "s0-s5-control-20261128T035230Z-2912483",
+      "family": "S5",
+      "variant": "control",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s5-action",
+      "run_id": "s5-20261128T040558Z-2939902",
+      "family": "S5",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r1-s3-action",
+      "run_id": "s3-20261128T041858Z-2966962",
+      "family": "S3",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s0-action",
+      "run_id": "s0-20261128T043218Z-2989790",
+      "family": "S0",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s3-action",
+      "run_id": "s3-20261128T045511Z-3028084",
+      "family": "S3",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s4-action",
+      "run_id": "s4-20261128T050844Z-3051251",
+      "family": "S4",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s4-control",
+      "run_id": "s0-s4-control-20261128T052217Z-3079434",
+      "family": "S4",
+      "variant": "control",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s1-action",
+      "run_id": "s1-20261128T053537Z-3107221",
+      "family": "S1",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s5-action",
+      "run_id": "s5-20261128T054735Z-3127763",
+      "family": "S5",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s5-control",
+      "run_id": "s0-s5-control-20261128T060058Z-3155443",
+      "family": "S5",
+      "variant": "control",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r2-s2-action",
+      "run_id": "s2-20261128T061349Z-3182015",
+      "family": "S2",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s1-action",
+      "run_id": "s1-20261128T062636Z-3204135",
+      "family": "S1",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s4-control",
+      "run_id": "s0-s4-control-20261128T063827Z-3224548",
+      "family": "S4",
+      "variant": "control",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s4-action",
+      "run_id": "s4-20261128T065136Z-3252515",
+      "family": "S4",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s5-control",
+      "run_id": "s0-s5-control-20261128T070454Z-3280659",
+      "family": "S5",
+      "variant": "control",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s5-action",
+      "run_id": "s5-20261128T071737Z-3307619",
+      "family": "S5",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s2-action",
+      "run_id": "s2-20261128T073020Z-3334713",
+      "family": "S2",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s3-action",
+      "run_id": "s3-20261128T074305Z-3356835",
+      "family": "S3",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    },
+    {
+      "case_id": "r3-s0-action",
+      "run_id": "s0-20261128T075615Z-3379497",
+      "family": "S0",
+      "variant": "action",
+      "source_batch": "batch-repeats-20261128T035224Z-2912209",
+      "passed": true
+    }
+  ],
+  "cohort_review_sha256": "24131f0332b611952b1b8f97ef994bf5244d91fdf3cfa998c2058a9a54f5af22",
+  "scope": "Inventory only across v4/v5/v6; event counts include setup, warm-up, action and recovery; no detector score"
+}

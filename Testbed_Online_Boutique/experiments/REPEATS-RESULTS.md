@@ -1,5 +1,7 @@
 # Trạng thái batch đo lặp ngày 26/11/2026
 
+[Bản tổng hợp kết quả và giải thích số liệu cho người mới](REPEATS-FINAL.md).
+
 Trạng thái cuối: **completed**. Hoàn tất **24/24** lượt đã lên lịch.
 Batch: batch-repeats-20261128T035224Z-2912209. Protocol: gd4-repeats-20261128-v2.
 Kết thúc UTC: 2026-11-28T08:27:15.922578+00:00.

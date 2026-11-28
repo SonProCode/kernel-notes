@@ -1,5 +1,7 @@
 # Các lượt đo Online Boutique
 
+**Kết quả cuối 15:27 ngày 28/11:** bản tiếp nối đã hoàn tất 24/24 case, gồm 5 kế thừa và 19 chạy mới; tất cả case và 6 cặp đối chứng đạt hậu kiểm. [Bảng kết quả và kiểm kê dữ liệu](../experiments/REPEATS-FINAL.md) phân biệt thao tác, request, sự kiện và nhãn; các dòng dưới giữ lại lịch sử v1.
+
 **Cập nhật 28/11:** batch đo lặp v1 dừng sau 5/24 case. [Hậu kiểm và hướng dẫn tái hiện](../experiments/REPEATS-RECOVERY.md) xác nhận 5 case đạt, giữ nguyên lượt S5 control chưa validated và mô tả bản tiếp nối 5 case kế thừa + 19 case mới. Không đọc số lượt lên lịch như số lượt đã thực hiện.
 
 ## Hậu kiểm S0–S5 và batch đối chứng 25/11/2026

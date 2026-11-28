@@ -27,6 +27,7 @@ Repo lưu blog, học liệu, tài liệu nguồn và các file triển khai th�
 - [Tổng kiểm tra S0–S5 và đối chứng pilot](Testbed_Online_Boutique/experiments/S0-S5-REVIEW.md)
 - [Lịch đo lặp 24 lượt và cách theo dõi trên VM](Testbed_Online_Boutique/experiments/REPEATS.md)
 - [Hậu kiểm batch bị dừng và hướng dẫn tái hiện](Testbed_Online_Boutique/experiments/REPEATS-RECOVERY.md)
+- [Kết quả cuối: 24/24 case S0–S5 và sáu cặp đối chứng](Testbed_Online_Boutique/experiments/REPEATS-FINAL.md)
 - [Học liệu tuần 1–2](HocLieu_Tuan1_Tuan2/)
 - [Học liệu tuần 3](HocLieu_Tuan3/)
 - [Tài liệu tham khảo và bản PDF](TaiLieu_Tuan1_Tuan2/)
